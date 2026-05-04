@@ -1,5 +1,9 @@
 import streamlit as st
 import streamlit.components.v1 as components
+from modules.database import init_db
+
+# 앱 실행 시 DB 연결 테스트 및 테이블 자동 생성
+init_db()
 
 st.set_page_config(
     page_title="RebornBiz",
