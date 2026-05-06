@@ -18,6 +18,7 @@ with st.sidebar:
     st.page_link("app.py", label="[홈] 메인 화면", icon="🏠")
     st.page_link("pages/1_calculator.py", label="[진단] 폐업 비용 계산기", icon="🧮")
     st.page_link("pages/2_simulation.py", label="[분석] 업종 변경 시뮬레이션", icon="📊")
+    st.page_link("pages/4_market_analysis.py", label="[상권] 내 주변 상권 분석", icon="🗺️")
     st.page_link("pages/3_guide.py", label="[가이드] 정부 지원 정책", icon="📚")
 
 # 메인 화면
@@ -30,6 +31,7 @@ st.write("""
 
 - **[진단] 폐업 비용 계산기**: 사업 정리 시 발생하는 철거비, 위약금 등 각종 예상 비용을 산출해 봅니다.
 - **[분석] 업종 변경 시뮬레이션**: 새로운 업종으로 전환할 때의 예상 리스크와 수익성을 시뮬레이션합니다.
+- **[상권] 내 주변 상권 분석**: 현재 위치를 기반으로 주변 상권의 밀집도와 업종 분포를 한눈에 파악합니다.
 - **[가이드] 정부 지원 정책**: 소상공인 재기 및 창업과 관련된 다양한 정부 지원금을 한눈에 확인합니다.
 """)
 

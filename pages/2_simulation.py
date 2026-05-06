@@ -38,15 +38,50 @@ st.markdown("---")
 
 # 1. 입력 섹션
 st.subheader("업종 정보 및 가용 예산 입력")
-col1, col2, col3 = st.columns(3)
-industries = list(INDUSTRY_DATA.keys())
 
-with col1:
-    current_biz = st.selectbox("현재 업종", options=industries, index=0)
-with col2:
-    target_biz = st.selectbox("전환 희망 업종", options=industries, index=1)
-with col3:
-    investment = st.number_input("가용 투자 예산 (만원)", min_value=0, value=5000, step=100)
+@st.cache_data
+def get_industry_df():
+    from modules.database import SessionLocal
+    db = SessionLocal()
+    df = pd.read_sql("SELECT large_cat_name, medium_cat_name, small_cat_name FROM industry_master", db.bind)
+    db.close()
+    return df
+
+try:
+    df = get_industry_df()
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("#### 현재 업종")
+        large_cats1 = sorted([c for c in df['large_cat_name'].unique() if c])
+        large_cat1 = st.selectbox("대분류명 (현재)", options=large_cats1) if large_cats1 else None
+        
+        medium_cats1 = sorted([c for c in df[df['large_cat_name'] == large_cat1]['medium_cat_name'].unique() if c]) if large_cat1 else []
+        medium_cat1 = st.selectbox("중분류명 (현재)", options=medium_cats1) if medium_cats1 else None
+        
+        small_cats1 = sorted([c for c in df[(df['large_cat_name'] == large_cat1) & (df['medium_cat_name'] == medium_cat1)]['small_cat_name'].unique() if c]) if medium_cat1 else []
+        current_biz = st.selectbox("소분류명 (현재)", options=small_cats1) if small_cats1 else "알 수 없음"
+
+    with col2:
+        st.markdown("#### 전환 희망 업종")
+        large_cats2 = sorted([c for c in df['large_cat_name'].unique() if c])
+        default_large_idx = large_cats2.index(large_cat1) if large_cat1 in large_cats2 else 0
+        large_cat2 = st.selectbox("대분류명 (희망)", options=large_cats2, index=default_large_idx) if large_cats2 else None
+        
+        medium_cats2 = sorted([c for c in df[df['large_cat_name'] == large_cat2]['medium_cat_name'].unique() if c]) if large_cat2 else []
+        default_medium_idx = medium_cats2.index(medium_cat1) if medium_cat1 in medium_cats2 else 0
+        medium_cat2 = st.selectbox("중분류명 (희망)", options=medium_cats2, index=default_medium_idx) if medium_cats2 else None
+        
+        small_cats2 = sorted([c for c in df[(df['large_cat_name'] == large_cat2) & (df['medium_cat_name'] == medium_cat2)]['small_cat_name'].unique() if c]) if medium_cat2 else []
+        target_biz = st.selectbox("소분류명 (희망)", options=small_cats2) if small_cats2 else "알 수 없음"
+
+except Exception as e:
+    st.error(f"데이터베이스 연결 오류 또는 테이블이 없습니다. 에러: {e}")
+    current_biz, target_biz = "카페", "치킨전문점"
+
+st.markdown("---")
+investment = st.number_input("가용 투자 예산 (만원)", min_value=0, value=5000, step=100)
 
 # 분석 로직 연동
 results = compare_industries(current_biz, target_biz, investment)
@@ -67,7 +102,10 @@ with mcol2:
         delta=f"{results['additional_profit']:,.1f} 만원"
     )
 with mcol3:
-    st.metric(label="예상 투자금 회수 기간(BEP)", value=f"{results['payback_months']:.1f} 개월")
+    import math
+    bep_val = results['payback_months']
+    bep_text = "측정 불가 (수익 없음)" if math.isinf(bep_val) else f"{bep_val:.1f} 개월"
+    st.metric(label="예상 투자금 회수 기간(BEP)", value=bep_text)
 
 # 페이지 중간 광고
 ad_space()
@@ -105,10 +143,14 @@ with chart_col1:
 with chart_col2:
     st.write("#### 🚀 누적 현금흐름 및 BEP 시뮬레이션")
     # 투자금 회수 기간 이후 12개월까지 시뮬레이션
-    max_months = int(results["payback_months"]) + 12
-    if max_months > 120:  # 무한대나 너무 긴 기간 방지
+    import math
+    if math.isinf(results["payback_months"]):
         max_months = 120
-        
+    else:
+        max_months = int(results["payback_months"]) + 12
+        if max_months > 120:  # 무한대나 너무 긴 기간 방지
+            max_months = 120
+            
     months = list(range(0, max_months + 1))
     
     # 0개월차에는 세팅 비용만큼 마이너스, 이후 매월 타겟 순이익 누적

@@ -41,6 +41,31 @@ class Simulation(Base):
     investment = Column(Float)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
+# 업종 마스터 테이블 정의
+class IndustryMaster(Base):
+    __tablename__ = "industry_master"
+    
+    large_cat_code = Column(String(20))
+    large_cat_name = Column(String(100))
+    medium_cat_code = Column(String(20))
+    medium_cat_name = Column(String(100))
+    small_cat_code = Column(String(20), primary_key=True, index=True)
+    small_cat_name = Column(String(100))
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
+# 상가(점포) 데이터 마스터 테이블 (배치 수집용)
+class StoreMaster(Base):
+    __tablename__ = "store_master"
+    
+    bizesId = Column(String(50), primary_key=True, index=True)
+    bizesNm = Column(String(255))
+    indsLclsNm = Column(String(100))
+    indsMclsNm = Column(String(100))
+    indsSclsNm = Column(String(100))
+    lat = Column(Float, index=True)
+    lon = Column(Float, index=True)
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
 def init_db():
     """DB 연결을 확인하고 테이블을 자동 생성합니다."""
     try:
@@ -50,6 +75,6 @@ def init_db():
             
         # 테이블 생성 (이미 존재하면 무시됨)
         Base.metadata.create_all(bind=engine)
-        print("[SUCCESS] 데이터베이스 테이블(Users, Simulations) 초기화 완료.")
+        print("[SUCCESS] 데이터베이스 테이블(Users, Simulations, industry_master) 초기화 완료.")
     except Exception as e:
         print(f"[ERROR] DB 연결 실패: {e}")
