@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; }
+    #map { width: 100%; height: 100vh; }
+  </style>
+  <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=709c40315079132e50e64ff31f511a13&libraries=clusterer"></script>
+</head>
+<body>
+  <!-- 스켈레톤/로딩 스피너 UI -->
+  <div id="loading" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: #f8f9fa; z-index: 100;">
+    <div style="width: 40px; height: 40px; border: 4px solid #e3e3e3; border-top: 4px solid #4a90e2; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+    <div style="margin-top: 15px; font-family: sans-serif; color: #666; font-size: 14px;">지도를 불러오는 중입니다...</div>
+  </div>
+  <style>
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+
+  <div id="map" style="opacity: 0; transition: opacity 0.5s ease-in-out;"></div>
+  <script>
+    // Streamlit Component API implementation for Vanilla JS
+    function sendMessageToStreamlitClient(type, data) {
+      var outData = Object.assign({
+        isStreamlitMessage: true,
+        type: type,
+      }, data);
+      window.parent.postMessage(outData, "*");
+    }
+
+    const Streamlit = {
+      setComponentReady: function() {
+        sendMessageToStreamlitClient("streamlit:componentReady", {apiVersion: 1});
+      },
+      setFrameHeight: function(height) {
+        sendMessageToStreamlitClient("streamlit:setFrameHeight", {height: height});
+      },
+      setComponentValue: function(value) {
+        sendMessageToStreamlitClient("streamlit:setComponentValue", {value: value, dataType: "json"});
+      }
+    };
+
+    var map = null;
+    var clusterer = null;
+    var centerPosition = null;
+    var isInitialized = false;
+    var centerMarker = null;
+
+    function adjustHeight() {
+        var width = window.innerWidth;
+        // 뷰포트 기반 비율 높이 계산 (최소 400px, 최대 700px)
+        var desiredHeight = Math.max(400, Math.min(width * 0.7, 700));
+        Streamlit.setFrameHeight(desiredHeight);
+        
+        if (map) {
+            map.relayout();
+            if (centerPosition) {
+                map.setCenter(centerPosition);
+            }
+        }
+    }
+
+    window.addEventListener("resize", adjustHeight);
+
+    function initMap(args) {
+        var lat = args.lat;
+        var lon = args.lon;
+        var stores = args.stores || [];
+        centerPosition = new kakao.maps.LatLng(lat, lon);
+
+        // 자동 위치 조회 요청이 온 경우 (처음 1회만)
+        if (args.auto_locate && !window.hasAutoLocated) {
+            window.hasAutoLocated = true;
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    Streamlit.setComponentValue({
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                        _timestamp: new Date().getTime(),
+                        _is_auto_located: true
+                    });
+                }, function(error) {
+                    // 권한 거부 또는 실패 시 기본 좌표 반환
+                    Streamlit.setComponentValue({
+                        lat: lat,
+                        lng: lon,
+                        _timestamp: new Date().getTime(),
+                        _is_auto_located: true
+                    });
+                }, { enableHighAccuracy: true, timeout: 5000, maximumAge: Infinity });
+            } else {
+                Streamlit.setComponentValue({
+                    lat: lat,
+                    lng: lon,
+                    _timestamp: new Date().getTime(),
+                    _is_auto_located: true
+                });
+            }
+        }
+
+        if (!map) {
+            var mapContainer = document.getElementById('map');
+            var mapOption = { 
+                center: centerPosition, 
+                level: 4
+            };
+            map = new kakao.maps.Map(mapContainer, mapOption);
+
+            clusterer = new kakao.maps.MarkerClusterer({
+                map: map,
+                averageCenter: true,
+                minLevel: 5
+            });
+
+            // Map Click Event to send data back to Streamlit!
+            kakao.maps.event.addListener(map, 'click', function(mouseEvent) {        
+                var latlng = mouseEvent.latLng; 
+                Streamlit.setComponentValue({
+                    lat: latlng.getLat(),
+                    lng: latlng.getLng(),
+                    _timestamp: new Date().getTime() // Force update even if clicking same spot
+                });
+            });
+        } else {
+            // Update center
+            map.setCenter(centerPosition);
+            clusterer.clear();
+            if (centerMarker) {
+                centerMarker.setMap(null);
+            }
+        }
+
+        // Add Center Marker
+        centerMarker = new kakao.maps.Marker({
+            position: centerPosition
+        });
+        centerMarker.setMap(map);
+        
+        // 반응형 InfoWindow: 긴 텍스트도 모바일에서 넘치지 않도록 max-width 설정
+        var infowindow = new kakao.maps.InfoWindow({
+            content : '<div style="padding:5px;font-size:14px;color:red;font-weight:bold;max-width:180px;text-align:center;word-break:keep-all;">내 위치 (중심점)</div>'
+        });
+        infowindow.open(map, centerMarker);
+
+        // Add Store Markers
+        var markers = stores.map(function(store) {
+            var marker = new kakao.maps.Marker({
+                position : new kakao.maps.LatLng(store.lat, store.lon)
+            });
+            var iwContent = '<div style="padding:5px;font-size:12px;max-width:200px;white-space:normal;word-break:keep-all;">' + store.bizesNm + '<br>(' + store.indsMclsNm + ')</div>';
+            var markerInfowindow = new kakao.maps.InfoWindow({
+                content : iwContent
+            });
+            kakao.maps.event.addListener(marker, 'mouseover', function() {
+                markerInfowindow.open(map, marker);
+            });
+            kakao.maps.event.addListener(marker, 'mouseout', function() {
+                markerInfowindow.close();
+            });
+            return marker;
+        });
+        clusterer.addMarkers(markers);
+
+        // 렌더링 완료 시 로딩 스피너 숨기고 지도 표시
+        setTimeout(function() {
+            var loadingEl = document.getElementById('loading');
+            if(loadingEl) loadingEl.style.display = 'none';
+            document.getElementById('map').style.opacity = '1';
+        }, 300);
+    }
+
+    window.addEventListener("message", function(event) {
+      if (event.data.type === "streamlit:render") {
+        initMap(event.data.args);
+        if (!isInitialized) {
+            adjustHeight();
+            isInitialized = true;
+        }
+      }
+    });
+
+    // Notify Streamlit that the component is ready
+    Streamlit.setComponentReady();
+  </script>
+</body>
+</html>

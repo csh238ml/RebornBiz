@@ -25,22 +25,19 @@ def haversine(lat1, lon1, lat2, lon2):
 
 def fetch_stores_in_radius(lat: float, lon: float, radius: int = 500, address_str: str = "") -> list:
     """
-    주소에 따라 수도권/광역시(서울, 경기, 인천, 부산, 대구, 광주, 대전, 울산, 세종)는 DB에서,
-    그 외 지역은 실시간 API를 통해 조회하는 하이브리드 라우팅 함수입니다.
+    내 주변 반경 데이터를 DB에서 먼저 조회합니다.
+    단, DB에 데이터가 없을 경우 공공데이터 API를 호출해 DB에 실시간 저장(캐싱)한 뒤 다시 불러옵니다.
     """
-    # 주소 문자열이 없거나 알 수 없을 경우 기본값으로 DB 조회
-    if not address_str or address_str == "상세 주소 알 수 없음":
-        use_batch_db = True
-    else:
-        batch_regions = ["서울", "경기", "인천", "부산", "대구", "광주", "대전", "울산", "세종"]
-        use_batch_db = any(region in address_str for region in batch_regions)
+    results = _fetch_from_db(lat, lon, radius)
     
-    if use_batch_db:
-        print(f"[INFO] '{address_str}' 지역: 배치 수집된 자체 DB를 조회합니다.")
-        return _fetch_from_db(lat, lon, radius)
-    else:
-        print(f"[INFO] '{address_str}' 지역: 외부 공공데이터 API를 실시간 호출합니다.")
-        return _fetch_from_api(lat, lon, radius)
+    if not results:
+        print("[INFO] 해당 지역에 조회된 데이터가 없어 API 실시간 연동을 시도합니다.")
+        success = sync_local_stores(lat, lon, radius)
+        if success:
+            # API에서 가져와 DB에 넣었으므로, 다시 DB에서 조회하여 반환
+            results = _fetch_from_db(lat, lon, radius)
+            
+    return results
 
 def _fetch_from_db(lat, lon, radius):
     db = SessionLocal()
@@ -73,7 +70,11 @@ def _fetch_from_db(lat, lon, radius):
     finally:
         db.close()
 
-def _fetch_from_api(lat, lon, radius):
+def sync_local_stores(lat, lon, radius):
+    """
+    공공데이터 API(storeListInRadius)를 사용해서 특정 위치 주변의 데이터를 가져온 뒤,
+    store_master 테이블에 즉시 저장(Upsert)하는 동기화 함수
+    """
     decoded_key = urllib.parse.unquote(API_KEY)
     params = {
         "serviceKey": decoded_key,
@@ -86,57 +87,21 @@ def _fetch_from_api(lat, lon, radius):
     }
     
     try:
-        response = requests.get(API_URL, params=params, verify=False, timeout=5)
+        response = requests.get(API_URL, params=params, verify=False, timeout=10)
         response.raise_for_status()
-        
-        try:
-            data = response.json()
-        except ValueError:
-            print("[WARN] API 응답이 JSON이 아닙니다. Mock 데이터를 반환합니다.")
-            return _generate_mock_stores(lat, lon, radius)
+        data = response.json()
             
         header = data.get("header", {})
         if header.get("resultCode") == "00":
             items = data.get("body", {}).get("items", [])
             if items:
-                return items
+                from modules.sync_stores_batch import upsert_stores_to_db
+                upsert_stores_to_db(items)
+                return True
         
-        print(f"[WARN] API 정상 응답 아님. 응답: {str(data)[:100]}. Mock 데이터를 반환합니다.")
-        return _generate_mock_stores(lat, lon, radius)
+        print(f"[WARN] API 정상 응답 아님 (데이터 없음 또는 만료). 응답: {str(data)[:100]}")
+        return False
         
     except Exception as e:
         print(f"[ERROR] API 호출 실패: {e}")
-        return _generate_mock_stores(lat, lon, radius)
-
-def _generate_mock_stores(lat, lon, radius, count=50):
-    """API 연동 전 시각화 테스트를 위한 가상 데이터 생성"""
-    categories = ["음식", "소매", "서비스", "학문/교육"]
-    sub_categories = {
-        "음식": ["한식", "카페", "치킨", "중식", "양식"],
-        "소매": ["편의점", "의류", "화장품", "식료품"],
-        "서비스": ["미용실", "세탁소", "부동산", "사진관"],
-        "학문/교육": ["보습학원", "어학원", "독서실"]
-    }
-    
-    mock_data = []
-    lat_degree_per_m = 1 / 111000
-    lon_degree_per_m = 1 / 88000
-    
-    for i in range(count):
-        r = random.uniform(0, radius)
-        offset_lat = r * lat_degree_per_m * random.uniform(-1, 1)
-        offset_lon = r * lon_degree_per_m * random.uniform(-1, 1)
-        
-        lcls = random.choice(categories)
-        mcls = random.choice(sub_categories[lcls])
-        
-        mock_data.append({
-            "bizesId": f"MOCK_{i}",
-            "bizesNm": f"테스트 상가 {i}",
-            "indsLclsNm": lcls,
-            "indsMclsNm": mcls,
-            "indsSclsNm": f"{mcls} 상세",
-            "lat": lat + offset_lat,
-            "lon": lon + offset_lon
-        })
-    return mock_data
+        return False
