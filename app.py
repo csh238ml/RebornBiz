@@ -12,14 +12,10 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 사이드바 메뉴 설정
-with st.sidebar:
-    st.title("메뉴")
-    st.page_link("app.py", label="[홈] 메인 화면", icon="🏠")
-    st.page_link("pages/1_calculator.py", label="[진단] 폐업 비용 계산기", icon="🧮")
-    st.page_link("pages/2_simulation.py", label="[분석] 업종 변경 시뮬레이션", icon="📊")
-    st.page_link("pages/4_market_analysis.py", label="[상권] 내 주변 상권 분석", icon="🗺️")
-    st.page_link("pages/3_guide.py", label="[가이드] 정부 지원 정책", icon="📚")
+from modules.components import set_custom_sidebar
+
+# 사이드바 메뉴 설정 (커스텀 다크 테마 공통 적용)
+set_custom_sidebar()
 
 # 메인 화면 디자인 (제공된 HTML/CSS 적용)
 st.html("""

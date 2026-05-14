@@ -8,7 +8,10 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from modules.calculators import calculate_closure_cost
 
+from modules.components import set_custom_sidebar
+
 st.set_page_config(page_title="폐업 비용 계산기 - RebornBiz", page_icon="🧮", layout="wide")
+set_custom_sidebar()
 
 def ad_space():
     """광고 플레이스홀더를 렌더링하는 함수"""
@@ -31,10 +34,8 @@ def ad_space():
         height=120
     )
 
-# 1. 페이지 최상단 광고
-ad_space()
 
-st.title("[진단] 폐업 비용 계산기 🧮")
+st.title("폐업 비용 계산기 🧮")
 st.write("사업장 철거, 임대차 계약 위약금, 인건비 정산 등 폐업 시 발생하는 예상 비용을 계산해 보세요.")
 st.markdown("---")
 

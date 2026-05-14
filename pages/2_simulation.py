@@ -9,7 +9,10 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from modules.industry_analyzer import compare_industries, INDUSTRY_DATA
 
+from modules.components import set_custom_sidebar
+
 st.set_page_config(page_title="업종 변경 시뮬레이션 - RebornBiz", page_icon="📊", layout="wide")
+set_custom_sidebar()
 
 def ad_space():
     """광고 플레이스홀더를 렌더링하는 함수"""
@@ -32,7 +35,7 @@ def ad_space():
         height=120
     )
 
-st.title("[분석] 업종 변경 시뮬레이션 📊")
+st.title("업종 변경 시뮬레이션 📊")
 st.write("새로운 업종으로 변경할 경우의 초기 투자 비용과 예상 수익률을 분석하여 안전한 재창업을 돕습니다.")
 st.markdown("---")
 

@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import pandas as pd
 import plotly.express as px
 import sys
@@ -10,11 +11,13 @@ import modules.market_api
 from modules.market_api import fetch_stores_in_radius
 from modules.kakao_component import kakao_map
 
+from modules.components import set_custom_sidebar
+
 st.set_page_config(page_title="내 주변 상권 분석 - RebornBiz", page_icon="🗺️", layout="wide")
+set_custom_sidebar()
 
 st.title("🗺️ 내 주변 상권 분석")
 st.write("현재 내 위치를 기반으로 주변 반경 내에 어떤 상권이 형성되어 있는지 시각적으로 확인합니다.")
-st.markdown("---")
 
 if "active_lat" not in st.session_state:
     st.session_state.active_lat = 37.498
@@ -45,8 +48,6 @@ def reverse_geocode(lat, lon):
         return "주소 변환 실패"
 
 address_str = reverse_geocode(lat, lon)
-
-st.markdown("---")
 
 # 2. 반경 설정
 st.subheader("2. 상권 분석 반경 설정")
@@ -116,7 +117,6 @@ else:
         st.metric("🏪 검색된 총 점포", f"{len(stores)} 개")
     
     # 3. 데이터 시각화 대시보드
-    st.markdown("---")
     st.subheader("3. 상권 시각화 대시보드")
     
     # 2단 그리드 구조 적용 (좌: 지도, 우: 차트 및 데이터)
@@ -147,6 +147,26 @@ else:
                         st.session_state.active_lat = coord[0]
                         st.session_state.active_lon = coord[1]
                         st.rerun()
+                        
+            # 하단 애드센스 광고 영역 Placeholder
+            components.html(
+                """
+                <div style="
+                    display: flex; 
+                    justify-content: center; 
+                    align-items: center; 
+                    height: 100px; 
+                    border: 2px dashed #cccccc; 
+                    border-radius: 10px; 
+                    background-color: #f8f9fa; 
+                    color: #adb5bd; 
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    margin-top: 20px;">
+                    <h3>AD Space (AdSense)</h3>
+                </div>
+                """,
+                height=140
+            )
         
     with col2:
         with st.container(border=True):
