@@ -12,6 +12,12 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+st.markdown("""
+    <style>
+        [data-testid="stSidebarNav"] {display: none !important;}
+    </style>
+""", unsafe_allow_html=True)
+
 from modules.components import set_custom_sidebar
 
 # 사이드바 메뉴 설정 (커스텀 다크 테마 공통 적용)

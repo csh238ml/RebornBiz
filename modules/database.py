@@ -1,4 +1,5 @@
 import os
+import streamlit as st
 from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, ForeignKey
 from sqlalchemy.orm import declarative_base, sessionmaker
 from dotenv import load_dotenv
@@ -66,6 +67,15 @@ class StoreMaster(Base):
     lon = Column(Float, index=True)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
+# 지역 데이터 마스터 테이블 정의
+class RegionMaster(Base):
+    __tablename__ = "region_master"
+    
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    sido_name = Column(String(50), index=True)
+    sigungu_name = Column(String(50), index=True)
+    dong_name = Column(String(50), index=True)
+
 def init_db():
     """DB 연결을 확인하고 테이블을 자동 생성합니다."""
     try:
@@ -78,3 +88,101 @@ def init_db():
         print("[SUCCESS] 데이터베이스 테이블(Users, Simulations, industry_master) 초기화 완료.")
     except Exception as e:
         print(f"[ERROR] DB 연결 실패: {e}")
+
+@st.cache_data(show_spinner=False)
+def get_large_categories():
+    """DB에서 대분류 목록을 조회합니다."""
+    db = SessionLocal()
+    try:
+        results = db.query(IndustryMaster.large_cat_name).distinct().all()
+        return sorted([r[0] for r in results if r[0]])
+    except Exception as e:
+        print(f"[ERROR] 대분류 조회 에러: {e}")
+        return []
+    finally:
+        db.close()
+
+@st.cache_data(show_spinner=False)
+def get_medium_categories(large_cat_name):
+    """선택된 대분류에 속하는 중분류 목록을 조회합니다."""
+    if not large_cat_name:
+        return []
+    db = SessionLocal()
+    try:
+        results = db.query(IndustryMaster.medium_cat_name).filter(
+            IndustryMaster.large_cat_name == large_cat_name
+        ).distinct().all()
+        return sorted([r[0] for r in results if r[0]])
+    except Exception as e:
+        print(f"[ERROR] 중분류 조회 에러: {e}")
+        return []
+    finally:
+        db.close()
+
+@st.cache_data(show_spinner=False)
+def get_small_categories(medium_cat_name):
+    """선택된 중분류에 속하는 소분류 목록을 조회합니다."""
+    if not medium_cat_name:
+        return []
+    db = SessionLocal()
+    try:
+        results = db.query(IndustryMaster.small_cat_name).filter(
+            IndustryMaster.medium_cat_name == medium_cat_name
+        ).distinct().all()
+        return sorted([r[0] for r in results if r[0]])
+    except Exception as e:
+        print(f"[ERROR] 소분류 조회 에러: {e}")
+        return []
+    finally:
+        db.close()
+
+@st.cache_data(show_spinner=False)
+def get_sido_list():
+    """DB에서 시/도 목록을 조회합니다."""
+    db = SessionLocal()
+    try:
+        results = db.query(RegionMaster.sido_name).filter(RegionMaster.sido_name.isnot(None)).distinct().all()
+        return sorted([r[0] for r in results if r[0]])
+    except Exception as e:
+        print(f"[ERROR] 시/도 조회 에러: {e}")
+        return []
+    finally:
+        db.close()
+
+@st.cache_data(show_spinner=False)
+def get_sigungu_list(sido_name):
+    """선택된 시/도에 속하는 시/군/구 목록을 조회합니다."""
+    if not sido_name:
+        return []
+    db = SessionLocal()
+    try:
+        results = db.query(RegionMaster.sigungu_name).filter(
+            RegionMaster.sido_name == sido_name,
+            RegionMaster.sigungu_name.isnot(None)
+        ).distinct().all()
+        return sorted([r[0] for r in results if r[0]])
+    except Exception as e:
+        print(f"[ERROR] 시/군/구 조회 에러: {e}")
+        return []
+    finally:
+        db.close()
+
+@st.cache_data(show_spinner=False)
+def get_dong_list(sido_name, sigungu_name):
+    """선택된 시/도, 시/군/구에 속하는 읍/면/동 목록을 조회합니다."""
+    if not sido_name or not sigungu_name:
+        return []
+    db = SessionLocal()
+    try:
+        results = db.query(RegionMaster.dong_name).filter(
+            RegionMaster.sido_name == sido_name,
+            RegionMaster.sigungu_name == sigungu_name,
+            RegionMaster.dong_name.isnot(None)
+        ).distinct().all()
+        return sorted([r[0] for r in results if r[0]])
+    except Exception as e:
+        print(f"[ERROR] 읍/면/동 조회 에러: {e}")
+        return []
+    finally:
+        db.close()
+

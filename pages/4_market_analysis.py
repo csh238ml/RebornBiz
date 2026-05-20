@@ -173,7 +173,7 @@ else:
             st.markdown("#### 📊 상권 상세 지표 및 리스트")
             
             # 탭을 활용하여 차트와 리스트 정보를 분리 및 정돈
-            tab1, tab2 = st.tabs(["📊 업종 분포 차트", "🎯 주변 경쟁 매장 검색"])
+            tab1, tab2 = st.tabs(["업종 분포 차트", " 주변 경쟁 매장 검색"])
         
         with tab1:
             if "indsLclsNm" in df_stores.columns:

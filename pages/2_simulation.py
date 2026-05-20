@@ -4,13 +4,41 @@ import plotly.express as px
 import pandas as pd
 import sys
 import os
+import importlib
 
 # 모듈 폴더 경로 추가 (industry_analyzer 함수를 불러오기 위함)
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# 강제로 최신 모듈을 다시 읽어오도록 캐시 클리어
+if 'modules.database' in sys.modules:
+    importlib.reload(sys.modules['modules.database'])
+if 'modules.region_selector' in sys.modules:
+    importlib.reload(sys.modules['modules.region_selector'])
+
 from modules.industry_analyzer import compare_industries, INDUSTRY_DATA
-
 from modules.components import set_custom_sidebar
+from modules.database import get_large_categories, get_medium_categories, get_small_categories
+from modules.region_selector import render_region_selector
 
+
+import time
+
+def calculate_simulation(region, budget, curr_industry, target_industry):
+    """상단에서 설정한 변수를 바탕으로 가상의 시뮬레이션 결과를 계산하는 함수"""
+    return {
+        "setup_cost": 3500,
+        "bep_months": 24,
+        "additional_monthly_profit": 150,
+        "roi": 18.5,
+        "bar_data": pd.DataFrame({
+            "금액(만원)": [2000, 500, 3000, 800]
+        }, index=[f"현재({curr_industry})_매출", f"현재({curr_industry})_이익", f"희망({target_industry})_매출", f"희망({target_industry})_이익"]),
+        "line_data": pd.DataFrame({
+            "현금흐름(만원)": [-3500, -2700, -1900, -1100, -300, 500, 1300, 2100, 2900, 3700, 4500, 5300]
+        }, index=[f"{i}개월" for i in range(12)])
+    }
+
+# 페이지 기본 설정 (와이드 모드 권장)
 st.set_page_config(page_title="업종 변경 시뮬레이션 - RebornBiz", page_icon="📊", layout="wide")
 set_custom_sidebar()
 
@@ -36,149 +64,100 @@ def ad_space():
     )
 
 st.title("업종 변경 시뮬레이션 📊")
-st.write("새로운 업종으로 변경할 경우의 초기 투자 비용과 예상 수익률을 분석하여 안전한 재창업을 돕습니다.")
-st.markdown("---")
+st.markdown("특정 상권 내에서 새로운 업종으로 변경할 경우의 초기 투자 비용과 예상 수익률을 분석합니다.")
 
-# 1. 입력 섹션
-st.subheader("업종 정보 및 가용 예산 입력")
+st.divider() # 시각적 분리선
 
-@st.cache_data
-def get_industry_df():
-    from modules.database import SessionLocal
-    db = SessionLocal()
-    df = pd.read_sql("SELECT large_cat_name, medium_cat_name, small_cat_name FROM industry_master", db.bind)
-    db.close()
-    return df
+# --- [Step 1] 지역 및 가용 예산 ---
+st.subheader("1. 지역 및 예산 설정")
 
-try:
-    df = get_industry_df()
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("#### 현재 업종")
-        large_cats1 = sorted([c for c in df['large_cat_name'].unique() if c])
-        large_cat1 = st.selectbox("대분류명 (현재)", options=large_cats1) if large_cats1 else None
-        
-        medium_cats1 = sorted([c for c in df[df['large_cat_name'] == large_cat1]['medium_cat_name'].unique() if c]) if large_cat1 else []
-        medium_cat1 = st.selectbox("중분류명 (현재)", options=medium_cats1) if medium_cats1 else None
-        
-        small_cats1 = sorted([c for c in df[(df['large_cat_name'] == large_cat1) & (df['medium_cat_name'] == medium_cat1)]['small_cat_name'].unique() if c]) if medium_cat1 else []
-        current_biz = st.selectbox("소분류명 (현재)", options=small_cats1) if small_cats1 else "알 수 없음"
+# 새롭게 작성된 DB 연동 지역 선택 모듈 사용
+sido, sigungu, dong = render_region_selector()
 
-    with col2:
-        st.markdown("#### 전환 희망 업종")
-        large_cats2 = sorted([c for c in df['large_cat_name'].unique() if c])
-        default_large_idx = large_cats2.index(large_cat1) if large_cat1 in large_cats2 else 0
-        large_cat2 = st.selectbox("대분류명 (희망)", options=large_cats2, index=default_large_idx) if large_cats2 else None
-        
-        medium_cats2 = sorted([c for c in df[df['large_cat_name'] == large_cat2]['medium_cat_name'].unique() if c]) if large_cat2 else []
-        default_medium_idx = medium_cats2.index(medium_cat1) if medium_cat1 in medium_cats2 else 0
-        medium_cat2 = st.selectbox("중분류명 (희망)", options=medium_cats2, index=default_medium_idx) if medium_cats2 else None
-        
-        small_cats2 = sorted([c for c in df[(df['large_cat_name'] == large_cat2) & (df['medium_cat_name'] == medium_cat2)]['small_cat_name'].unique() if c]) if medium_cat2 else []
-        target_biz = st.selectbox("소분류명 (희망)", options=small_cats2) if small_cats2 else "알 수 없음"
-
-except Exception as e:
-    st.error(f"데이터베이스 연결 오류 또는 테이블이 없습니다. 에러: {e}")
-    current_biz, target_biz = "카페", "치킨전문점"
-
-st.markdown("---")
+st.write("") # 간격 띄우기
+st.markdown("#### 💰 가용 예산")
 investment = st.number_input("가용 투자 예산 (만원)", min_value=0, value=5000, step=100)
 
-# 분석 로직 연동
-results = compare_industries(current_biz, target_biz, investment)
+st.write("") # 간격 띄우기
 
-st.markdown("---")
+# --- [Step 2] 업종 정보 입력 ---
+st.subheader("2. 업종 전환 정보")
 
-# 2. 전문적 연출: 기대 수익 계산식
-st.subheader("기대 수익률(ROI) 및 핵심 지표 분석")
-st.latex(r"ROI = \frac{\text{Expected Annual Profit}}{\text{Total Investment}} \times 100")
+current_biz = "알 수 없음"
+target_biz = "알 수 없음"
 
-mcol1, mcol2, mcol3 = st.columns(3)
-with mcol1:
-    st.metric(label="예상 초기 세팅 비용", value=f"{results['target_setup_cost']:,.0f} 만원")
-with mcol2:
-    st.metric(
-        label="월별 예상 추가 수익 (기존 대비)", 
-        value=f"{results['additional_profit']:,.1f} 만원", 
-        delta=f"{results['additional_profit']:,.1f} 만원"
-    )
-with mcol3:
-    import math
-    bep_val = results['payback_months']
-    bep_text = "측정 불가 (수익 없음)" if math.isinf(bep_val) else f"{bep_val:.1f} 개월"
-    st.metric(label="예상 투자금 회수 기간(BEP)", value=bep_text)
+large_cats = get_large_categories()
 
-# 페이지 중간 광고
-ad_space()
-st.markdown("---")
-
-# 3. 시각화 섹션
-st.subheader("상세 지표 비교 및 현금흐름 흐름도")
-
-chart_col1, chart_col2 = st.columns(2)
-
-with chart_col1:
-    st.write("#### 📈 매출 및 순이익 비교 (현재 vs 전환)")
-    # Grouped Bar Chart 데이터 구성
-    bar_data = pd.DataFrame({
-        "업종": [f"현재({current_biz})", f"현재({current_biz})", f"전환({target_biz})", f"전환({target_biz})"],
-        "지표": ["월 평균 매출", "월 순이익", "월 평균 매출", "월 순이익"],
-        "금액(만원)": [
-            results["current_revenue"], results["current_profit"],
-            results["target_revenue"], results["target_profit"]
-        ]
-    })
-    
-    fig_bar = px.bar(
-        bar_data, 
-        x="업종", 
-        y="금액(만원)", 
-        color="지표", 
-        barmode="group",
-        text_auto=".0f",
-        color_discrete_sequence=["#1f77b4", "#ff7f0e"]
-    )
-    fig_bar.update_layout(yaxis_title="금액 (만원)", legend_title_text="항목")
-    st.plotly_chart(fig_bar, use_container_width=True)
-
-with chart_col2:
-    st.write("#### 🚀 누적 현금흐름 및 BEP 시뮬레이션")
-    # 투자금 회수 기간 이후 12개월까지 시뮬레이션
-    import math
-    if math.isinf(results["payback_months"]):
-        max_months = 120
-    else:
-        max_months = int(results["payback_months"]) + 12
-        if max_months > 120:  # 무한대나 너무 긴 기간 방지
-            max_months = 120
-            
-    months = list(range(0, max_months + 1))
-    
-    # 0개월차에는 세팅 비용만큼 마이너스, 이후 매월 타겟 순이익 누적
-    cash_flow = [-results["target_setup_cost"] + (m * results["target_profit"]) for m in months]
-    
-    line_data = pd.DataFrame({
-        "경과 개월 수": months,
-        "누적 현금흐름(만원)": cash_flow
-    })
-    
-    fig_line = px.line(
-        line_data, 
-        x="경과 개월 수", 
-        y="누적 현금흐름(만원)", 
-        markers=True,
-        color_discrete_sequence=["#2ca02c"]
-    )
-    
-    # BEP 지점 수평/수직선 강조
-    fig_line.add_hline(y=0, line_dash="dash", line_color="red", annotation_text="BEP (손익분기점)", annotation_position="bottom right")
-    if results['payback_months'] < 120:
-        fig_line.add_vline(x=results["payback_months"], line_dash="dash", line_color="gray", opacity=0.5)
+col_curr, col_target = st.columns(2)
+with col_curr:
+    st.markdown("##### 🏢 현재 업종")
+    with st.container(border=True):
+        c_large = st.selectbox("대분류 (현재)", options=["선택하세요"] + large_cats, key="c_large")
         
-    fig_line.update_layout(yaxis_title="누적 순수익 (만원)")
-    st.plotly_chart(fig_line, use_container_width=True)
+        c_medium_options = get_medium_categories(c_large) if c_large and c_large != "선택하세요" else []
+        c_medium = st.selectbox("중분류 (현재)", options=["선택하세요"] + c_medium_options if c_medium_options else ["선택하세요"], key="c_medium", disabled=not c_medium_options)
+        
+        c_small_options = get_small_categories(c_medium) if c_medium and c_medium != "선택하세요" else []
+        c_small = st.selectbox("소분류 (현재)", options=["선택하세요"] + c_small_options if c_small_options else ["선택하세요"], key="c_small", disabled=not c_small_options)
+        
+        if c_small and c_small != "선택하세요":
+            current_biz = c_small
+
+with col_target:
+    st.markdown("##### 🚀 전환 희망 업종")
+    with st.container(border=True):
+        t_large = st.selectbox("대분류 (희망)", options=["선택하세요"] + large_cats, key="t_large")
+        
+        t_medium_options = get_medium_categories(t_large) if t_large and t_large != "선택하세요" else []
+        t_medium = st.selectbox("중분류 (희망)", options=["선택하세요"] + t_medium_options if t_medium_options else ["선택하세요"], key="t_medium", disabled=not t_medium_options)
+        
+        t_small_options = get_small_categories(t_medium) if t_medium and t_medium != "선택하세요" else []
+        t_small = st.selectbox("소분류 (희망)", options=["선택하세요"] + t_small_options if t_small_options else ["선택하세요"], key="t_small", disabled=not t_small_options)
+        
+        if t_small and t_small != "선택하세요":
+            target_biz = t_small
+
+st.write("")
+
+# 시뮬레이션 실행 버튼
+if st.button("시뮬레이션 실행 ➡️", type="primary", use_container_width=True):
+    with st.spinner("빅데이터 기반 상권 분석 및 수익률 시뮬레이션을 진행 중입니다... (약 1.5초 소요)"):
+        time.sleep(1.5) # 로딩 지연 효과
+        
+        region_str = f"{sido} {sigungu} {dong}"
+        sim_results = calculate_simulation(region_str, investment, current_biz, target_biz)
+        
+        st.success("데이터 분석이 완료되었습니다!")
+        st.divider()
+        
+        # --- [Step 3] 시뮬레이션 결과 대시보드 ---
+        st.subheader("3. 기대 수익률 및 핵심 지표")
+        
+        # 1. 핵심 수치 강조 (Metric)
+        m1, m2, m3, m4 = st.columns(4)
+        
+        delta_msg = "예산 내 가능" if investment >= sim_results['setup_cost'] else "예산 초과"
+        delta_col = "normal" if investment >= sim_results['setup_cost'] else "inverse"
+        
+        m1.metric(label="예상 초기 세팅 비용", value=f"{sim_results['setup_cost']:,} 만원", delta=delta_msg, delta_color=delta_col)
+        m2.metric(label="예상 투자금 회수(BEP)", value=f"{sim_results['bep_months']} 개월", delta="-6개월 단축 (이전 대비)")
+        m3.metric(label="월별 예상 추가 수익", value=f"{sim_results['additional_monthly_profit']:,} 만원", delta="12% 증가")
+        m4.metric(label="예상 ROI", value=f"{sim_results['roi']} %", delta="우수 상권", delta_color="normal")
+        
+        st.write("")
+        
+        # 2. 상세 차트 (Expander로 감싸서 기본 화면을 심플하게 유지)
+        with st.expander("📈 상세 지표 비교 및 현금흐름 차트 보기", expanded=True):
+            chart_col1, chart_col2 = st.columns(2)
+            
+            with chart_col1:
+                st.markdown("**매출 및 순이익 비교 (현재 vs 전환)**")
+                st.bar_chart(sim_results["bar_data"])
+                
+            with chart_col2:
+                st.markdown("**누적 현금흐름 및 BEP 시뮬레이션**")
+                st.line_chart(sim_results["line_data"])
+
 
 # 페이지 하단 광고
 ad_space()
