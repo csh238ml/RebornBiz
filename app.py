@@ -12,6 +12,38 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+def inject_naver_analytics():
+    js_code = """
+    <script>
+    const parentDoc = window.parent.document;
+    
+    // 스크립트가 중복으로 들어가는 것을 방지
+    if (!parentDoc.getElementById("naver-wcslog")) {
+        const script1 = parentDoc.createElement("script");
+        script1.id = "naver-wcslog";
+        script1.src = "//wcs.pstatic.net/wcslog.js";
+        
+        // wcslog.js 로딩이 완료된 후 실행되도록 설정
+        script1.onload = function() {
+            const script2 = parentDoc.createElement("script");
+            script2.text = `
+                if(!window.wcs_add) window.wcs_add = {};
+                window.wcs_add["wa"] = "cb815cb694e138";
+                if(window.wcs) {
+                    window.wcs_do();
+                }
+            `;
+            parentDoc.head.appendChild(script2);
+        };
+        parentDoc.head.appendChild(script1);
+    }
+    </script>
+    """
+    # 화면에 보이지 않는 투명한 컴포넌트로 실행
+    components.html(js_code, width=0, height=0)
+
+    inject_naver_analytics()
+
 st.markdown("""
     <style>
         [data-testid="stSidebarNav"] {display: none !important;}
