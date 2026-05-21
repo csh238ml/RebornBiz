@@ -12,37 +12,24 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# [수정] 외부 스크립트 로드와 분석 실행 코드를 하나의 HTML 파일처럼 묶어 주입합니다.
+# window.parent 대신 현재 컴포넌트가 로드되는 즉시 네이버 서버로 전송하도록 설계되었습니다.
 def inject_naver_analytics():
-    js_code = """
-    <script>
-    const parentDoc = window.parent.document;
-    
-    // 스크립트가 중복으로 들어가는 것을 방지
-    if (!parentDoc.getElementById("naver-wcslog")) {
-        const script1 = parentDoc.createElement("script");
-        script1.id = "naver-wcslog";
-        script1.src = "//wcs.pstatic.net/wcslog.js";
-        
-        // wcslog.js 로딩이 완료된 후 실행되도록 설정
-        script1.onload = function() {
-            const script2 = parentDoc.createElement("script");
-            script2.text = `
-                if(!window.wcs_add) window.wcs_add = {};
-                window.wcs_add["wa"] = "cb815cb694e138";
-                if(window.wcs) {
-                    window.wcs_do();
-                }
-            `;
-            parentDoc.head.appendChild(script2);
-        };
-        parentDoc.head.appendChild(script1);
-    }
+    naver_script = """
+    <script type="text/javascript" src="//wcs.pstatic.net/wcslog.js"></script>
+    <script type="text/javascript">
+        if(!window.wcs_add) window.wcs_add = {};
+        window.wcs_add["wa"] = "cb815cb694e138";
+        if(window.wcs) {
+            window.wcs_do();
+        }
     </script>
     """
-    # 화면에 보이지 않는 투명한 컴포넌트로 실행
-    components.html(js_code, width=0, height=0)
+    # width=0, height=0으로 지정하여 사용자 화면에는 전혀 노출되지 않습니다.
+    components.html(naver_script, width=0, height=0)
 
-    inject_naver_analytics()
+# [수정] 올바른 위치(함수 밖)에서 함수를 호출합니다.
+inject_naver_analytics()
 
 st.markdown("""
     <style>
