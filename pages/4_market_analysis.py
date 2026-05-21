@@ -1,4 +1,6 @@
 import streamlit as st
+st.set_page_config(page_title="내 주변 상권 분석 - RebornBiz", page_icon="🗺️", layout="wide", initial_sidebar_state="auto")
+
 import streamlit.components.v1 as components
 import pandas as pd
 import plotly.express as px
@@ -13,7 +15,6 @@ from modules.kakao_component import kakao_map
 
 from modules.components import set_custom_sidebar
 
-st.set_page_config(page_title="내 주변 상권 분석 - RebornBiz", page_icon="🗺️", layout="wide")
 set_custom_sidebar()
 
 st.title("🗺️ 내 주변 상권 분석")

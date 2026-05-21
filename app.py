@@ -1,19 +1,19 @@
 import streamlit as st
 import streamlit.components.v1 as components
-from modules.database import init_db
-
-# 앱 실행 시 DB 연결 테스트 및 테이블 자동 생성
-init_db()
 
 st.set_page_config(
     page_title="RebornBiz",
     page_icon="🏢",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="auto"
 )
 
-# [수정] 외부 스크립트 로드와 분석 실행 코드를 하나의 HTML 파일처럼 묶어 주입합니다.
-# window.parent 대신 현재 컴포넌트가 로드되는 즉시 네이버 서버로 전송하도록 설계되었습니다.
+from modules.database import init_db
+
+# 앱 실행 시 DB 연결 테스트 및 테이블 자동 생성
+init_db()
+
+# 외부 스크립트 로드와 분석 실행 코드를 하나의 HTML 파일처럼 묶어 주입합니다.
 def inject_naver_analytics():
     naver_script = """
     <script type="text/javascript" src="//wcs.pstatic.net/wcslog.js"></script>
@@ -25,10 +25,8 @@ def inject_naver_analytics():
         }
     </script>
     """
-    # width=0, height=0으로 지정하여 사용자 화면에는 전혀 노출되지 않습니다.
-    components.html(naver_script, width=0, height=0)
+    st.html(naver_script)
 
-# [수정] 올바른 위치(함수 밖)에서 함수를 호출합니다.
 inject_naver_analytics()
 
 st.markdown("""
@@ -42,7 +40,7 @@ from modules.components import set_custom_sidebar
 # 사이드바 메뉴 설정 (커스텀 다크 테마 공통 적용)
 set_custom_sidebar()
 
-# 메인 화면 디자인 (제공된 HTML/CSS 적용)
+# 메인 화면 디자인 (SPA 라우터 강제 트리거 연동 반영)
 st.html("""
 <style>
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
@@ -153,6 +151,7 @@ st.html("""
     font-size: 0.9rem;
     transition: background 0.2s;
     display: block;
+    cursor: pointer;
 }
 
 .custom-btn:hover {
@@ -182,7 +181,13 @@ st.html("""
                 <span class="card-badge">진단</span>
                 <h3>폐업 비용 계산기</h3>
                 <p>철거비, 위약금 등 사업 정리 시 발생하는 각종 예상 비용을 데이터로 정확히 산출합니다.</p>
-                <a target="_self" href="/calculator" class="custom-btn">비용 계산하기</a>
+                <a href="javascript:void(0);" onclick="
+                    const d = window.parent ? window.parent.document : document;
+                    const links = d.querySelectorAll('[data-testid=\'stPageLink-NavLink\']');
+                    for(let link of links) {
+                        if(link.innerText.includes('폐업 비용 계산기')) { link.click(); break; }
+                    }
+                " class="custom-btn">비용 계산하기</a>
             </div>
         </div>
 
@@ -192,7 +197,13 @@ st.html("""
                 <span class="card-badge">분석</span>
                 <h3>업종 변경 시뮬레이션</h3>
                 <p>새로운 업종 전환 시의 예상 리스크와 수익성을 분석하여 안전한 도전을 지원합니다.</p>
-                <a target="_self" href="/simulation" class="custom-btn">시뮬레이션 시작</a>
+                <a href="javascript:void(0);" onclick="
+                    const d = window.parent ? window.parent.document : document;
+                    const links = d.querySelectorAll('[data-testid=\'stPageLink-NavLink\']');
+                    for(let link of links) {
+                        if(link.innerText.includes('업종 변경 시뮬레이션')) { link.click(); break; }
+                    }
+                " class="custom-btn">시뮬레이션 시작</a>
             </div>
         </div>
 
@@ -202,7 +213,13 @@ st.html("""
                 <span class="card-badge">상권</span>
                 <h3>내 주변 상권 분석</h3>
                 <p>현재 위치 기반 상권 밀집도와 업종 분포 파악하여 최적의 입지 전략을 제시합니다.</p>
-                <a target="_self" href="/market_analysis" class="custom-btn">상권 분석하기</a>
+                <a href="javascript:void(0);" onclick="
+                    const d = window.parent ? window.parent.document : document;
+                    const links = d.querySelectorAll('[data-testid=\'stPageLink-NavLink\']');
+                    for(let link of links) {
+                        if(link.innerText.includes('내 주변 상권 분석')) { link.click(); break; }
+                    }
+                " class="custom-btn">상권 분석하기</a>
             </div>
         </div>
 
@@ -212,7 +229,13 @@ st.html("""
                 <span class="card-badge">가이드</span>
                 <h3>정부 지원 정책</h3>
                 <p>재취업, 재창업 등 소상공인에게 꼭 필요한 정부 지원금을 한눈에 확인하고 신청하세요.</p>
-                <a target="_self" href="/guide" class="custom-btn">지원 정책 확인</a>
+                <a href="javascript:void(0);" onclick="
+                    const d = window.parent ? window.parent.document : document;
+                    const links = d.querySelectorAll('[data-testid=\'stPageLink-NavLink\']');
+                    for(let link of links) {
+                        if(link.innerText.includes('정부 지원 정책')) { link.click(); break; }
+                    }
+                " class="custom-btn">지원 정책 확인</a>
             </div>
         </div>
     </div>
@@ -221,7 +244,7 @@ st.html("""
 
 st.markdown("<br><br><hr>", unsafe_allow_html=True)
 
-# 하단 광고 영역 Placeholder (구글 애드센스용)
+# 하단 광고 영역 Placeholder
 components.html(
     """
     <div style="

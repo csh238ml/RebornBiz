@@ -1,4 +1,6 @@
 import streamlit as st
+st.set_page_config(page_title="업종 변경 시뮬레이션 - RebornBiz", page_icon="📊", layout="wide", initial_sidebar_state="auto")
+
 import streamlit.components.v1 as components
 import plotly.express as px
 import pandas as pd
@@ -159,7 +161,6 @@ def calculate_simulation(region, budget, curr_industry, target_industry):
     return result
 
 # 페이지 기본 설정 (와이드 모드 권장)
-st.set_page_config(page_title="업종 변경 시뮬레이션 - RebornBiz", page_icon="📊", layout="wide")
 set_custom_sidebar()
 
 def ad_space():

@@ -1,4 +1,6 @@
 import streamlit as st
+st.set_page_config(page_title="업종 정보 조회 - RebornBiz", page_icon="🏢", layout="wide", initial_sidebar_state="auto")
+
 import pandas as pd
 import sys
 import os
@@ -7,7 +9,6 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from modules.components import set_custom_sidebar
 from modules.database import SessionLocal
 
-st.set_page_config(page_title="업종 정보 조회 - RebornBiz", page_icon="🏢", layout="wide")
 set_custom_sidebar()
 
 st.title("🏢 업종 정보 조회")

@@ -1,4 +1,5 @@
 import streamlit as st
+st.set_page_config(page_title="정부 지원 정책 - RebornBiz", page_icon="📚", layout="wide", initial_sidebar_state="auto")
 
 import sys
 import os
@@ -6,7 +7,6 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from modules.components import set_custom_sidebar
 
-st.set_page_config(page_title="정부 지원 정책 - RebornBiz", page_icon="📚")
 set_custom_sidebar()
 
 st.title("[가이드] 정부 지원 정책")
