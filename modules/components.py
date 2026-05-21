@@ -72,5 +72,4 @@ def set_custom_sidebar():
     st.sidebar.page_link("pages/1_calculator.py", label="폐업 비용 계산기", icon="🧮")
     st.sidebar.page_link("pages/2_simulation.py", label="업종 변경 시뮬레이션", icon="📈")
     st.sidebar.page_link("pages/4_market_analysis.py", label="내 주변 상권 분석", icon="📍")
-    st.sidebar.page_link("pages/5_industry_info.py", label="업종 정보 조회", icon="🏢")
     st.sidebar.page_link("pages/3_guide.py", label="정부 지원 정책", icon="🏛️")
