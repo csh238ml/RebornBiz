@@ -13,35 +13,33 @@ init_db()
 components.html("""
     <script type="text/javascript" src="//wcs.pstatic.net/wcslog.js"></script>
     <script type="text/javascript">
-        // [1] 네이버 애널리틱스 (iframe 내부 실행으로 샌드박스 에러 원천 차단)
         if(!window.wcs_add) window.wcs_add = {};
         window.wcs_add["wa"] = "cb815cb694e138";
         if(window.wcs) { window.wcs_do(); }
 
-        // [2] 404 에러 원천 차단기 (사이드바 원격 클릭 로직)
-        // 중복 실행을 방지하기 위해 부모 창에 플래그 설정
-        if (!window.parent.customRouterInitialized) {
-            window.parent.customRouterInitialized = true;
-            
-            window.parent.document.addEventListener('click', function(e) {
-                const btn = e.target.closest('.custom-btn');
-                if (btn && btn.hasAttribute('data-target')) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    const targetKeyword = btn.getAttribute('data-target');
-                    
-                    // 사이드바에 있는 안전한 Streamlit 순정 링크를 찾아 대신 클릭합니다.
-                    const links = window.parent.document.querySelectorAll('a');
-                    for (let i = 0; i < links.length; i++) {
-                        if (links[i].href && links[i].href.includes(targetKeyword)) {
-                            links[i].click(); 
-                            break;
-                        }
+        // [핵심] 클릭할 때마다 부모 창의 사이드바를 실시간으로 탐색
+        window.parent.document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.custom-btn');
+            if (btn && btn.hasAttribute('data-target')) {
+                e.preventDefault();
+                const targetKeyword = btn.getAttribute('data-target');
+                
+                // 💡 로컬/운영 어디서든 사이드바 링크를 실시간으로 찾음
+                const links = window.parent.document.querySelectorAll('[data-testid="stPageLink-NavLink"]');
+                
+                let found = false;
+                for (let i = 0; i < links.length; i++) {
+                    // 실제 데이터-테스트아이디가 포함된 순정 링크를 찾음
+                    if (links[i].innerText.includes(targetKeyword) || 
+                        links[i].href.includes(targetKeyword)) {
+                        links[i].click();
+                        found = true;
+                        break;
                     }
                 }
-            });
-        }
+                if (!found) console.warn("링크를 찾을 수 없습니다. [타겟: " + targetKeyword + "]");
+            }
+        }, true);
     </script>
 """, width=0, height=0)
 
