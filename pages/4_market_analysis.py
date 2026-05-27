@@ -1,5 +1,5 @@
 import streamlit as st
-st.set_page_config(page_title="내 주변 상권 분석 - RebornBiz", page_icon="🗺️", layout="wide", initial_sidebar_state="auto")
+st.set_page_config(page_title="내 주변 상권 분석 | RebornBiz", page_icon="🗺️", layout="wide", initial_sidebar_state="auto")
 
 import streamlit.components.v1 as components
 import pandas as pd
@@ -13,9 +13,10 @@ import modules.market_api
 from modules.market_api import fetch_stores_in_radius
 from modules.kakao_component import kakao_map
 
-from modules.components import set_custom_sidebar
+from modules.components import set_custom_sidebar, inject_seo_tags
 
 set_custom_sidebar()
+inject_seo_tags()
 
 st.title("🗺️ 내 주변 상권 분석")
 st.write("현재 내 위치를 기반으로 주변 반경 내에 어떤 상권이 형성되어 있는지 시각적으로 확인합니다.")
@@ -162,7 +163,7 @@ else:
                     background-color: #f8f9fa; 
                     color: #adb5bd; 
                     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                    margin-top: 20px;">
+                    margin-top: 0;">
                     <h3>AD Space (AdSense)</h3>
                 </div>
                 """,
@@ -234,7 +235,7 @@ else:
                     st.metric(label=f"반경 {radius}m 내 '{selected_industry}' 매장 수", value=f"{competitor_count} 개")
                     
                     if competitor_count > 0 and 'bizesNm' in competitors.columns:
-                        st.markdown("<br><b>🏪 매장 리스트</b>", unsafe_allow_html=True)
+                        st.markdown("<b>🏪 매장 리스트</b>", unsafe_allow_html=True)
                         store_names = competitors[['bizesNm', 'indsSclsNm']].reset_index(drop=True)
                         store_names.columns = ['상호명', '상세 업종']
                         st.dataframe(store_names, hide_index=True, use_container_width=True, height=400)

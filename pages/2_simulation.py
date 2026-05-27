@@ -1,5 +1,5 @@
 import streamlit as st
-st.set_page_config(page_title="업종 변경 시뮬레이션 - RebornBiz", page_icon="📊", layout="wide", initial_sidebar_state="auto")
+st.set_page_config(page_title="업종 변경 시뮬레이션 | RebornBiz", page_icon="📊", layout="wide", initial_sidebar_state="auto")
 
 import streamlit.components.v1 as components
 import plotly.express as px
@@ -18,7 +18,7 @@ if 'modules.region_selector' in sys.modules:
     importlib.reload(sys.modules['modules.region_selector'])
 
 from modules.industry_analyzer import compare_industries, INDUSTRY_DATA
-from modules.components import set_custom_sidebar
+from modules.components import set_custom_sidebar, inject_seo_tags
 from modules.database import get_large_categories, get_medium_categories, get_small_categories
 from modules.region_selector import render_region_selector
 
@@ -162,6 +162,7 @@ def calculate_simulation(region, budget, curr_industry, target_industry):
 
 # 페이지 기본 설정 (와이드 모드 권장)
 set_custom_sidebar()
+inject_seo_tags()
 
 def ad_space():
     """광고 플레이스홀더를 렌더링하는 함수"""
@@ -177,7 +178,7 @@ def ad_space():
             background-color: #f8f9fa; 
             color: #adb5bd; 
             font-family: 'Segoe UI', sans-serif;
-            margin: 10px 0;">
+            margin: 0;">
             <h3>AD Space (Google AdSense)</h3>
         </div>
         """,
@@ -195,11 +196,8 @@ st.subheader("1. 지역 및 예산 설정")
 # 새롭게 작성된 DB 연동 지역 선택 모듈 사용
 sido, sigungu, dong = render_region_selector()
 
-st.write("") # 간격 띄우기
 st.markdown("#### 💰 가용 예산")
 investment = st.number_input("가용 투자 예산 (만원)", min_value=0, value=5000, step=100)
-
-st.write("") # 간격 띄우기
 
 # --- [Step 2] 업종 정보 입력 ---
 st.subheader("2. 업종 전환 정보")
@@ -245,8 +243,6 @@ with col_target:
         if t_small and t_small != "선택하세요":
             target_biz = t_small
 
-st.write("")
-
 # 시뮬레이션 실행 버튼
 if st.button("시뮬레이션 실행 ➡️", type="primary", use_container_width=True):
     with st.spinner("빅데이터 기반 상권 분석 및 수익률 시뮬레이션을 진행 중입니다... (약 1.5초 소요)"):
@@ -272,10 +268,8 @@ if st.button("시뮬레이션 실행 ➡️", type="primary", use_container_widt
         m3.metric(label="월별 예상 추가 수익", value=f"{sim_results['additional_monthly_profit']:,} 만원", delta="12% 증가")
         m4.metric(label="예상 ROI", value=f"{sim_results['roi']} %", delta="우수 상권", delta_color="normal")
         
-        st.write("")
         if "store_count" in sim_results:
             st.info(f"💡 **상권 실데이터 연동**: 해당 지역 내 동일 업종 점포 수는 총 **{sim_results['store_count']}개** 입니다. (서울시 공공데이터 API)")
-        st.write("")
         
         # 2. 상세 차트 (Expander로 감싸서 기본 화면을 심플하게 유지)
         with st.expander("📈 상세 지표 비교 및 현금흐름 차트 보기", expanded=True):

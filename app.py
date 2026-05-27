@@ -4,7 +4,7 @@ from modules.database import init_db
 from modules.components import set_custom_sidebar
 
 # 1. 페이지 설정 (최상단)
-st.set_page_config(page_title="RebornBiz", page_icon="🏢", layout="wide", initial_sidebar_state="auto")
+st.set_page_config(page_title="RebornBiz | 소상공인 폐업 및 재창업 지원 플랫폼", page_icon="🏢", layout="wide", initial_sidebar_state="auto")
 
 # 2. DB 초기화
 init_db()
@@ -44,8 +44,10 @@ components.html("""
 """, width=0, height=0)
 
 # 4. 사이드바 메뉴 렌더링
+from modules.components import set_custom_sidebar, inject_seo_tags
 st.markdown('<style>[data-testid="stSidebarNav"] {display: none !important;}</style>', unsafe_allow_html=True)
 set_custom_sidebar()
+inject_seo_tags()
 
 # 5. 메인 화면 디자인 (마크다운 깨짐 방지를 위해 st.html 사용)
 st.html("""
@@ -154,7 +156,7 @@ st.html("""
 </div>
 """)
 
-st.markdown("<br><br><hr>", unsafe_allow_html=True)
+st.markdown("<hr>", unsafe_allow_html=True)
 
 # 6. 하단 광고 영역
 st.html("""
@@ -162,7 +164,7 @@ st.html("""
         display: flex; justify-content: center; align-items: center; 
         height: 150px; border: 2px dashed #cccccc; border-radius: 10px; 
         background-color: #f8f9fa; color: #adb5bd; font-family: 'Segoe UI', Tahoma, sans-serif;
-        margin-top: 10px;">
+        margin-top: 0;">
         <h3>AD Space</h3>
     </div>
 """)
