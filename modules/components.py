@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 
 def set_custom_sidebar():
     # 1. 사이드바 디자인을 위한 CSS
@@ -90,9 +91,9 @@ def set_custom_sidebar():
     st.sidebar.page_link("pages/4_market_analysis.py", label="내 주변 상권 분석", icon="📍")
     st.sidebar.page_link("pages/3_guide.py", label="정부 지원 정책", icon="🏛️")
 
+
 def inject_seo_tags():
-    """SEO 및 Open Graph 메타 태그를 부모 HTML의 <head>에 동적으로 주입합니다."""
-    import streamlit.components.v1 as components
+    """SEO, Open Graph 메타 태그 및 애드센스 스크립트를 부모 HTML의 <head>에 동적으로 주입합니다."""
     
     seo_html = """
     <script>
