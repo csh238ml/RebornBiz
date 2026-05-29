@@ -114,6 +114,15 @@ def inject_seo_tags():
     addMetaTag('og:title', 'RebornBiz | 소상공인 폐업 및 재창업 지원 플랫폼', true);
     addMetaTag('og:description', '소상공인의 안전한 폐업과 성공적인 재창업을 돕습니다. 폐업 비용 계산, 상권 분석, 정부 지원 정책을 한 번에 확인하세요.', true);
     addMetaTag('og:type', 'website', true);
+
+    // 구글 애드센스 스크립트 주입
+    if (!window.parent.document.querySelector('script[src*="adsbygoogle.js"]')) {
+        let adsScript = window.parent.document.createElement('script');
+        adsScript.async = true;
+        adsScript.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4577150400116930';
+        adsScript.crossOrigin = 'anonymous';
+        window.parent.document.head.appendChild(adsScript);
+    }
     </script>
     """
     components.html(seo_html, width=0, height=0)
