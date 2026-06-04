@@ -27,20 +27,20 @@ DEFAULT_METRICS = {
     "기타": {"margin": 20, "setup": 5000}
 }
 
+import urllib.parse
+
 def fetch_ftc_data():
     """공정거래위원회 가맹사업 통계 API에서 데이터를 가져옵니다."""
     API_KEY = "FmRJggnPbuErC7S3g3D1K51bawXyTDd7hh/JZP+dkyl5OdU79rlNJ+NZWXUfncUYfKzWtgUj8Ks6oxWvRQdPSg=="
-    url = f"https://apis.data.go.kr/1130000/FftcBrandFrcsStatsService/getBrandFrcsStats?serviceKey={API_KEY}"
     
-    # pageNo=1, numOfRows=100 (가맹사업 통계는 데이터양이 많을 수 있음)
-    params = {
-        "pageNo": 1,
-        "numOfRows": 1000,
-        "resultType": "json"
-    }
+    # URL 인코딩 충돌을 방지하기 위해 수동 인코딩
+    enc_key = urllib.parse.quote(API_KEY)
+    
+    # URL에 파라미터를 직접 조립. 필수 파라미터 yr=2023 추가.
+    url = f"https://apis.data.go.kr/1130000/FftcBrandFrcsStatsService/getBrandFrcsStats?serviceKey={enc_key}&pageNo=1&numOfRows=1000&resultType=json&yr=2023"
     
     try:
-        response = requests.get(url, params=params, timeout=10, verify=False)
+        response = requests.get(url, timeout=10, verify=False)
         if response.status_code == 200:
             data = response.json()
             # items 구조 파악
@@ -57,6 +57,7 @@ def fetch_ftc_data():
                 return []
         else:
             print(f"API 호출 실패: 상태코드 {response.status_code}")
+            print(f"응답 내용: {response.text}")
             return []
     except Exception as e:
         print(f"API 호출 중 예외 발생: {e}")
