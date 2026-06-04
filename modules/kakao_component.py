@@ -14,6 +14,10 @@ else:
     parent_dir = os.path.dirname(os.path.abspath(__file__))
     kakao_component_path = os.path.join(parent_dir, "kakao_map")
     
+    # 서버 터미널 디버깅용 로그 출력
+    print(f"[DEBUG] 카카오맵 컴포넌트 폴더 경로: {kakao_component_path}")
+    print(f"[DEBUG] index.html 실제 존재 여부: {os.path.exists(os.path.join(kakao_component_path, 'index.html'))}")
+    
     kakao_map = components.declare_component(
         "kakao_map",
         path=kakao_component_path
