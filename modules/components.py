@@ -5,14 +5,8 @@ def set_custom_sidebar():
     # 1. 사이드바 디자인을 위한 CSS
     st.sidebar.markdown("""
     <style>
-        [data-testid="stSidebarNav"] { display: none !important; }
         [data-testid="stSidebar"] { background-color: #1e293b !important; }
         
-        /* 1. 상단 기본 헤더 제거 (글자 가림 방지) */
-        header[data-testid="stHeader"] {
-            display: none !important;
-        }
-
         /* 2. 모든 페이지 메인 컨테이너 상단 여백 통일 */
         .block-container {
             padding-top: 3rem !important; 

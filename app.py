@@ -45,7 +45,6 @@ components.html("""
 
 # 4. 사이드바 메뉴 렌더링
 from modules.components import set_custom_sidebar, inject_seo_tags
-st.markdown('<style>[data-testid="stSidebarNav"] {display: none !important;}</style>', unsafe_allow_html=True)
 set_custom_sidebar()
 inject_seo_tags()
 
