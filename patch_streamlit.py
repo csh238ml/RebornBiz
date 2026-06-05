@@ -26,6 +26,16 @@ def patch_streamlit():
     else:
         print(f"[WARNING] Favicons directory not found at: {favicons_dir}")
 
+    # 2.5. OG 이미지(썸네일) 파일을 정적 서빙 경로로 복사 (rebornbiz.co.kr/assets/og-image.png 대응)
+    target_assets_dir = os.path.join(static_dir, "assets")
+    os.makedirs(target_assets_dir, exist_ok=True)
+    og_image_src = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "og-image.png")
+    if os.path.exists(og_image_src):
+        shutil.copy2(og_image_src, os.path.join(target_assets_dir, "og-image.png"))
+        print("[SUCCESS] og-image.png copied to Streamlit static/assets directory.")
+    else:
+        print(f"[WARNING] og-image.png not found at: {og_image_src}")
+
     # 3. index.html 읽어오기
     with open(index_path, "r", encoding="utf-8") as f:
         content = f.read()
