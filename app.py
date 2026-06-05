@@ -9,14 +9,9 @@ st.set_page_config(page_title="RebornBiz | 소상공인 폐업 및 재창업 지
 # 2. DB 초기화
 init_db()
 
-# 3. 네이버 애널리틱스 & SPA 라우팅 가로채기 (핵심)
+# 3. SPA 라우팅 가로채기 (핵심)
 components.html("""
-    <script type="text/javascript" src="//wcs.pstatic.net/wcslog.js"></script>
     <script type="text/javascript">
-        if(!window.wcs_add) window.wcs_add = {};
-        window.wcs_add["wa"] = "cb815cb694e138";
-        if(window.wcs) { window.wcs_do(); }
-
         // [핵심] 클릭할 때마다 부모 창의 사이드바를 실시간으로 탐색
         window.parent.document.addEventListener('click', function(e) {
             const btn = e.target.closest('.custom-btn');
