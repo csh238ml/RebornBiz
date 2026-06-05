@@ -54,6 +54,18 @@ def patch_streamlit():
     else:
         print("[INFO] Favicon tags already patched or default tag missing.")
 
+    # 4.5. 잘못된 HTML 텍스트(주석 실수 등) 강제 클렌징
+    malformed_texts = [
+        "// 네이버 애널리틱스 소스",
+        "//네이버 애널리틱스 소스",
+        "// 네이버 애널리틱스",
+        "//네이버 애널리틱스"
+    ]
+    for text in malformed_texts:
+        if text in content:
+            content = content.replace(text, "")
+            print(f"[SUCCESS] Cleaned malformed text: {text}")
+
     # 5. 네이버 애널리틱스 스크립트 주입 (중복 주입 방지)
     naver_script = """    <script type="text/javascript" src="//wcs.pstatic.net/wcslog.js"></script>
     <script type="text/javascript">
