@@ -14,9 +14,14 @@ from modules.market_api import fetch_stores_in_radius
 from modules.kakao_component import kakao_map
 
 from modules.components import set_custom_sidebar, inject_seo_tags
+from modules.database import log_page_access
 
 set_custom_sidebar()
 inject_seo_tags()
+
+# 페이지 접속 로그 기록
+log_page_access("내 주변 상권 분석")
+
 
 st.title("🗺️ 내 주변 상권 분석")
 st.write("현재 내 위치를 기반으로 주변 반경 내에 어떤 상권이 형성되어 있는지 시각적으로 확인합니다.")

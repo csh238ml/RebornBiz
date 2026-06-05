@@ -10,9 +10,13 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from modules.calculators import calculate_closure_cost
 from modules.components import set_custom_sidebar, inject_seo_tags
+from modules.database import log_page_access
 
 set_custom_sidebar()
 inject_seo_tags()
+
+# 페이지 접속 로그 기록
+log_page_access("폐업 비용 계산기")
 
 def ad_space():
     """광고 플레이스홀더를 렌더링하는 함수"""

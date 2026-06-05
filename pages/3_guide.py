@@ -9,9 +9,14 @@ st.set_page_config(page_title="정부 지원 정책 가이드 | RebornBiz", page
 # 2. 커스텀 사이드바 로드
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from modules.components import set_custom_sidebar, inject_seo_tags
+from modules.database import log_page_access
 
 set_custom_sidebar()
 inject_seo_tags()
+
+# 페이지 접속 로그 기록
+log_page_access("정부 지원 정책")
+
 
 # 🌟 광고 렌더링 함수 정의
 def ad_space(text="AD Space (Google AdSense)"):

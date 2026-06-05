@@ -1,6 +1,7 @@
+# Streamlit Watcher Trigger
 import streamlit as st
 import streamlit.components.v1 as components
-from modules.database import init_db
+from modules.database import init_db, log_page_access
 from modules.components import set_custom_sidebar
 
 # 1. 페이지 설정 (최상단)
@@ -8,6 +9,9 @@ st.set_page_config(page_title="RebornBiz | 소상공인 폐업 및 재창업 지
 
 # 2. DB 초기화
 init_db()
+
+# 페이지 접속 로그 기록
+log_page_access("홈")
 
 # 3. SPA 라우팅 가로채기 (핵심)
 components.html("""

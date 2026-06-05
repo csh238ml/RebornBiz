@@ -19,8 +19,12 @@ if 'modules.region_selector' in sys.modules:
 
 from modules.industry_analyzer import compare_industries, INDUSTRY_DATA
 from modules.components import set_custom_sidebar, inject_seo_tags
-from modules.database import get_large_categories, get_medium_categories, get_small_categories, get_industry_metrics
+from modules.database import get_large_categories, get_medium_categories, get_small_categories, get_industry_metrics, log_page_access
 from modules.region_selector import render_region_selector
+
+# 페이지 접속 로그 기록
+log_page_access("업종 변경 시뮬레이션")
+
 
 
 import time

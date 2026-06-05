@@ -88,6 +88,16 @@ class IndustryMetrics(Base):
     setup_cost = Column(Integer) # 평균 창업 비용 (만원 단위)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
+# 접속 로그 테이블 정의
+class AccessLog(Base):
+    __tablename__ = "access_logs"
+    
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    access_time = Column(DateTime, default=datetime.datetime.utcnow)
+    ip_address = Column(String(100))
+    user_agent = Column(String(500))
+    accessed_menu = Column(String(100))
+
 
 
 def init_db():
@@ -256,3 +266,46 @@ def get_industry_metrics():
         return default_metrics
     finally:
         db.close()
+
+def get_client_info():
+    """Streamlit 컨텍스트에서 Nginx 프록시 환경을 고려하여 실제 클라이언트 IP와 브라우저 정보를 추출합니다."""
+    ip_address = "Unknown"
+    user_agent = "Unknown"
+    
+    try:
+        if hasattr(st, "context") and hasattr(st.context, "headers"):
+            headers = st.context.headers
+            
+            # X-Forwarded-For에서 우선 추출 (Nginx 프록시 환경)
+            x_forwarded_for = headers.get("X-Forwarded-For")
+            if x_forwarded_for:
+                ip_address = x_forwarded_for.split(",")[0].strip()
+            else:
+                x_real_ip = headers.get("X-Real-IP")
+                if x_real_ip:
+                    ip_address = x_real_ip
+                
+            user_agent = headers.get("User-Agent", "Unknown")
+    except Exception as e:
+        print(f"[ERROR] 클라이언트 정보 추출 실패: {e}")
+        
+    return ip_address, user_agent
+
+def log_page_access(menu_name):
+    """현재 접속한 사용자의 정보를 추출하여 access_logs 테이블에 비동기적으로(또는 예외 처리 후) 기록합니다."""
+    try:
+        ip_address, user_agent = get_client_info()
+        
+        db = SessionLocal()
+        new_log = AccessLog(
+            ip_address=ip_address,
+            user_agent=user_agent,
+            accessed_menu=menu_name
+        )
+        db.add(new_log)
+        db.commit()
+    except Exception as e:
+        print(f"[ERROR] 페이지 접속 로깅 실패: {e}")
+    finally:
+        if 'db' in locals():
+            db.close()
