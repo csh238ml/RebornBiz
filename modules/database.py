@@ -4,6 +4,7 @@ from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, 
 from sqlalchemy.orm import declarative_base, sessionmaker
 from dotenv import load_dotenv
 import datetime
+import pytz
 
 # .env 파일에서 환경변수 로드
 load_dotenv()
@@ -296,8 +297,13 @@ def log_page_access(menu_name):
     try:
         ip_address, user_agent = get_client_info()
         
+        # 명시적으로 한국 시간(KST) 생성
+        kst = pytz.timezone('Asia/Seoul')
+        kst_now = datetime.datetime.now(kst)
+        
         db = SessionLocal()
         new_log = AccessLog(
+            access_time=kst_now,
             ip_address=ip_address,
             user_agent=user_agent,
             accessed_menu=menu_name
