@@ -53,28 +53,43 @@ st.divider()
 # Custom CSS 주입: 탭 디자인 고도화 및 Expander 카드화
 st.markdown("""
 <style>
-/* 탭 기본 스타일 변경 */
+/* 탭 전체 배경(스위치 트랙 형태) */
 .stTabs [data-baseweb="tab-list"] {
-    gap: 30px;
-    border-bottom-color: #e2e8f0;
-}
-.stTabs [data-baseweb="tab"] {
-    height: 60px;
-    white-space: pre-wrap;
-    background-color: transparent;
-    border-radius: 4px 4px 0px 0px;
-    gap: 1px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    font-size: 1.2rem !important;
-    font-weight: 700 !important;
-    color: #64748b;
+    background-color: #f1f3f5;
+    border-radius: 12px;
+    padding: 8px;
+    display: flex;
+    justify-content: space-between;
+    gap: 0;
 }
 
-/* 탭 활성화(Selected) 상태의 포인트 컬러 적용 */
+/* 개별 탭 버튼 (균등 분할) */
+.stTabs [data-baseweb="tab"] {
+    flex: 1; /* 가로 균등 배치 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    border-radius: 8px;
+    margin: 0 4px;
+    font-size: 1.15rem !important;
+    font-weight: 700 !important;
+    color: #868e96;
+    background-color: transparent;
+    border: none !important;
+}
+
+/* 선택된(활성화) 탭 스타일 (팝업되는 입체적인 스위치) */
 .stTabs [aria-selected="true"] {
-    color: #2563eb !important;
-    border-bottom: 4px solid #2563eb !important;
+    background-color: #ffffff !important;
+    color: #212529 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* 하단 기본 밑줄 및 보더 요소 완전히 숨김 */
+.stTabs [data-baseweb="tab-highlight"],
+.stTabs [data-baseweb="tab-border"] {
+    display: none !important;
 }
 
 /* Expander를 예쁜 공고 카드 형태로 디자인 */
