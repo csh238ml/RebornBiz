@@ -107,6 +107,45 @@ st.markdown("""
     .css-1544g2n.e1fqcg0o4 {
         padding-top: var(--spacing-3);
     }
+    
+    /* 탭 전체 배경(스위치 트랙 형태) */
+    .stTabs [data-baseweb="tab-list"] {
+        background-color: #f1f3f5;
+        border-radius: 12px;
+        padding: 8px;
+        display: flex;
+        justify-content: space-between;
+        gap: 0;
+    }
+
+    /* 개별 탭 버튼 (균등 분할) */
+    .stTabs [data-baseweb="tab"] {
+        flex: 1; /* 가로 균등 배치 */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 50px;
+        border-radius: 8px;
+        margin: 0 4px;
+        font-size: 1.15rem !important;
+        font-weight: 700 !important;
+        color: #868e96;
+        background-color: transparent;
+        border: none !important;
+    }
+
+    /* 선택된(활성화) 탭 스타일 (팝업되는 입체적인 스위치) */
+    .stTabs [aria-selected="true"] {
+        background-color: #ffffff !important;
+        color: #212529 !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    /* 하단 기본 밑줄 및 보더 요소 완전히 숨김 */
+    .stTabs [data-baseweb="tab-highlight"],
+    .stTabs [data-baseweb="tab-border"] {
+        display: none !important;
+    }
     </style>
 """, unsafe_allow_html=True)
 
