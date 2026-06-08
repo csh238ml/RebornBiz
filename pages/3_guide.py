@@ -50,6 +50,54 @@ st.markdown("""
 st.divider()
 
 
+# Custom CSS 주입: 탭 디자인 고도화 및 Expander 카드화
+st.markdown("""
+<style>
+/* 탭 기본 스타일 변경 */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 30px;
+    border-bottom-color: #e2e8f0;
+}
+.stTabs [data-baseweb="tab"] {
+    height: 60px;
+    white-space: pre-wrap;
+    background-color: transparent;
+    border-radius: 4px 4px 0px 0px;
+    gap: 1px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: 1.2rem !important;
+    font-weight: 700 !important;
+    color: #64748b;
+}
+
+/* 탭 활성화(Selected) 상태의 포인트 컬러 적용 */
+.stTabs [aria-selected="true"] {
+    color: #2563eb !important;
+    border-bottom: 4px solid #2563eb !important;
+}
+
+/* Expander를 예쁜 공고 카드 형태로 디자인 */
+[data-testid="stExpander"] {
+    border-left: 6px solid #2563eb;
+    border-radius: 12px;
+    background-color: #f8fafc;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    margin-bottom: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+    border-right: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+}
+[data-testid="stExpander"] > details > summary {
+    font-size: 1.15rem;
+    font-weight: bold;
+    color: #1e293b;
+    padding: 10px;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
 from modules.database import SessionLocal, GovPolicyGuide
 import re
 
@@ -84,26 +132,27 @@ def get_latest_policies():
         db.close()
 
 # 4. 탭(Tabs)을 활용한 카테고리 분류
-tab1, tab2, tab3 = st.tabs(["💰 정부 지원금(금융/자금)", "👨‍💼 컨설팅 프로그램(경영/창업)", "🧾 기타 정책(세제/일반)"])
+tab1, tab2, tab3 = st.tabs(["💰 정부 지원금 (금융/자금)", "👨‍💼 컨설팅 프로그램 (경영/창업)", "🧾 기타 정책 (세제/일반)"])
 
 policies = get_latest_policies()
 
-def render_policy_expander(p):
-    """단일 정책의 Expander 렌더링"""
-    with st.expander(f"📌 {p['pblanc_nm']}", expanded=False):
-        st.markdown(f"- **소관기관:** {p['jrsd_instt_nm']}")
-        st.markdown(f"- **신청기간:** {p['reqst_begin_end_de']}")
+def render_policy_card(p):
+    """단일 정책의 Card 스타일 렌더링"""
+    with st.expander(f"✨ {p['pblanc_nm']}", expanded=False):
+        st.markdown(f"🏢 **소관기관:** {p['jrsd_instt_nm']}")
+        st.markdown(f"📅 **신청기간:** <span style='color:#ef4444; font-weight:bold;'>{p['reqst_begin_end_de']}</span>", unsafe_allow_html=True)
+        st.divider()
         
         if p['bsns_sumry_cn']:
-            st.markdown("##### 📝 사업개요")
+            st.markdown("##### 📝 **사업개요**")
             st.markdown(f"> {p['bsns_sumry_cn'][:300]}..." if len(p['bsns_sumry_cn']) > 300 else f"> {p['bsns_sumry_cn']}")
             
         if p['reqst_mth_papers_cn']:
-            st.markdown("##### 📎 신청방법")
+            st.markdown("##### 📎 **신청방법**")
             st.markdown(f"{p['reqst_mth_papers_cn']}")
             
         if p['pblanc_url'] and p['pblanc_url'].startswith('http'):
-            st.link_button("👉 원본 공고문 바로가기", p['pblanc_url'])
+            st.link_button("👉 원본 공고문 바로가기", p['pblanc_url'], use_container_width=True)
 
 # --- 탭 1: 정부 지원금 ---
 with tab1:
@@ -112,7 +161,7 @@ with tab1:
     
     if tab1_policies:
         for p in tab1_policies[:10]:
-            render_policy_expander(p)
+            render_policy_card(p)
     else:
         # DB 장애 시 Fallback (기존 원본 코드)
         with st.expander("1. 점포철거비 지원 (희망리턴패키지)", expanded=True):
@@ -137,7 +186,7 @@ with tab2:
     
     if tab2_policies:
         for p in tab2_policies[:10]:
-            render_policy_expander(p)
+            render_policy_card(p)
     else:
         # DB 장애 시 Fallback
         with st.expander("1. 사업정리 컨설팅", expanded=True):
@@ -159,7 +208,7 @@ with tab3:
     
     if tab3_policies:
         for p in tab3_policies[:10]:
-            render_policy_expander(p)
+            render_policy_card(p)
     else:
         # DB 장애 시 Fallback
         with st.expander("1. 폐업 시 부가가치세 신고 가이드", expanded=True):
