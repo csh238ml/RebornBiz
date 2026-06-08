@@ -104,17 +104,11 @@ def set_custom_sidebar():
             color: #38bdf8 !important;
         }
 
-        /* 🌟 우측 상단 Deploy 버튼 및 기본 메뉴 완전히 숨기기 */
-        #MainMenu {
-            visibility: hidden !important;
-            display: none !important;
-        }
-        
+        /* 🌟 우측 상단 Deploy 버튼 및 기본 메뉴 완전히 숨기기 (핀포인트 저격) */
+        #MainMenu,
         .stDeployButton,
         .stAppDeployButton,
-        [data-testid="stToolbar"],
-        [data-testid="stHeaderActionElements"],
-        [data-testid="stActionButton"] {
+        header[data-testid="stHeader"] div[data-testid="stActionButton"] {
             visibility: hidden !important;
             display: none !important;
         }
