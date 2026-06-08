@@ -84,6 +84,10 @@ def set_custom_sidebar():
     st.sidebar.page_link("pages/2_simulation.py", label="업종 변경 시뮬레이션", icon="📈")
     st.sidebar.page_link("pages/4_market_analysis.py", label="내 주변 상권 분석", icon="📍")
     st.sidebar.page_link("pages/3_guide.py", label="정부 지원 정책", icon="🏛️")
+    
+    # 하단 푸터 느낌의 약관 및 정책 링크 추가
+    st.sidebar.divider()
+    st.sidebar.page_link("pages/5_policy.py", label="이용약관 및 처리방침", icon="📜")
 
 
 def inject_seo_tags():
