@@ -100,18 +100,30 @@ class AccessLog(Base):
     accessed_menu = Column(String(100))
 
 # 정부 지원 정책 테이블 정의
-class SupportPolicy(Base):
-    __tablename__ = "pblanc_bsns"
+class GovPolicyGuide(Base):
+    __tablename__ = "gov_policy_guides"
     
-    pblanc_id = Column(String(100), primary_key=True, index=True)
-    pblanc_nm = Column(String(255))
-    jrsd_instt_nm = Column(String(100))
-    exc_instt_nm = Column(String(100))
-    trget_nm = Column(String(255))
-    reqst_begin_end_de = Column(String(100))
-    pblanc_url = Column(String(500))
+    pblanc_id = Column(String(50), primary_key=True)
+    pblanc_nm = Column(String(500), nullable=False)
+    pblanc_url = Column(Text)
+    jrsd_instt_nm = Column(String(255))
+    exc_instt_nm = Column(String(255))
     bsns_sumry_cn = Column(Text)
-    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    pldir_sport_realm_lclas_code_nm = Column(String(100), index=True)
+    creat_pnttm = Column(DateTime, index=True)
+    reqst_begin_end_de = Column(String(255))
+    updt_pnttm = Column(DateTime)
+    trget_nm = Column(Text)
+    inqire_co = Column(Integer, default=0)
+    flpth_nm = Column(Text)
+    file_nm = Column(String(500))
+    print_flpth_nm = Column(Text)
+    print_file_nm = Column(String(500))
+    hashtags = Column(Text)
+    reqst_mth_papers_cn = Column(Text)
+    refrnc_nm = Column(Text)
+    rcept_engn_hmpg_url = Column(Text)
+    fetched_at = Column(DateTime, default=datetime.datetime.utcnow)
 
 
 
