@@ -74,31 +74,49 @@ def set_custom_sidebar():
             color: #38bdf8 !important;
             font-weight: 600 !important;
         }
-        /* 🌟 모바일 사이드바 열기(햄버거) 버튼 커스텀 */
+        /* 🌟 모바일 사이드바 열기(햄버거) 버튼 커스텀 (확장된 셀렉터) */
         button[data-testid="collapsedControl"] svg,
         button[data-testid="stSidebarCollapse"] svg,
-        button[data-testid="stSidebarCollapseButton"] svg {
+        button[data-testid="stSidebarCollapseButton"] svg,
+        button[class*="stSidebarCollapse"] svg {
             display: none !important;
         }
 
         button[data-testid="collapsedControl"]::before,
         button[data-testid="stSidebarCollapse"]::before,
-        button[data-testid="stSidebarCollapseButton"]::before {
+        button[data-testid="stSidebarCollapseButton"]::before,
+        button[class*="stSidebarCollapse"]::before {
             content: "☰" !important;
             font-size: 24px !important;
-            color: #1e293b;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: color 0.3s ease;
-            width: 100%;
-            height: 100%;
+            color: #1e293b !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            transition: color 0.3s ease !important;
+            width: 100% !important;
+            height: 100% !important;
         }
 
         button[data-testid="collapsedControl"]:hover::before,
         button[data-testid="stSidebarCollapse"]:hover::before,
-        button[data-testid="stSidebarCollapseButton"]:hover::before {
+        button[data-testid="stSidebarCollapseButton"]:hover::before,
+        button[class*="stSidebarCollapse"]:hover::before {
             color: #38bdf8 !important;
+        }
+
+        /* 🌟 우측 상단 Deploy 버튼 및 기본 메뉴 완전히 숨기기 */
+        #MainMenu {
+            visibility: hidden !important;
+            display: none !important;
+        }
+        
+        .stDeployButton,
+        .stAppDeployButton,
+        [data-testid="stToolbar"],
+        [data-testid="stHeaderActionElements"],
+        [data-testid="stActionButton"] {
+            visibility: hidden !important;
+            display: none !important;
         }
     </style>
     <div class="custom-logo">RebornBiz</div>
