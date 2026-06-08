@@ -152,6 +152,13 @@ st.markdown("""
 if not stores:
     st.warning("해당 반경 내에 조회된 상권 데이터가 없습니다.")
 else:
+    df_stores = pd.DataFrame(stores)
+    
+    # 핵심 상권 업종(자영업)만 필터링
+    core_industries = ['음식', '소매', '생활서비스', '수리·개인·기타서비스', '예술·스포츠·여가']
+    if 'indsLclsNm' in df_stores.columns:
+        df_stores = df_stores[df_stores['indsLclsNm'].isin(core_industries)].copy()
+        
     # Top Section: 헤더 및 요약 지표 (반응형 3단 배지)
     st.markdown("### 📋 상권 요약 지표")
     m_col1, m_col2, m_col3 = st.columns(3)
@@ -160,7 +167,7 @@ else:
     with m_col2:
         st.metric("⭕ 검색 반경", f"{radius}m")
     with m_col3:
-        st.metric("🏪 검색된 총 점포", f"{len(stores)} 개")
+        st.metric("🏪 검색된 주요 자영업 점포", f"{len(df_stores)} 개")
     
     # 3. 데이터 시각화 대시보드
     st.subheader("3. 상권 시각화 대시보드")
@@ -168,14 +175,14 @@ else:
     # 2단 그리드 구조 적용 (좌: 지도, 우: 차트 및 데이터)
     col1, col2 = st.columns([1.2, 1.0], gap="large")
     
-    df_stores = pd.DataFrame(stores)
+    
     
     with col1:
         with st.container(border=True):
             st.markdown("#### 📍 주변 상권 지도 (카카오 맵)")
             
-            # 데이터를 딕셔너리로 직렬화 (간소화)
-            simple_stores = [{"lat": s["lat"], "lon": s["lon"], "bizesNm": s.get("bizesNm", "알수없음"), "indsMclsNm": s.get("indsMclsNm", "")} for s in stores]
+            # 데이터를 딕셔너리로 직렬화 (간소화) - 필터링된 데이터 사용
+            simple_stores = [{"lat": row["lat"], "lon": row["lon"], "bizesNm": row.get("bizesNm", "알수없음"), "indsMclsNm": row.get("indsMclsNm", "")} for row in df_stores.to_dict('records')]
             
             # 컴포넌트 호출 및 자동 위치 조회 플래그 전달
             clicked_data = kakao_map(lat=lat, lon=lon, stores=simple_stores, auto_locate=auto_locate, key="kakaomap_comp")
