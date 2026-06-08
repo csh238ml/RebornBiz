@@ -74,6 +74,32 @@ def set_custom_sidebar():
             color: #38bdf8 !important;
             font-weight: 600 !important;
         }
+        /* 🌟 모바일 사이드바 열기(햄버거) 버튼 커스텀 */
+        button[data-testid="collapsedControl"] svg,
+        button[data-testid="stSidebarCollapse"] svg,
+        button[data-testid="stSidebarCollapseButton"] svg {
+            display: none !important;
+        }
+
+        button[data-testid="collapsedControl"]::before,
+        button[data-testid="stSidebarCollapse"]::before,
+        button[data-testid="stSidebarCollapseButton"]::before {
+            content: "☰" !important;
+            font-size: 24px !important;
+            color: #1e293b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: color 0.3s ease;
+            width: 100%;
+            height: 100%;
+        }
+
+        button[data-testid="collapsedControl"]:hover::before,
+        button[data-testid="stSidebarCollapse"]:hover::before,
+        button[data-testid="stSidebarCollapseButton"]:hover::before {
+            color: #38bdf8 !important;
+        }
     </style>
     <div class="custom-logo">RebornBiz</div>
     """, unsafe_allow_html=True)
