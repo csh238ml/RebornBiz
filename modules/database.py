@@ -1,6 +1,6 @@
 import os
 import streamlit as st
-from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, ForeignKey
+from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, ForeignKey, Text
 from sqlalchemy.orm import declarative_base, sessionmaker
 from dotenv import load_dotenv
 import datetime
@@ -98,6 +98,20 @@ class AccessLog(Base):
     ip_address = Column(String(100))
     user_agent = Column(String(500))
     accessed_menu = Column(String(100))
+
+# 정부 지원 정책 테이블 정의
+class SupportPolicy(Base):
+    __tablename__ = "pblanc_bsns"
+    
+    pblanc_id = Column(String(100), primary_key=True, index=True)
+    pblanc_nm = Column(String(255))
+    jrsd_instt_nm = Column(String(100))
+    exc_instt_nm = Column(String(100))
+    trget_nm = Column(String(255))
+    reqst_begin_end_de = Column(String(100))
+    pblanc_url = Column(String(500))
+    bsns_sumry_cn = Column(Text)
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
 
 
