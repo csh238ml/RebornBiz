@@ -144,52 +144,74 @@ def set_custom_sidebar():
     <div class="custom-logo">RebornBiz</div>
     """, unsafe_allow_html=True)
 
-    # 🌟 모바일 사이드바 자동 닫기 스크립트 (이벤트 인터셉트 & 딜레이 라우팅)
+    # 🌟 모바일 사이드바 자동 닫기 스크립트 (React 내부 onClick 직접 호출 방식)
     components.html("""
     <script>
         const parentWindow = window.parent;
         const parentDoc = parentWindow.document;
 
         if (!parentWindow._sidebarAutoCloseAdded) {
+            
+            // React 요소의 내부 onClick 속성을 찾아 직접 실행하는 궁극의 해킹 함수
+            function triggerReactClick(el) {
+                if (!el) return false;
+                for (const key in el) {
+                    if (key.startsWith('__reactEventHandlers$') || key.startsWith('__reactProps$')) {
+                        const props = el[key];
+                        if (props && typeof props.onClick === 'function') {
+                            props.onClick({ 
+                                target: el, 
+                                currentTarget: el,
+                                preventDefault: () => {}, 
+                                stopPropagation: () => {},
+                                nativeEvent: new MouseEvent('click')
+                            });
+                            return true;
+                        }
+                    }
+                }
+                el.click(); // Fallback
+                return true;
+            }
+
+            function forceCloseSidebar() {
+                const sidebar = parentDoc.querySelector('[data-testid="stSidebar"]');
+                // 사이드바가 이미 닫혀있으면 무시
+                if (!sidebar || sidebar.getAttribute('aria-expanded') !== 'true') return;
+
+                // 1. 오버레이(배경) 영역 요소 추출 및 React onClick 강제 실행
+                const x = parentWindow.innerWidth - 10;
+                const y = parentWindow.innerHeight / 2;
+                const backdrop = parentDoc.elementFromPoint(x, y);
+                if (backdrop && backdrop.tagName === 'DIV') {
+                    triggerReactClick(backdrop);
+                }
+
+                // 2. 모바일 헤더의 토글/닫기 버튼들 React onClick 강제 실행
+                const closeBtns = parentDoc.querySelectorAll('button[kind="headerNoPadding"], button[data-testid="baseButton-headerNoPadding"], .stAppHeader button');
+                closeBtns.forEach(btn => triggerReactClick(btn));
+            }
+
+            // [트리거 1] 메뉴 링크를 클릭하는 즉시 실행
             parentDoc.addEventListener('click', function(e) {
                 const navLink = e.target.closest('[data-testid="stPageLink-NavLink"]');
-                
-                // 모바일 환경(너비 992px 이하)에서 메뉴 링크가 클릭된 경우
                 if (navLink && parentWindow.innerWidth <= 992) {
-                    // 스크립트가 발생시킨 라우팅 클릭인 경우 그대로 통과 (실제 라우팅 진행)
-                    if (navLink.dataset.autoNavigating === "true") {
-                        return;
-                    }
-                    
-                    // 1. 사용자의 원래 클릭 이벤트를 즉시 가로채서 중단 (라우팅 보류)
-                    // (React가 '사이드바 닫기'와 '페이지 이동'을 동시 처리하다가 닫기를 무시하는 현상 방지)
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    // 2. 오버레이(배경) 영역을 클릭하여 사이드바를 먼저 안전하게 닫음
-                    const x = parentWindow.innerWidth - 10;
-                    const y = parentWindow.innerHeight / 2;
-                    const backdrop = parentDoc.elementFromPoint(x, y);
-                    if (backdrop && backdrop.tagName === 'DIV') {
-                        backdrop.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, clientX: x, clientY: y}));
-                        backdrop.dispatchEvent(new MouseEvent('mouseup', {bubbles: true, clientX: x, clientY: y}));
-                        backdrop.click();
-                    }
-                    
-                    // 3. 보험용으로 ESC 키 이벤트 발송
-                    parentDoc.dispatchEvent(new parentWindow.KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', keyCode: 27, which: 27, bubbles: true }));
-
-                    // 4. 사이드바가 닫힐 시간(200ms)을 충분히 확보한 뒤, 원래 목적지로 수동 라우팅 실행
-                    navLink.dataset.autoNavigating = "true";
-                    setTimeout(() => {
-                        navLink.click(); // 이 클릭은 상단의 if문을 통과하여 실제 페이지 이동을 유발함
-                        
-                        // 이동 후 속성 초기화
-                        setTimeout(() => { navLink.dataset.autoNavigating = ""; }, 500);
-                    }, 200);
+                    forceCloseSidebar();
                 }
-            }, true); // 캡처링 단계에서 최우선으로 가로챔
+            }, true);
             
+            // [트리거 2] SPA 이동으로 URL이 변경되었음을 감지했을 때 실행 (이중 안전망)
+            let lastUrl = parentWindow.location.href;
+            setInterval(() => {
+                if (parentWindow.innerWidth <= 992) {
+                    const currentUrl = parentWindow.location.href;
+                    if (currentUrl !== lastUrl) {
+                        lastUrl = currentUrl;
+                        forceCloseSidebar();
+                    }
+                }
+            }, 200);
+
             parentWindow._sidebarAutoCloseAdded = true;
         }
     </script>
