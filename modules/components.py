@@ -144,26 +144,38 @@ def set_custom_sidebar():
     <div class="custom-logo">RebornBiz</div>
     """, unsafe_allow_html=True)
 
-    # 🌟 모바일 사이드바 자동 닫기 스크립트 (중복 실행 방지 처리)
+    # 🌟 모바일 사이드바 자동 닫기 스크립트 (강력한 닫기 제어)
     components.html("""
     <script>
-        const parent = window.parent.document;
-        if (!parent.sidebarAutoCloseAdded) {
-            parent.addEventListener('click', function(e) {
+        const parentWindow = window.parent;
+        const parentDoc = parentWindow.document;
+
+        if (!parentWindow._sidebarAutoCloseAdded) {
+            parentDoc.addEventListener('click', function(e) {
                 const navLink = e.target.closest('[data-testid="stPageLink-NavLink"]');
-                if (navLink && window.innerWidth <= 992) {
-                    // 1. Esc 키 이벤트를 통해 기본 동작(사이드바 닫기) 유도
-                    const escEvent = new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', keyCode: 27, which: 27, bubbles: true });
-                    parent.dispatchEvent(escEvent);
+                
+                // 모바일 환경(너비 992px 이하)에서 메뉴 링크가 클릭된 경우
+                if (navLink && parentWindow.innerWidth <= 992) {
                     
-                    // 2. 닫히지 않을 경우를 대비한 모바일 헤더 버튼(X) 클릭 시도
-                    setTimeout(() => {
-                        const closeBtns = parent.querySelectorAll('button[kind="headerNoPadding"], button[data-testid="baseButton-headerNoPadding"], .stAppHeader button');
-                        closeBtns.forEach(btn => btn.click());
-                    }, 50);
+                    // 1. 사이드바 내부에 위치한 닫기 버튼(X)을 명시적으로 찾아 클릭
+                    const sidebarCloseBtn = parentDoc.querySelector('[data-testid="stSidebar"] button');
+                    if (sidebarCloseBtn) {
+                        sidebarCloseBtn.click();
+                    }
+                    
+                    // 2. 부모 창(Window) 컨텍스트에서 완벽한 ESC 키 이벤트 생성 후 발송
+                    const escEvent = new parentWindow.KeyboardEvent('keydown', { 
+                        key: 'Escape', 
+                        code: 'Escape', 
+                        keyCode: 27, 
+                        which: 27, 
+                        bubbles: true,
+                        cancelable: true
+                    });
+                    parentDoc.dispatchEvent(escEvent);
                 }
             }, true);
-            parent.sidebarAutoCloseAdded = true;
+            parentWindow._sidebarAutoCloseAdded = true;
         }
     </script>
     """, width=0, height=0)
