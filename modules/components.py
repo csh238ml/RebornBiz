@@ -144,7 +144,7 @@ def set_custom_sidebar():
     <div class="custom-logo">RebornBiz</div>
     """, unsafe_allow_html=True)
 
-    # 🌟 모바일 사이드바 자동 닫기 스크립트 (안전한 즉각적 숨김 및 닫기 연동)
+    # 🌟 모바일 사이드바 닫기 - 최종 해결책: 이벤트 인터셉트 + 순정 닫기 버튼 클릭 + 지연 라우팅
     components.html("""
     <script>
         const parentWindow = window.parent;
@@ -152,49 +152,49 @@ def set_custom_sidebar():
 
         if (!parentWindow._sidebarAutoCloseAdded) {
             
+            // 모든 임의 조작(CSS 강제 숨김)을 제거하여 React 상태 꼬임(햄버거 버튼 소멸) 원천 차단
             parentDoc.addEventListener('click', function(e) {
                 const navLink = e.target.closest('[data-testid="stPageLink-NavLink"]');
                 
                 if (navLink && parentWindow.innerWidth <= 992) {
                     
-                    // 1. 유저 제안 수용: 메뉴 클릭 즉시 사이드바를 화면에서 숨깁니다.
-                    const sidebar = parentDoc.querySelector('[data-testid="stSidebar"]');
-                    if (sidebar) {
-                        sidebar.style.display = 'none';
+                    // 스크립트가 수동으로 발생시킨 클릭이면 정상 라우팅(페이지 이동) 허용
+                    if (navLink.dataset.autoNavigating === "true") {
+                        return;
                     }
                     
-                    // 2. 전체 화면(stAppViewContainer)이 사라지는 버그 수정: 진짜 '배경 오버레이'만 찾아 숨김
-                    const elements = parentDoc.querySelectorAll('.stApp > div');
-                    elements.forEach(el => {
-                        const style = parentWindow.getComputedStyle(el);
-                        // 오버레이 특징: fixed/absolute 포지션, 높은 z-index, 투명하지 않은 배경색
-                        if ((style.position === 'fixed' || style.position === 'absolute') && 
-                            style.backgroundColor !== 'rgba(0, 0, 0, 0)' && 
-                            style.backgroundColor !== 'transparent' &&
-                            parseInt(style.zIndex || '0') > 100) {
-                            el.style.display = 'none';
-                        }
-                    });
-
-                    // 3. 시각적으로 숨긴 뒤, 내부 React 상태를 닫힘으로 만들기 위해 물리적 클릭 발송
-                    setTimeout(() => {
-                        // 오버레이 영역(우측 빈공간) 클릭
+                    // 1. 유저의 메뉴 클릭 이벤트 가로채기 -> 라우팅 즉시 차단 (페이지 이동 보류)
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // 2. 모바일 사이드바 상단에 있는 순정 'X 닫기 버튼'을 찾아서 물리적으로 클릭
+                    const closeBtn = parentDoc.querySelector('[data-testid="stSidebarHeader"] button, button[kind="headerNoPadding"], button[data-testid="baseButton-headerNoPadding"]');
+                    if (closeBtn) {
+                        closeBtn.click();
+                    } else {
+                        // 보험용: 버튼이 없으면 우측 오버레이 영역 빈 공간 클릭
                         const x = parentWindow.innerWidth - 10;
                         const y = parentWindow.innerHeight / 2;
                         const backdrop = parentDoc.elementFromPoint(x, y);
-                        
-                        if (backdrop && backdrop.tagName === 'DIV' && backdrop.closest('[data-testid="stSidebar"]') === null) {
+                        if (backdrop && backdrop.tagName === 'DIV') {
                             backdrop.click();
                         }
+                    }
+
+                    // 3. 아주 중요한 단계:
+                    // React가 사이드바 닫기 애니메이션을 완료하고 '닫힘 상태'를 브라우저에 확실히 저장할 시간(0.3초)을 줍니다.
+                    // 닫기가 완전히 끝난 후, 보류했던 페이지 이동을 스크립트가 대신 강제 실행합니다!
+                    navLink.dataset.autoNavigating = "true";
+                    setTimeout(() => {
+                        navLink.click(); // 이제서야 진짜 페이지 이동(SPA) 발생! 새 페이지는 무조건 닫힌 상태로 렌더링됨
                         
-                        // 모바일 닫기(X) 버튼 직접 클릭 시뮬레이션
-                        const closeBtns = parentDoc.querySelectorAll('[data-testid="stSidebar"] button, button[kind="headerNoPadding"]');
-                        if (closeBtns.length > 0) {
-                            closeBtns[0].click();
-                        }
-                    }, 50);
+                        // 이동 직후 플래그 안전 초기화
+                        setTimeout(() => {
+                            navLink.dataset.autoNavigating = "";
+                        }, 500);
+                    }, 300);
                 }
-            }, true);
+            }, true); // 캡처링 우선순위 최고
 
             parentWindow._sidebarAutoCloseAdded = true;
         }
