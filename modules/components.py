@@ -119,7 +119,7 @@ def set_custom_sidebar():
     # 2. 페이지 링크 - 태그 없이 순수 텍스트만 입력
     st.sidebar.page_link("app.py", label="홈", icon="🏠")
     st.sidebar.page_link("pages/1_calculator.py", label="폐업 비용 계산기", icon="🧮")
-    st.sidebar.page_link("pages/1_1_tax_calculator.py", label="폐업 세금 자동 계산기", icon="🧾")
+    st.sidebar.page_link("pages/tax_cal.py", label="폐업 세금 계산기", icon="🧾")
     st.sidebar.page_link("pages/2_simulation.py", label="업종 변경 시뮬레이션", icon="📈")
     st.sidebar.page_link("pages/4_market_analysis.py", label="내 주변 상권 분석", icon="📍")
     st.sidebar.page_link("pages/3_guide.py", label="정부 지원 정책", icon="🏛️")

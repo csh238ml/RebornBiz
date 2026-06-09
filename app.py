@@ -60,6 +60,7 @@ st.html("""
     --accent-2: linear-gradient(135deg, #6ee7b7 0%, #10b981 100%);
     --accent-3: linear-gradient(135deg, #93c5fd 0%, #3b82f6 100%);
     --accent-4: linear-gradient(135deg, #c4b5fd 0%, #8b5cf6 100%);
+    --accent-5: linear-gradient(135deg, #fca5a5 0%, #ef4444 100%);
 }
 
 .custom-main {
@@ -102,6 +103,7 @@ st.html("""
 .simul .card-icon-box { background: var(--accent-2); } .simul .card-badge { background: #d1fae5; color: #065f46; }
 .area .card-icon-box { background: var(--accent-3); } .area .card-badge { background: #dbeafe; color: #1e40af; }
 .gov .card-icon-box { background: var(--accent-4); } .gov .card-badge { background: #ede9fe; color: #5b21b6; }
+.tax .card-icon-box { background: var(--accent-5); } .tax .card-badge { background: #fee2e2; color: #991b1b; }
 </style>
 
 <div class="custom-main">
@@ -118,6 +120,16 @@ st.html("""
                 <h3>폐업 비용 계산기</h3>
                 <p>철거비, 위약금 등 사업 정리 시 발생하는 각종 예상 비용을 데이터로 정확히 산출합니다.</p>
                 <button class="custom-btn" data-target="calculator">비용 계산하기</button>
+            </div>
+        </div>
+        
+        <div class="custom-card tax">
+            <div class="card-icon-box">🧾</div>
+            <div class="card-content">
+                <span class="card-badge">세무</span>
+                <h3>세금 자동 계산기</h3>
+                <p>폐업 시 매입세액 공제 자산에 대한 부가가치세(잔존재화 간주공급)를 세법 기준으로 산출합니다.</p>
+                <button class="custom-btn" data-target="tax_cal">세금 계산하기</button>
             </div>
         </div>
 
