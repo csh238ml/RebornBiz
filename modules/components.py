@@ -78,14 +78,18 @@ def set_custom_sidebar():
         button[data-testid="collapsedControl"] svg,
         button[data-testid="stSidebarCollapse"] svg,
         button[data-testid="stSidebarCollapseButton"] svg,
-        button[class*="stSidebarCollapse"] svg {
+        button[class*="stSidebarCollapse"] svg,
+        button[data-testid="baseButton-headerNoPadding"] svg,
+        button[kind="headerNoPadding"] svg {
             display: none !important;
         }
 
         button[data-testid="collapsedControl"]::before,
         button[data-testid="stSidebarCollapse"]::before,
         button[data-testid="stSidebarCollapseButton"]::before,
-        button[class*="stSidebarCollapse"]::before {
+        button[class*="stSidebarCollapse"]::before,
+        button[data-testid="baseButton-headerNoPadding"]::before,
+        button[kind="headerNoPadding"]::before {
             content: "☰" !important;
             font-size: 24px !important;
             color: #1e293b !important;
@@ -100,7 +104,9 @@ def set_custom_sidebar():
         button[data-testid="collapsedControl"]:hover::before,
         button[data-testid="stSidebarCollapse"]:hover::before,
         button[data-testid="stSidebarCollapseButton"]:hover::before,
-        button[class*="stSidebarCollapse"]:hover::before {
+        button[class*="stSidebarCollapse"]:hover::before,
+        button[data-testid="baseButton-headerNoPadding"]:hover::before,
+        button[kind="headerNoPadding"]:hover::before {
             color: #38bdf8 !important;
         }
 
@@ -108,7 +114,9 @@ def set_custom_sidebar():
         button[data-testid="collapsedControl"],
         button[data-testid="stSidebarCollapse"],
         button[data-testid="stSidebarCollapseButton"],
-        button[class*="stSidebarCollapse"] {
+        button[class*="stSidebarCollapse"],
+        button[data-testid="baseButton-headerNoPadding"],
+        button[kind="headerNoPadding"] {
             position: fixed !important;
             top: 8px !important;
             left: 8px !important;
