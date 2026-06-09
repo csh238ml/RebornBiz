@@ -144,7 +144,7 @@ def set_custom_sidebar():
     <div class="custom-logo">RebornBiz</div>
     """, unsafe_allow_html=True)
 
-    # 🌟 모바일 사이드바 자동 닫기 스크립트 (사용자 제안: 즉각적 시각 숨김 및 동시 클릭)
+    # 🌟 모바일 사이드바 자동 닫기 스크립트 (안전한 즉각적 숨김 및 닫기 연동)
     components.html("""
     <script>
         const parentWindow = window.parent;
@@ -157,42 +157,42 @@ def set_custom_sidebar():
                 
                 if (navLink && parentWindow.innerWidth <= 992) {
                     
-                    // 1. 유저 제안 적극 수용: 메뉴를 클릭하자마자 CSS로 즉시 화면에서 숨겨버립니다.
+                    // 1. 유저 제안 수용: 메뉴 클릭 즉시 사이드바를 화면에서 숨깁니다.
                     const sidebar = parentDoc.querySelector('[data-testid="stSidebar"]');
                     if (sidebar) {
-                        sidebar.style.display = 'none'; // 즉시 투명화/숨김
-                        sidebar.style.visibility = 'hidden';
+                        sidebar.style.display = 'none';
                     }
                     
-                    // 오버레이(배경) 영역도 즉시 숨김
+                    // 2. 전체 화면(stAppViewContainer)이 사라지는 버그 수정: 진짜 '배경 오버레이'만 찾아 숨김
                     const elements = parentDoc.querySelectorAll('.stApp > div');
                     elements.forEach(el => {
-                        if (getComputedStyle(el).backgroundColor.includes('rgba')) {
+                        const style = parentWindow.getComputedStyle(el);
+                        // 오버레이 특징: fixed/absolute 포지션, 높은 z-index, 투명하지 않은 배경색
+                        if ((style.position === 'fixed' || style.position === 'absolute') && 
+                            style.backgroundColor !== 'rgba(0, 0, 0, 0)' && 
+                            style.backgroundColor !== 'transparent' &&
+                            parseInt(style.zIndex || '0') > 100) {
                             el.style.display = 'none';
                         }
                     });
 
-                    // 2. 시각적으로 숨긴 뒤, 내부적으로 "화면 클릭"을 발생시켜 React 상태도 연달아 닫음 처리합니다.
+                    // 3. 시각적으로 숨긴 뒤, 내부 React 상태를 닫힘으로 만들기 위해 물리적 클릭 발송
                     setTimeout(() => {
-                        // 가장 안전한 화면 중앙 우측 끝(배경 오버레이 영역) 좌표
+                        // 오버레이 영역(우측 빈공간) 클릭
                         const x = parentWindow.innerWidth - 10;
                         const y = parentWindow.innerHeight / 2;
-                        
                         const backdrop = parentDoc.elementFromPoint(x, y);
-                        if (backdrop && backdrop.tagName !== 'BUTTON' && backdrop.tagName !== 'A') {
-                            // 마우스/터치 이벤트를 동시에 발생시켜 모바일 브라우저의 React 엔진을 속임
-                            backdrop.dispatchEvent(new TouchEvent('touchstart', {bubbles: true}));
-                            backdrop.dispatchEvent(new TouchEvent('touchend', {bubbles: true}));
-                            backdrop.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, clientX: x, clientY: y}));
-                            backdrop.dispatchEvent(new MouseEvent('mouseup', {bubbles: true, clientX: x, clientY: y}));
+                        
+                        if (backdrop && backdrop.tagName === 'DIV' && backdrop.closest('[data-testid="stSidebar"]') === null) {
                             backdrop.click();
                         }
                         
-                        // 추가로 사이드바 닫기 버튼(X) 직접 클릭 시뮬레이션
+                        // 모바일 닫기(X) 버튼 직접 클릭 시뮬레이션
                         const closeBtns = parentDoc.querySelectorAll('[data-testid="stSidebar"] button, button[kind="headerNoPadding"]');
-                        if (closeBtns.length > 0) closeBtns[0].click();
-                        
-                    }, 10); // 즉시 실행
+                        if (closeBtns.length > 0) {
+                            closeBtns[0].click();
+                        }
+                    }, 50);
                 }
             }, true);
 
