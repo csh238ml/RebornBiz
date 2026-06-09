@@ -144,6 +144,30 @@ def set_custom_sidebar():
     <div class="custom-logo">RebornBiz</div>
     """, unsafe_allow_html=True)
 
+    # 🌟 모바일 사이드바 자동 닫기 스크립트 (중복 실행 방지 처리)
+    components.html("""
+    <script>
+        const parent = window.parent.document;
+        if (!parent.sidebarAutoCloseAdded) {
+            parent.addEventListener('click', function(e) {
+                const navLink = e.target.closest('[data-testid="stPageLink-NavLink"]');
+                if (navLink && window.innerWidth <= 992) {
+                    // 1. Esc 키 이벤트를 통해 기본 동작(사이드바 닫기) 유도
+                    const escEvent = new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', keyCode: 27, which: 27, bubbles: true });
+                    parent.dispatchEvent(escEvent);
+                    
+                    // 2. 닫히지 않을 경우를 대비한 모바일 헤더 버튼(X) 클릭 시도
+                    setTimeout(() => {
+                        const closeBtns = parent.querySelectorAll('button[kind="headerNoPadding"], button[data-testid="baseButton-headerNoPadding"], .stAppHeader button');
+                        closeBtns.forEach(btn => btn.click());
+                    }, 50);
+                }
+            }, true);
+            parent.sidebarAutoCloseAdded = true;
+        }
+    </script>
+    """, width=0, height=0)
+
     # 2. 페이지 링크 - 태그 없이 순수 텍스트만 입력
     st.sidebar.page_link("app.py", label="홈", icon="🏠")
     st.sidebar.page_link("pages/1_calculator.py", label="폐업 비용 계산기", icon="🧮")
