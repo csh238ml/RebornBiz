@@ -2,6 +2,16 @@ import streamlit as st
 import datetime
 import sys
 import os
+import locale
+
+# 시스템 로케일을 한국어로 강제 설정 (달력 한글화 등)
+try:
+    locale.setlocale(locale.LC_TIME, 'ko_KR.UTF-8') # 리눅스/맥 환경
+except locale.Error:
+    try:
+        locale.setlocale(locale.LC_TIME, 'Korean_Korea.949') # 윈도우 로컬 환경
+    except locale.Error:
+        pass
 
 st.set_page_config(page_title="폐업 세금 자동 계산기 | RebornBiz", page_icon="🧾", layout="wide", initial_sidebar_state="auto")
 
@@ -116,8 +126,8 @@ if st.button("세금 계산하기", type="primary", use_container_width=True):
                 - **폐업 과세기간**: {y2}년 {p2}기
                 - **경과된 과세기간 수**: {passed_periods}기 (폐업일이 속한 기수는 산입하지 않음)
                 - **적용 상각률**: {int(rate_per_period*100)}% × {passed_periods}기 = {int(total_depreciation_rate*100)}%
-                - **잔존가치 계산**: {asset_price:,} 원 × (1 - {total_depreciation_rate}) = {int(residual_value):,} 원
-                - **부가세 계산**: 잔존가치 {int(residual_value):,} 원 × 10% = {int(vat_to_pay):,} 원
+                - **잔존가치 계산**: {int(asset_price):,}원 × (1 - {total_depreciation_rate}) = {int(residual_value):,}원
+                - **부가세 계산**: 잔존가치 {int(residual_value):,}원 × 10% = {int(vat_to_pay):,}원
                 """)
 
 # 5. 하단 광고 및 정책 (공통 컴포넌트 형식)
