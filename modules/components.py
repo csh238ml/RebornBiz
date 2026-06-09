@@ -144,56 +144,52 @@ def set_custom_sidebar():
     <div class="custom-logo">RebornBiz</div>
     """, unsafe_allow_html=True)
 
-    # 🌟 모바일 사이드바 자동 닫기 스크립트 (강력한 React 이벤트 시뮬레이션 및 URL 감시)
+    # 🌟 모바일 사이드바 자동 닫기 스크립트 (이벤트 인터셉트 & 딜레이 라우팅)
     components.html("""
     <script>
         const parentWindow = window.parent;
         const parentDoc = parentWindow.document;
 
         if (!parentWindow._sidebarAutoCloseAdded) {
-            
-            // 1. 메뉴 링크를 직접 클릭했을 때 즉시 닫기 시도
             parentDoc.addEventListener('click', function(e) {
                 const navLink = e.target.closest('[data-testid="stPageLink-NavLink"]');
+                
+                // 모바일 환경(너비 992px 이하)에서 메뉴 링크가 클릭된 경우
                 if (navLink && parentWindow.innerWidth <= 992) {
-                    forceCloseSidebar();
-                }
-            }, true);
-            
-            // 2. SPA 라우팅으로 URL이 변경되었을 때 닫기 시도 (이중 안전장치)
-            let lastUrl = parentWindow.location.href;
-            setInterval(() => {
-                if (parentWindow.innerWidth <= 992) {
-                    const currentUrl = parentWindow.location.href;
-                    if (currentUrl !== lastUrl) {
-                        lastUrl = currentUrl;
-                        forceCloseSidebar();
+                    // 스크립트가 발생시킨 라우팅 클릭인 경우 그대로 통과 (실제 라우팅 진행)
+                    if (navLink.dataset.autoNavigating === "true") {
+                        return;
                     }
-                }
-            }, 300);
-
-            function forceCloseSidebar() {
-                // 약간의 지연 후 오버레이(배경) 영역을 정밀하게 타겟팅하여 클릭 시뮬레이션
-                setTimeout(() => {
-                    const x = parentWindow.innerWidth - 20; // 우측 끝 여백 (스크롤바 피함)
-                    const y = parentWindow.innerHeight / 2; // 세로 중앙
                     
+                    // 1. 사용자의 원래 클릭 이벤트를 즉시 가로채서 중단 (라우팅 보류)
+                    // (React가 '사이드바 닫기'와 '페이지 이동'을 동시 처리하다가 닫기를 무시하는 현상 방지)
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // 2. 오버레이(배경) 영역을 클릭하여 사이드바를 먼저 안전하게 닫음
+                    const x = parentWindow.innerWidth - 10;
+                    const y = parentWindow.innerHeight / 2;
                     const backdrop = parentDoc.elementFromPoint(x, y);
-                    
-                    // 추출된 요소가 안전한 빈 공간(DIV)일 경우 완벽한 클릭 이벤트 발송
                     if (backdrop && backdrop.tagName === 'DIV') {
-                        const eventConfig = { bubbles: true, cancelable: true, clientX: x, clientY: y, view: parentWindow };
-                        
-                        // React가 반드시 인지하도록 Pointer와 Mouse 이벤트 풀 시퀀스 발송
-                        backdrop.dispatchEvent(new MouseEvent('pointerdown', eventConfig));
-                        backdrop.dispatchEvent(new MouseEvent('mousedown', eventConfig));
-                        backdrop.dispatchEvent(new MouseEvent('pointerup', eventConfig));
-                        backdrop.dispatchEvent(new MouseEvent('mouseup', eventConfig));
-                        backdrop.dispatchEvent(new MouseEvent('click', eventConfig));
+                        backdrop.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, clientX: x, clientY: y}));
+                        backdrop.dispatchEvent(new MouseEvent('mouseup', {bubbles: true, clientX: x, clientY: y}));
+                        backdrop.click();
                     }
-                }, 50);
-            }
+                    
+                    // 3. 보험용으로 ESC 키 이벤트 발송
+                    parentDoc.dispatchEvent(new parentWindow.KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', keyCode: 27, which: 27, bubbles: true }));
 
+                    // 4. 사이드바가 닫힐 시간(200ms)을 충분히 확보한 뒤, 원래 목적지로 수동 라우팅 실행
+                    navLink.dataset.autoNavigating = "true";
+                    setTimeout(() => {
+                        navLink.click(); // 이 클릭은 상단의 if문을 통과하여 실제 페이지 이동을 유발함
+                        
+                        // 이동 후 속성 초기화
+                        setTimeout(() => { navLink.dataset.autoNavigating = ""; }, 500);
+                    }, 200);
+                }
+            }, true); // 캡처링 단계에서 최우선으로 가로챔
+            
             parentWindow._sidebarAutoCloseAdded = true;
         }
     </script>
