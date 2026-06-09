@@ -144,35 +144,56 @@ def set_custom_sidebar():
     <div class="custom-logo">RebornBiz</div>
     """, unsafe_allow_html=True)
 
-    # 🌟 모바일 사이드바 자동 닫기 스크립트 (오버레이 클릭 시뮬레이션)
+    # 🌟 모바일 사이드바 자동 닫기 스크립트 (강력한 React 이벤트 시뮬레이션 및 URL 감시)
     components.html("""
     <script>
         const parentWindow = window.parent;
         const parentDoc = parentWindow.document;
 
         if (!parentWindow._sidebarAutoCloseAdded) {
+            
+            // 1. 메뉴 링크를 직접 클릭했을 때 즉시 닫기 시도
             parentDoc.addEventListener('click', function(e) {
                 const navLink = e.target.closest('[data-testid="stPageLink-NavLink"]');
-                
-                // 모바일 환경(너비 992px 이하)에서 메뉴 링크가 클릭된 경우
                 if (navLink && parentWindow.innerWidth <= 992) {
-                    
-                    // 사용자가 메뉴 밖(부모창 화면)을 클릭해야 닫히는 원리를 이용해
-                    // 50ms 후 우측 바깥 여백(오버레이) 영역에 프로그래밍 방식으로 마우스 클릭 이벤트를 발송합니다.
-                    setTimeout(() => {
-                        const x = parentWindow.innerWidth - 10;
-                        const y = parentWindow.innerHeight / 2;
-                        
-                        const backdrop = parentDoc.elementFromPoint(x, y);
-                        if (backdrop) {
-                            const mouseEventInit = { bubbles: true, clientX: x, clientY: y };
-                            backdrop.dispatchEvent(new MouseEvent('mousedown', mouseEventInit));
-                            backdrop.dispatchEvent(new MouseEvent('mouseup', mouseEventInit));
-                            backdrop.click();
-                        }
-                    }, 50);
+                    forceCloseSidebar();
                 }
             }, true);
+            
+            // 2. SPA 라우팅으로 URL이 변경되었을 때 닫기 시도 (이중 안전장치)
+            let lastUrl = parentWindow.location.href;
+            setInterval(() => {
+                if (parentWindow.innerWidth <= 992) {
+                    const currentUrl = parentWindow.location.href;
+                    if (currentUrl !== lastUrl) {
+                        lastUrl = currentUrl;
+                        forceCloseSidebar();
+                    }
+                }
+            }, 300);
+
+            function forceCloseSidebar() {
+                // 약간의 지연 후 오버레이(배경) 영역을 정밀하게 타겟팅하여 클릭 시뮬레이션
+                setTimeout(() => {
+                    const x = parentWindow.innerWidth - 20; // 우측 끝 여백 (스크롤바 피함)
+                    const y = parentWindow.innerHeight / 2; // 세로 중앙
+                    
+                    const backdrop = parentDoc.elementFromPoint(x, y);
+                    
+                    // 추출된 요소가 안전한 빈 공간(DIV)일 경우 완벽한 클릭 이벤트 발송
+                    if (backdrop && backdrop.tagName === 'DIV') {
+                        const eventConfig = { bubbles: true, cancelable: true, clientX: x, clientY: y, view: parentWindow };
+                        
+                        // React가 반드시 인지하도록 Pointer와 Mouse 이벤트 풀 시퀀스 발송
+                        backdrop.dispatchEvent(new MouseEvent('pointerdown', eventConfig));
+                        backdrop.dispatchEvent(new MouseEvent('mousedown', eventConfig));
+                        backdrop.dispatchEvent(new MouseEvent('pointerup', eventConfig));
+                        backdrop.dispatchEvent(new MouseEvent('mouseup', eventConfig));
+                        backdrop.dispatchEvent(new MouseEvent('click', eventConfig));
+                    }
+                }, 50);
+            }
+
             parentWindow._sidebarAutoCloseAdded = true;
         }
     </script>
