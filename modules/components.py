@@ -144,7 +144,7 @@ def set_custom_sidebar():
     <div class="custom-logo">RebornBiz</div>
     """, unsafe_allow_html=True)
 
-    # 🌟 모바일 사이드바 자동 닫기 스크립트 (강력한 닫기 제어)
+    # 🌟 모바일 사이드바 자동 닫기 스크립트 (오버레이 클릭 시뮬레이션)
     components.html("""
     <script>
         const parentWindow = window.parent;
@@ -157,22 +157,20 @@ def set_custom_sidebar():
                 // 모바일 환경(너비 992px 이하)에서 메뉴 링크가 클릭된 경우
                 if (navLink && parentWindow.innerWidth <= 992) {
                     
-                    // 1. 사이드바 내부에 위치한 닫기 버튼(X)을 명시적으로 찾아 클릭
-                    const sidebarCloseBtn = parentDoc.querySelector('[data-testid="stSidebar"] button');
-                    if (sidebarCloseBtn) {
-                        sidebarCloseBtn.click();
-                    }
-                    
-                    // 2. 부모 창(Window) 컨텍스트에서 완벽한 ESC 키 이벤트 생성 후 발송
-                    const escEvent = new parentWindow.KeyboardEvent('keydown', { 
-                        key: 'Escape', 
-                        code: 'Escape', 
-                        keyCode: 27, 
-                        which: 27, 
-                        bubbles: true,
-                        cancelable: true
-                    });
-                    parentDoc.dispatchEvent(escEvent);
+                    // 사용자가 메뉴 밖(부모창 화면)을 클릭해야 닫히는 원리를 이용해
+                    // 50ms 후 우측 바깥 여백(오버레이) 영역에 프로그래밍 방식으로 마우스 클릭 이벤트를 발송합니다.
+                    setTimeout(() => {
+                        const x = parentWindow.innerWidth - 10;
+                        const y = parentWindow.innerHeight / 2;
+                        
+                        const backdrop = parentDoc.elementFromPoint(x, y);
+                        if (backdrop) {
+                            const mouseEventInit = { bubbles: true, clientX: x, clientY: y };
+                            backdrop.dispatchEvent(new MouseEvent('mousedown', mouseEventInit));
+                            backdrop.dispatchEvent(new MouseEvent('mouseup', mouseEventInit));
+                            backdrop.click();
+                        }
+                    }, 50);
                 }
             }, true);
             parentWindow._sidebarAutoCloseAdded = true;
