@@ -59,10 +59,10 @@ st.markdown("### 1. 자산 취득 및 폐업일 입력")
 col1, col2 = st.columns(2)
 
 with col1:
-    acq_date = st.date_input("자산 취득일 (매입일)", datetime.date(2023, 1, 1))
+    acq_date = st.date_input("자산 취득일 (매입일)", datetime.date(2023, 1, 1), format="YYYY/MM/DD")
 
 with col2:
-    close_date = st.date_input("사업 폐업일", datetime.date.today())
+    close_date = st.date_input("사업 폐업일", datetime.date.today(), format="YYYY/MM/DD")
 
 st.markdown("### 2. 자산 정보 입력")
 col3, col4 = st.columns(2)
@@ -105,10 +105,10 @@ if st.button("세금 계산하기", type="primary", use_container_width=True):
             with res_col2:
                 st.metric("📉 총 감가상각률", f"{int(total_depreciation_rate * 100)}%")
             with res_col3:
-                st.metric("💰 잔존가치 (간주공급액)", f"{int(residual_value):,} 원")
+                st.metric("💰 잔존가치 (간주공급액)", f"{int(residual_value):,}원")
                 
             st.markdown("### 🚨 최종 예상 부가가치세")
-            st.error(f"폐업 시 납부해야 할 예상 부가세는 **{int(vat_to_pay):,} 원** 입니다.")
+            st.warning(f"예상 부가세는 약 **{int(vat_to_pay):,}**원입니다.")
             
             with st.expander("📝 상세 계산 내역 보기"):
                 st.markdown(f"""
