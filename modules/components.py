@@ -104,6 +104,22 @@ def set_custom_sidebar():
             color: #38bdf8 !important;
         }
 
+        /* 🌟 모바일 햄버거 버튼 강제 노출 및 고정 (최상위 Z-index) */
+        button[data-testid="collapsedControl"],
+        button[data-testid="stSidebarCollapse"],
+        button[data-testid="stSidebarCollapseButton"],
+        button[class*="stSidebarCollapse"] {
+            position: fixed !important;
+            top: 8px !important;
+            left: 8px !important;
+            z-index: 999999 !important;
+            background: transparent !important;
+            border: none !important;
+            visibility: visible !important;
+            display: block !important;
+        }
+
+
         /* 🌟 우측 상단 Deploy 버튼 및 기본 메뉴 완전히 숨기기 (핀포인트 저격) */
         #MainMenu,
         .stDeployButton,
