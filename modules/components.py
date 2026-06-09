@@ -144,7 +144,7 @@ def set_custom_sidebar():
     <div class="custom-logo">RebornBiz</div>
     """, unsafe_allow_html=True)
 
-    # 🌟 모바일 사이드바 자동 닫기 스크립트 (React 내부 onClick 직접 호출 방식)
+    # 🌟 모바일 사이드바 자동 닫기 스크립트 (화면 로딩 후 지연 클릭 방식)
     components.html("""
     <script>
         const parentWindow = window.parent;
@@ -152,62 +152,46 @@ def set_custom_sidebar():
 
         if (!parentWindow._sidebarAutoCloseAdded) {
             
-            // React 요소의 내부 onClick 속성을 찾아 직접 실행하는 궁극의 해킹 함수
-            function triggerReactClick(el) {
-                if (!el) return false;
-                for (const key in el) {
-                    if (key.startsWith('__reactEventHandlers$') || key.startsWith('__reactProps$')) {
-                        const props = el[key];
-                        if (props && typeof props.onClick === 'function') {
-                            props.onClick({ 
-                                target: el, 
-                                currentTarget: el,
-                                preventDefault: () => {}, 
-                                stopPropagation: () => {},
-                                nativeEvent: new MouseEvent('click')
-                            });
-                            return true;
-                        }
-                    }
-                }
-                el.click(); // Fallback
-                return true;
-            }
-
-            function forceCloseSidebar() {
-                const sidebar = parentDoc.querySelector('[data-testid="stSidebar"]');
-                // 사이드바가 이미 닫혀있으면 무시
-                if (!sidebar || sidebar.getAttribute('aria-expanded') !== 'true') return;
-
-                // 1. 오버레이(배경) 영역 요소 추출 및 React onClick 강제 실행
-                const x = parentWindow.innerWidth - 10;
-                const y = parentWindow.innerHeight / 2;
-                const backdrop = parentDoc.elementFromPoint(x, y);
-                if (backdrop && backdrop.tagName === 'DIV') {
-                    triggerReactClick(backdrop);
-                }
-
-                // 2. 모바일 헤더의 토글/닫기 버튼들 React onClick 강제 실행
-                const closeBtns = parentDoc.querySelectorAll('button[kind="headerNoPadding"], button[data-testid="baseButton-headerNoPadding"], .stAppHeader button');
-                closeBtns.forEach(btn => triggerReactClick(btn));
-            }
-
-            // [트리거 1] 메뉴 링크를 클릭하는 즉시 실행
+            // 1. 메뉴 링크 클릭 시 '닫기 예약 플래그' 활성화
             parentDoc.addEventListener('click', function(e) {
                 const navLink = e.target.closest('[data-testid="stPageLink-NavLink"]');
                 if (navLink && parentWindow.innerWidth <= 992) {
-                    forceCloseSidebar();
+                    parentWindow._closeSidebarPending = true;
+                    parentWindow._closeAttempts = 0; // 최대 시도 횟수 초기화
                 }
             }, true);
             
-            // [트리거 2] SPA 이동으로 URL이 변경되었음을 감지했을 때 실행 (이중 안전망)
-            let lastUrl = parentWindow.location.href;
+            // 2. 0.2초마다 화면 상태를 모니터링하여, 화면 로드가 완료된 시점에 부모창(오버레이) 클릭
             setInterval(() => {
-                if (parentWindow.innerWidth <= 992) {
-                    const currentUrl = parentWindow.location.href;
-                    if (currentUrl !== lastUrl) {
-                        lastUrl = currentUrl;
-                        forceCloseSidebar();
+                if (parentWindow._closeSidebarPending && parentWindow.innerWidth <= 992) {
+                    const sidebar = parentDoc.querySelector('[data-testid="stSidebar"]');
+                    
+                    // 사이드바가 이미 성공적으로 닫혔거나, 시도 횟수가 15회(3초)를 초과하면 안전하게 중단
+                    if (!sidebar || sidebar.getAttribute('aria-expanded') !== 'true' || parentWindow._closeAttempts > 15) {
+                        parentWindow._closeSidebarPending = false;
+                        return;
+                    }
+                    
+                    parentWindow._closeAttempts++;
+                    
+                    // 유저가 "부모창 화면을 클릭해야 메뉴가 닫힌다"고 한 물리적 동작을 좌표 기반으로 정확히 시뮬레이션
+                    const x = parentWindow.innerWidth - 10;
+                    const y = parentWindow.innerHeight / 2;
+                    const backdrop = parentDoc.elementFromPoint(x, y);
+                    
+                    // 안전한 오버레이(배경) 영역일 경우에만 클릭 이벤트 발송
+                    if (backdrop && backdrop.tagName !== 'A' && backdrop.tagName !== 'BUTTON') {
+                        // 일반 click()을 무시하는 React를 뚫기 위해 풀 라이프사이클 이벤트 발송
+                        const eventConfig = { bubbles: true, cancelable: true, clientX: x, clientY: y };
+                        backdrop.dispatchEvent(new MouseEvent('pointerdown', eventConfig));
+                        backdrop.dispatchEvent(new MouseEvent('mousedown', eventConfig));
+                        backdrop.dispatchEvent(new MouseEvent('pointerup', eventConfig));
+                        backdrop.dispatchEvent(new MouseEvent('mouseup', eventConfig));
+                        backdrop.dispatchEvent(new MouseEvent('click', eventConfig));
+                        
+                        // 추가 보조 수단: X 닫기 버튼 자체 클릭 시도
+                        const closeBtns = parentDoc.querySelectorAll('button[kind="headerNoPadding"]');
+                        closeBtns.forEach(btn => btn.click());
                     }
                 }
             }, 200);
