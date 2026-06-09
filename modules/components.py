@@ -144,59 +144,61 @@ def set_custom_sidebar():
     <div class="custom-logo">RebornBiz</div>
     """, unsafe_allow_html=True)
 
-    # 🌟 모바일 사이드바 닫기 - 최종 해결책: 이벤트 인터셉트 + 순정 닫기 버튼 클릭 + 지연 라우팅
+    # 🌟 모바일 사이드바 닫기 - 궁극의 해결책: 부모 창 직접 주입 (1회성 버그 영구 해결)
     components.html("""
     <script>
         const parentWindow = window.parent;
         const parentDoc = parentWindow.document;
 
-        if (!parentWindow._sidebarAutoCloseAdded) {
+        // SPA 라우팅 시 iframe이 파괴되면서 이벤트 리스너가 죽는 현상을 막기 위해,
+        // 부모 창(Streamlit 본체)의 head에 스크립트를 직접 주입하여 영구적으로 살아있게 만듭니다.
+        if (!parentWindow._sidebarAutoCloseScriptInjected) {
             
-            // 모든 임의 조작(CSS 강제 숨김)을 제거하여 React 상태 꼬임(햄버거 버튼 소멸) 원천 차단
-            parentDoc.addEventListener('click', function(e) {
-                const navLink = e.target.closest('[data-testid="stPageLink-NavLink"]');
-                
-                if (navLink && parentWindow.innerWidth <= 992) {
+            const script = parentDoc.createElement('script');
+            script.type = 'text/javascript';
+            script.innerHTML = `
+                document.addEventListener('click', function(e) {
+                    const navLink = e.target.closest('[data-testid="stPageLink-NavLink"]');
                     
-                    // 스크립트가 수동으로 발생시킨 클릭이면 정상 라우팅(페이지 이동) 허용
-                    if (navLink.dataset.autoNavigating === "true") {
-                        return;
-                    }
-                    
-                    // 1. 유저의 메뉴 클릭 이벤트 가로채기 -> 라우팅 즉시 차단 (페이지 이동 보류)
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    // 2. 모바일 사이드바 상단에 있는 순정 'X 닫기 버튼'을 찾아서 물리적으로 클릭
-                    const closeBtn = parentDoc.querySelector('[data-testid="stSidebarHeader"] button, button[kind="headerNoPadding"], button[data-testid="baseButton-headerNoPadding"]');
-                    if (closeBtn) {
-                        closeBtn.click();
-                    } else {
-                        // 보험용: 버튼이 없으면 우측 오버레이 영역 빈 공간 클릭
-                        const x = parentWindow.innerWidth - 10;
-                        const y = parentWindow.innerHeight / 2;
-                        const backdrop = parentDoc.elementFromPoint(x, y);
-                        if (backdrop && backdrop.tagName === 'DIV') {
-                            backdrop.click();
-                        }
-                    }
-
-                    // 3. 아주 중요한 단계:
-                    // React가 사이드바 닫기 애니메이션을 완료하고 '닫힘 상태'를 브라우저에 확실히 저장할 시간(0.3초)을 줍니다.
-                    // 닫기가 완전히 끝난 후, 보류했던 페이지 이동을 스크립트가 대신 강제 실행합니다!
-                    navLink.dataset.autoNavigating = "true";
-                    setTimeout(() => {
-                        navLink.click(); // 이제서야 진짜 페이지 이동(SPA) 발생! 새 페이지는 무조건 닫힌 상태로 렌더링됨
+                    if (navLink && window.innerWidth <= 992) {
                         
-                        // 이동 직후 플래그 안전 초기화
-                        setTimeout(() => {
-                            navLink.dataset.autoNavigating = "";
-                        }, 500);
-                    }, 300);
-                }
-            }, true); // 캡처링 우선순위 최고
+                        // 스크립트가 수동으로 발생시킨 클릭이면 정상 라우팅 허용
+                        if (navLink.dataset.autoNavigating === "true") {
+                            return;
+                        }
+                        
+                        // 1. 라우팅 즉시 차단
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        // 2. 모바일 사이드바 닫기 버튼 물리적 클릭
+                        const closeBtn = document.querySelector('[data-testid="stSidebarHeader"] button, button[kind="headerNoPadding"], button[data-testid="baseButton-headerNoPadding"]');
+                        if (closeBtn) {
+                            closeBtn.click();
+                        } else {
+                            const x = window.innerWidth - 10;
+                            const y = window.innerHeight / 2;
+                            const backdrop = document.elementFromPoint(x, y);
+                            if (backdrop && backdrop.tagName === 'DIV') {
+                                backdrop.click();
+                            }
+                        }
 
-            parentWindow._sidebarAutoCloseAdded = true;
+                        // 3. 애니메이션 및 상태 저장 대기 후 지연 이동
+                        navLink.dataset.autoNavigating = "true";
+                        setTimeout(() => {
+                            navLink.click();
+                            
+                            setTimeout(() => {
+                                navLink.dataset.autoNavigating = "";
+                            }, 500);
+                        }, 300);
+                    }
+                }, true); // 캡처링 단계에서 최우선 실행
+            `;
+            
+            parentDoc.head.appendChild(script);
+            parentWindow._sidebarAutoCloseScriptInjected = true;
         }
     </script>
     """, width=0, height=0)
