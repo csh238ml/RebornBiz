@@ -75,13 +75,16 @@ def set_custom_sidebar():
             font-weight: 600 !important;
         }
         /* 🌟 모바일 사이드바 열기(햄버거) 버튼 커스텀 (확장된 셀렉터) */
-        button[data-testid="collapsedControl"] svg,
-        button[data-testid="stSidebarCollapse"] svg,
-        button[data-testid="stSidebarCollapseButton"] svg,
-        button[class*="stSidebarCollapse"] svg,
-        button[data-testid="baseButton-headerNoPadding"] svg,
-        button[kind="headerNoPadding"] svg {
+        /* 🌟 기존 아이콘(SVG, 텍스트, div 등) 완벽 제거 (모든 내부 자식 요소 숨김) */
+        button[data-testid="collapsedControl"] *,
+        button[data-testid="stSidebarCollapse"] *,
+        button[data-testid="stSidebarCollapseButton"] *,
+        button[class*="stSidebarCollapse"] *,
+        button[data-testid="baseButton-headerNoPadding"] *,
+        button[kind="headerNoPadding"] * {
             display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
         }
 
         button[data-testid="collapsedControl"]::before,
@@ -122,6 +125,7 @@ def set_custom_sidebar():
             left: 8px !important;
             z-index: 999999 !important;
             background: transparent !important;
+            color: transparent !important; /* 내부 텍스트 아이콘 강제 투명화 */
             border: none !important;
             visibility: visible !important;
             display: block !important;
