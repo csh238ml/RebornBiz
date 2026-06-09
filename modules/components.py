@@ -162,12 +162,21 @@ def set_custom_sidebar():
                     
                     if (navLink && window.innerWidth <= 992) {
                         
+                        // 사이드바가 현재 열려있는지 확인 (aria-expanded 속성)
+                        const sidebar = document.querySelector('[data-testid="stSidebar"]');
+                        const isSidebarOpen = sidebar && sidebar.getAttribute('aria-expanded') === 'true';
+                        
+                        // 사이드바가 이미 닫혀있다면(예: 홈 화면의 카드 버튼 클릭 시), 개입하지 않고 즉시 정상 이동 허용
+                        if (!isSidebarOpen) {
+                            return;
+                        }
+                        
                         // 스크립트가 수동으로 발생시킨 클릭이면 정상 라우팅 허용
                         if (navLink.dataset.autoNavigating === "true") {
                             return;
                         }
                         
-                        // 1. 라우팅 즉시 차단
+                        // 1. 사이드바가 열려있을 때만 라우팅 즉시 차단
                         e.preventDefault();
                         e.stopPropagation();
                         
