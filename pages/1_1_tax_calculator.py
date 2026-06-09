@@ -81,7 +81,7 @@ with col3:
     asset_type = st.selectbox("자산 종류", ["기타 감가상각자산 (기계, 비품, 인테리어 등 상각률 25%)", "건물 및 구축물 (상각률 5%)"])
 
 with col4:
-    asset_price = st.number_input("취득가액 (공급가액 기준, 원)", min_value=0, value=10000000, step=1000000)
+    asset_price = st.number_input("취득가액 (공급가액 기준, 원)", min_value=0.0, value=10000000.0, step=1000000.0, format="%0.f")
 
 if st.button("세금 계산하기", type="primary", use_container_width=True):
     if acq_date > close_date:
