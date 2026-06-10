@@ -16,6 +16,89 @@
   </div>
   <style>
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* 펄스 애니메이션 마커 스타일 */
+    .pulse-marker {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 12px;
+        height: 12px;
+    }
+
+    .pulse-marker .dot {
+        width: 12px;
+        height: 12px;
+        background-color: #FF8C42;
+        border-radius: 50%;
+        border: 2px solid #ffffff;
+        box-shadow: 0 0 0 2px #1E3A8A;
+        z-index: 2;
+    }
+
+    .pulse-marker .ring {
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        background-color: rgba(30, 58, 138, 0.3);
+        border-radius: 50%;
+        z-index: 1;
+        animation: pulse 1.5s ease-out infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); opacity: 1; }
+        100% { transform: scale(3.5); opacity: 0; }
+    }
+
+    /* 커스텀 말풍선 오버레이 스타일 */
+    .custom-label {
+        position: absolute;
+        bottom: 24px; /* 마커 위에 배치 */
+        background-color: #1E3A8A;
+        color: #ffffff;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-family: 'Pretendard', sans-serif;
+        font-size: 12px;
+        font-weight: bold;
+        white-space: nowrap;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        transition: transform 0.2s, background-color 0.2s;
+        cursor: pointer;
+    }
+
+    /* 말풍선 꼬리 */
+    .custom-label::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #1E3A8A transparent transparent transparent;
+        transition: border-color 0.2s;
+    }
+
+    /* 마우스 오버 효과 */
+    .custom-label:hover {
+        transform: scale(1.05) translateY(-2px);
+        background-color: #FF8C42;
+    }
+    .custom-label:hover::after {
+        border-color: #FF8C42 transparent transparent transparent;
+    }
+    
+    /* 마커와 라벨을 담을 래퍼 */
+    .marker-wrapper {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
   </style>
 
   <div id="map" style="opacity: 0; transition: opacity 0.5s ease-in-out;"></div>
@@ -131,17 +214,24 @@
             }
         }
 
-        // Add Center Marker
-        centerMarker = new kakao.maps.Marker({
-            position: centerPosition
+        // 커스텀 펄싱 마커 및 라벨 HTML
+        var overlayContent = document.createElement('div');
+        overlayContent.className = 'marker-wrapper';
+        overlayContent.innerHTML = `
+            <div class="custom-label">분석 중심점</div>
+            <div class="pulse-marker">
+                <div class="ring"></div>
+                <div class="dot"></div>
+            </div>
+        `;
+
+        // Add Center CustomOverlay
+        centerMarker = new kakao.maps.CustomOverlay({
+            position: centerPosition,
+            content: overlayContent,
+            map: map,
+            yAnchor: 0.5 // 중앙 정렬 (marker-wrapper 내부에서 bottom으로 띄움)
         });
-        centerMarker.setMap(map);
-        
-        // 반응형 InfoWindow: 긴 텍스트도 모바일에서 넘치지 않도록 max-width 설정
-        var infowindow = new kakao.maps.InfoWindow({
-            content : '<div style="padding:5px;font-size:14px;color:red;font-weight:bold;max-width:180px;text-align:center;word-break:keep-all;">내 위치 (중심점)</div>'
-        });
-        infowindow.open(map, centerMarker);
 
         // Add Store Markers
         var markers = stores.map(function(store) {
