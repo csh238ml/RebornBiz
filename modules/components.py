@@ -326,12 +326,12 @@ display: none !important;
 }
 
 /* 재사용 가능한 아싸지원사업 스타일 통합 카드 클래스 */
-.reborn-card {
-background-color: #ffffff;
-border: 1px solid #e2e8f0;
-border-radius: 16px;
-box-shadow: 0 4px 20px rgba(30, 58, 138, 0.02);
-padding: 32px 24px;
-margin-bottom: 24px;
+.reborn-card, .reborn-card-marker + div {
+background-color: #ffffff !important;
+border: 1px solid #e2e8f0 !important;
+border-radius: 16px !important;
+box-shadow: 0 4px 20px rgba(30, 58, 138, 0.02) !important;
+padding: 32px 24px !important;
+margin-bottom: 24px !important;
 }
 </style>""", unsafe_allow_html=True)

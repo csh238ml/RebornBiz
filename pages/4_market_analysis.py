@@ -152,58 +152,15 @@ else:
         
     with col2:
         with st.container(border=True):
-            st.markdown("#### 📊 상권 상세 지표 및 리스트")
+            st.markdown("#### 🔍 주변 경쟁 매장 검색 및 리스트")
             
-            # 탭을 활용하여 차트와 리스트 정보를 분리 및 정돈
-            tab1, tab2 = st.tabs(["업종 분포 차트", " 주변 경쟁 매장 검색"])
-        
-        with tab1:
-            if "indsLclsNm" in df_stores.columns:
-                st.markdown("##### 🔹 업종 대분류 비중")
-                # 대분류별 파이 차트
-                lcls_counts = df_stores['indsLclsNm'].value_counts().reset_index()
-                lcls_counts.columns = ['업종 대분류', '점포 수']
-                
-                fig_pie = px.pie(lcls_counts, names='업종 대분류', values='점포 수', hole=0.4, 
-                               color_discrete_sequence=px.colors.qualitative.Pastel)
-                # 범례를 하단으로 내려 모바일 가독성 확보
-                fig_pie.update_layout(
-                    margin=dict(t=10, b=10, l=10, r=10),
-                    legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5)
-                )
-                st.plotly_chart(fig_pie, use_container_width=True)
-                
-                st.markdown("---")
-                st.markdown("##### 🔹 주요 업종 중분류 (Top 10)")
-                # 중분류별 바 차트 (Top 10)
-                if "indsMclsNm" in df_stores.columns:
-                    mcls_counts = df_stores['indsMclsNm'].value_counts().head(10).reset_index()
-                    mcls_counts.columns = ['업종 중분류', '점포 수']
-                    
-                    # 텍스트 라벨 길이 자동 조절 (긴 이름 자르기)
-                    mcls_counts['업종 라벨'] = mcls_counts['업종 중분류'].apply(lambda x: x[:10] + '...' if len(x) > 10 else x)
-                    
-                    fig_bar = px.bar(
-                        mcls_counts, 
-                        x='점포 수', 
-                        y='업종 라벨', 
-                        orientation='h',
-                        color='업종 라벨',
-                        color_discrete_sequence=px.colors.qualitative.Pastel,
-                        hover_data={'업종 라벨': False, '업종 중분류': True} # 호버 시 전체 이름 표시
-                    )
-                    # 유연한 폰트 크기 및 여백 자동 조절(automargin)
-                    fig_bar.update_layout(
-                        yaxis=dict(categoryorder='total ascending', automargin=True, tickfont=dict(size=11)),
-                        xaxis=dict(title="점포 수"),
-                        showlegend=False, 
-                        margin=dict(t=10, b=10, l=10, r=10)
-                    )
-                    st.plotly_chart(fig_bar, use_container_width=True)
-                    
-        with tab2:
             if "indsMclsNm" in df_stores.columns:
-                st.markdown("##### 반경 내 특정 업종의 매장들을 확인합니다.")
+                # Top 3 업종 추출 및 뱃지 표시
+                top3 = df_stores['indsMclsNm'].value_counts().head(3).index.tolist()
+                if top3:
+                    badges_html = " ".join([f"<span style='background-color: #e0f2fe; color: #0284c7; padding: 4px 10px; border-radius: 12px; font-size: 0.85rem; font-weight: 600; margin-right: 6px;'>#{inds}</span>" for inds in top3])
+                    st.markdown(f"<div style='margin-bottom: 16px;'><b>🏆 반경 내 Top 3 업종:</b><br><div style='margin-top: 8px;'>{badges_html}</div></div>", unsafe_allow_html=True)
+                
                 # 업종 리스트 추출
                 industry_options = ["전체"] + sorted(df_stores['indsMclsNm'].dropna().unique().tolist())
                 selected_industry = st.selectbox("분석할 업종을 고르세요", options=industry_options, key="selected_industry_widget")
