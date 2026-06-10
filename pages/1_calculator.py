@@ -124,30 +124,30 @@ st.markdown("---")
 
 # 5. 안내 섹션
 st.markdown("""
-    <div style="background-color: #eff6ff; border-radius: 12px; padding: 24px; margin-top: 32px; border: 1px solid #bfdbfe; font-family: 'Pretendard', sans-serif;">
-        <h4 style="color: #1E3A8A; margin-top: 0; margin-bottom: 12px; font-weight: bold; font-size: 18px;">💡 정부 지원금 신청 안내 (희망리턴패키지)</h4>
-        
-        <div style="font-size: 14px; color: #334155; line-height: 1.6;">
-            <strong style="color: #1E3A8A;">
-                <a href="https://hope.sbiz.or.kr" target="_blank" style="text-decoration: none; color: #1E3A8A;">소상공인시장진흥공단 '희망리턴패키지' 원스톱 폐업 지원</a>
-            </strong>
-            <ul style="margin-top: 8px; margin-bottom: 20px; padding-left: 20px;">
-                <li><strong>지원 대상:</strong> 폐업을 앞두고 있거나 이미 폐업한 소상공인</li>
-                <li><strong>지원 내용:</strong> 점포 철거 및 원상복구 비용 (최대 250만 원 한도) 및 사업정리 컨설팅</li>
-                <li><strong>신청 자격:</strong> 사업자등록증상 영업 기간이 60일 이상인 소상공인 등 <br>(세부 조건은 <a href="https://hope.sbiz.or.kr" target="_blank" style="color: #007bff; text-decoration: underline; font-weight: bold;">소진공 홈페이지 참조</a>)</li>
-                <li style="color: #ef4444; font-weight: 700; margin-top: 4px;">⚠️ 주의 사항: 철거 공사 시작 전에 반드시 사전 신청 및 승인이 필요합니다. (공사 후 신청 시 지원금 수령 불가)</li>
-            </ul>
-        </div>
-        
-        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-            <a href="https://hope.sbiz.or.kr" target="_blank" style="display: inline-block; background-color: #1E3A8A; color: #ffffff; text-decoration: none; padding: 12px 20px; border-radius: 8px; font-size: 14px; font-weight: bold; text-align: center; transition: all 0.2s;">
-                희망리턴패키지 상세 보기 ↗
-            </a>
-            <a href="https://www.sbiz24.kr" target="_blank" style="display: inline-block; background-color: #ffffff; color: #1E3A8A; text-decoration: none; padding: 12px 20px; border-radius: 8px; font-size: 14px; font-weight: bold; text-align: center; border: 1px solid #1E3A8A; transition: all 0.2s;">
-                점포철거비 공식 신청 (소상공인24) ↗
-            </a>
-        </div>
+<div style="background-color: #eff6ff; border-radius: 12px; padding: 24px; margin-top: 32px; border: 1px solid #bfdbfe; font-family: 'Pretendard', sans-serif;">
+    <h4 style="color: #1E3A8A; margin-top: 0; margin-bottom: 12px; font-weight: bold; font-size: 18px;">💡 정부 지원금 신청 안내 (희망리턴패키지)</h4>
+    
+    <div style="font-size: 14px; color: #334155; line-height: 1.6;">
+        <strong style="color: #1E3A8A;">
+            <a href="https://hope.sbiz.or.kr" target="_blank" style="text-decoration: none; color: #1E3A8A;">소상공인시장진흥공단 '희망리턴패키지' 원스톱 폐업 지원</a>
+        </strong>
+        <ul style="margin-top: 8px; margin-bottom: 20px; padding-left: 20px;">
+            <li><strong>지원 대상:</strong> 폐업을 앞두고 있거나 이미 폐업한 소상공인</li>
+            <li><strong>지원 내용:</strong> 점포 철거 및 원상복구 비용 (최대 250만 원 한도) 및 사업정리 컨설팅</li>
+            <li><strong>신청 자격:</strong> 사업자등록증상 영업 기간이 60일 이상인 소상공인 등 <br>(세부 조건은 <a href="https://hope.sbiz.or.kr" target="_blank" style="color: #007bff; text-decoration: underline; font-weight: bold;">소진공 홈페이지 참조</a>)</li>
+            <li style="color: #ef4444; font-weight: 700; margin-top: 4px;">⚠️ 주의 사항: 철거 공사 시작 전에 반드시 사전 신청 및 승인이 필요합니다. (공사 후 신청 시 지원금 수령 불가)</li>
+        </ul>
     </div>
+    
+    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <a href="https://hope.sbiz.or.kr" target="_blank" style="display: inline-block; background-color: #1E3A8A; color: #ffffff; text-decoration: none; padding: 12px 20px; border-radius: 8px; font-size: 14px; font-weight: bold; text-align: center; transition: all 0.2s;">
+            희망리턴패키지 상세 보기 ↗
+        </a>
+        <a href="https://www.sbiz24.kr" target="_blank" style="display: inline-block; background-color: #ffffff; color: #1E3A8A; text-decoration: none; padding: 12px 20px; border-radius: 8px; font-size: 14px; font-weight: bold; text-align: center; border: 1px solid #1E3A8A; transition: all 0.2s;">
+            점포철거비 공식 신청 (소상공인24) ↗
+        </a>
+    </div>
+</div>
 """, unsafe_allow_html=True)
 
 # 6. 페이지 최하단 광고
