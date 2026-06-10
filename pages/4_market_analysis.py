@@ -13,11 +13,12 @@ import modules.market_api
 from modules.market_api import fetch_stores_in_radius
 from modules.kakao_component import kakao_map
 
-from modules.components import set_custom_sidebar, inject_seo_tags
+from modules.components import set_custom_sidebar, inject_seo_tags, inject_global_css
 from modules.database import log_page_access
 
 set_custom_sidebar()
 inject_seo_tags()
+inject_global_css()
 
 # 페이지 접속 로그 기록
 log_page_access("내 주변 상권 분석")
@@ -68,86 +69,7 @@ def get_cached_stores(c_lat, c_lon, c_radius, c_addr):
 with st.spinner('주변 상권 데이터를 불러오는 중입니다...'):
     stores = get_cached_stores(lat, lon, radius, address_str)
 
-# 커스텀 CSS (8px 기반 시스템 및 카드 UI 디자인 시스템)
-st.markdown("""
-    <style>
-    /* 전체 페이지 배경색 */
-    .stApp {
-        background-color: #F8F9FA;
-    }
-    
-    /* 8px 기반 스페이싱 시스템 */
-    :root {
-        --spacing-1: 8px;
-        --spacing-2: 16px;
-        --spacing-3: 24px;
-    }
-    
-    /* Metric(배지) 카드 스타일 */
-    [data-testid="stMetric"] {
-        background-color: #FFFFFF;
-        padding: var(--spacing-2);
-        border-radius: 12px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        border-left: 5px solid #4a90e2;
-        border: 1px solid #E0E0E0;
-        margin-bottom: var(--spacing-1);
-    }
-    
-    /* st.container(border=True)에 대한 글로벌 카드 스타일 적용 */
-    div[data-testid="stVerticalBlockBorderWrapper"] {
-        background-color: #FFFFFF !important;
-        border: 1px solid #E0E0E0 !important;
-        border-radius: 12px !important;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
-        padding: 20px !important;
-    }
-    
-    /* 주요 컨테이너 상하 여백 */
-    .css-1544g2n.e1fqcg0o4 {
-        padding-top: var(--spacing-3);
-    }
-    
-    /* 탭 전체 배경(스위치 트랙 형태) */
-    .stTabs [data-baseweb="tab-list"] {
-        background-color: #f1f3f5;
-        border-radius: 12px;
-        padding: 8px;
-        display: flex;
-        justify-content: space-between;
-        gap: 0;
-    }
 
-    /* 개별 탭 버튼 (균등 분할) */
-    .stTabs [data-baseweb="tab"] {
-        flex: 1; /* 가로 균등 배치 */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 50px;
-        border-radius: 8px;
-        margin: 0 4px;
-        font-size: 1.15rem !important;
-        font-weight: 700 !important;
-        color: #868e96;
-        background-color: transparent;
-        border: none !important;
-    }
-
-    /* 선택된(활성화) 탭 스타일 (팝업되는 입체적인 스위치) */
-    .stTabs [aria-selected="true"] {
-        background-color: #ffffff !important;
-        color: #212529 !important;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-
-    /* 하단 기본 밑줄 및 보더 요소 완전히 숨김 */
-    .stTabs [data-baseweb="tab-highlight"],
-    .stTabs [data-baseweb="tab-border"] {
-        display: none !important;
-    }
-    </style>
-""", unsafe_allow_html=True)
 
 if not stores:
     st.warning("해당 반경 내에 조회된 상권 데이터가 없습니다.")

@@ -8,11 +8,12 @@ st.set_page_config(page_title="정부 지원 정책 가이드 | RebornBiz", page
 
 # 2. 커스텀 사이드바 로드
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from modules.components import set_custom_sidebar, inject_seo_tags
+from modules.components import set_custom_sidebar, inject_seo_tags, inject_global_css
 from modules.database import log_page_access
 
 set_custom_sidebar()
 inject_seo_tags()
+inject_global_css()
 
 # 페이지 접속 로그 기록
 log_page_access("정부 지원 정책")
@@ -48,66 +49,6 @@ st.markdown("""
 """)
 
 st.divider()
-
-
-# Custom CSS 주입: 전역 배경 설정 및 커스텀 카드 클래스
-st.markdown("""
-<style>
-/* 전체 앱 배경 설정 */
-.stApp {
-    background-color: #F8FAFC !important;
-}
-
-/* 탭 전체 배경(스위치 트랙 형태) */
-.stTabs [data-baseweb="tab-list"] {
-    background-color: #f1f3f5;
-    border-radius: 12px;
-    padding: 8px;
-    display: flex;
-    justify-content: space-between;
-    gap: 0;
-}
-
-/* 개별 탭 버튼 (균등 분할) */
-.stTabs [data-baseweb="tab"] {
-    flex: 1; /* 가로 균등 배치 */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 50px;
-    border-radius: 8px;
-    margin: 0 4px;
-    font-size: 1.15rem !important;
-    font-weight: 700 !important;
-    color: #868e96;
-    background-color: transparent;
-    border: none !important;
-}
-
-/* 선택된(활성화) 탭 스타일 (팝업되는 입체적인 스위치) */
-.stTabs [aria-selected="true"] {
-    background-color: #ffffff !important;
-    color: #1E3A8A !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-
-/* 하단 기본 밑줄 및 보더 요소 완전히 숨김 */
-.stTabs [data-baseweb="tab-highlight"],
-.stTabs [data-baseweb="tab-border"] {
-    display: none !important;
-}
-
-/* 커스텀 카드 CSS (policy-card-marker 다음 요소 적용) */
-.policy-card-marker + div {
-    background-color: #ffffff !important;
-    border-radius: 16px !important;
-    border: 1px solid #e2e8f0 !important;
-    box-shadow: 0 4px 20px rgba(30, 58, 138, 0.02) !important;
-    padding: 24px !important;
-    margin-bottom: 24px !important;
-}
-</style>
-""", unsafe_allow_html=True)
 
 
 from modules.database import SessionLocal, GovPolicyGuide

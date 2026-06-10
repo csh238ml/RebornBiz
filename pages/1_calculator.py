@@ -9,11 +9,12 @@ import os
 # 모듈 폴더 경로 추가 (calculators 함수를 불러오기 위함)
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from modules.calculators import calculate_closure_cost
-from modules.components import set_custom_sidebar, inject_seo_tags
+from modules.components import set_custom_sidebar, inject_seo_tags, inject_global_css
 from modules.database import log_page_access
 
 set_custom_sidebar()
 inject_seo_tags()
+inject_global_css()
 
 # 페이지 접속 로그 기록
 log_page_access("폐업 비용 계산기")

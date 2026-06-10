@@ -144,6 +144,73 @@ def set_custom_sidebar():
     <div class="custom-logo">RebornBiz</div>
     """, unsafe_allow_html=True)
 
+def inject_global_css():
+    """모든 페이지에 공통 적용되는 핵심 디자인 테마(배경, 탭, 카드, 메뉴 숨김) 주입"""
+    st.markdown("""<style>
+/* 전체 앱 배경 설정 */
+.stApp {
+background-color: #F8FAFC !important;
+}
+
+/* 탭 전체 배경(스위치 트랙 형태) */
+.stTabs [data-baseweb="tab-list"] {
+background-color: #f1f3f5;
+border-radius: 12px;
+padding: 8px;
+display: flex;
+justify-content: space-between;
+gap: 0;
+}
+
+/* 개별 탭 버튼 (균등 분할) */
+.stTabs [data-baseweb="tab"] {
+flex: 1;
+display: flex;
+justify-content: center;
+align-items: center;
+height: 50px;
+border-radius: 8px;
+margin: 0 4px;
+font-size: 1.15rem !important;
+font-weight: 700 !important;
+color: #868e96;
+background-color: transparent;
+border: none !important;
+}
+
+/* 선택된(활성화) 탭 스타일 (팝업되는 입체적인 스위치) */
+.stTabs [aria-selected="true"] {
+background-color: #ffffff !important;
+color: #1E3A8A !important;
+box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* 하단 기본 밑줄 및 보더 요소 완전히 숨김 */
+.stTabs [data-baseweb="tab-highlight"],
+.stTabs [data-baseweb="tab-border"] {
+display: none !important;
+}
+
+/* 우측 상단 Deploy 버튼 및 기본 메뉴 완전히 숨기기 */
+#MainMenu,
+.stDeployButton,
+.stAppDeployButton,
+header[data-testid="stHeader"] div[data-testid="stActionButton"] {
+visibility: hidden !important;
+display: none !important;
+}
+
+/* 재사용 가능한 아싸지원사업 스타일 통합 카드 클래스 */
+.reborn-card {
+background-color: #ffffff;
+border: 1px solid #e2e8f0;
+border-radius: 16px;
+box-shadow: 0 4px 20px rgba(30, 58, 138, 0.02);
+padding: 32px 24px;
+margin-bottom: 24px;
+}
+</style>""", unsafe_allow_html=True)
+
     # 🌟 모바일 사이드바 닫기 - 궁극의 해결책: 부모 창 직접 주입 (1회성 버그 영구 해결)
     components.html("""
     <script>

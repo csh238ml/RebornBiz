@@ -16,49 +16,13 @@ except locale.Error:
 st.set_page_config(page_title="폐업 세금 자동 계산기 | RebornBiz", page_icon="🧾", layout="wide", initial_sidebar_state="auto")
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from modules.components import set_custom_sidebar, inject_seo_tags
+from modules.components import set_custom_sidebar, inject_seo_tags, inject_global_css
 from modules.database import log_page_access
 
 set_custom_sidebar()
 inject_seo_tags()
+inject_global_css()
 log_page_access("폐업 세금 자동 계산기")
-
-# 커스텀 CSS (8px 기반 시스템 및 스타일링)
-st.markdown("""
-    <style>
-    /* 전체 페이지 배경색 */
-    .stApp {
-        background-color: #F8F9FA;
-    }
-    
-    /* 8px 기반 스페이싱 시스템 */
-    :root {
-        --spacing-1: 8px;
-        --spacing-2: 16px;
-        --spacing-3: 24px;
-    }
-    
-    /* Metric(배지) 카드 스타일 */
-    [data-testid="stMetric"] {
-        background-color: #FFFFFF;
-        padding: var(--spacing-2);
-        border-radius: 12px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        border-left: 5px solid #4a90e2;
-        border: 1px solid #E0E0E0;
-        margin-bottom: var(--spacing-1);
-    }
-    
-    /* st.container(border=True)에 대한 글로벌 카드 스타일 적용 */
-    div[data-testid="stVerticalBlockBorderWrapper"] {
-        background-color: #FFFFFF !important;
-        border: 1px solid #E0E0E0 !important;
-        border-radius: 12px !important;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
-        padding: 20px !important;
-    }
-    </style>
-""", unsafe_allow_html=True)
 
 st.title("🧾 폐업 세금(부가세) 자동 계산기")
 st.write("폐업 시 매입세액 공제를 받은 남아있는 자산(건물, 인테리어, 비품 등)에 대해 납부해야 할 **'폐업 시 잔존재화 간주공급'** 부가가치세를 손쉽게 계산해 보세요.")
