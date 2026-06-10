@@ -123,7 +123,7 @@ st.markdown("""
 st.markdown("---")
 
 # 5. 안내 섹션
-st.markdown("""
+st.html("""
 <div style="background-color: #eff6ff; border-radius: 12px; padding: 24px; margin-top: 32px; border: 1px solid #bfdbfe; font-family: 'Pretendard', sans-serif;">
     <h4 style="color: #1E3A8A; margin-top: 0; margin-bottom: 12px; font-weight: bold; font-size: 18px;">💡 정부 지원금 신청 안내 (희망리턴패키지)</h4>
     
@@ -148,7 +148,7 @@ st.markdown("""
         </a>
     </div>
 </div>
-""", unsafe_allow_html=True)
+""")
 
 # 6. 페이지 최하단 광고
 ad_space()
