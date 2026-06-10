@@ -50,9 +50,14 @@ st.markdown("""
 st.divider()
 
 
-# Custom CSS 주입: 탭 디자인 고도화 및 Expander 카드화
+# Custom CSS 주입: 전역 배경 설정 및 커스텀 카드 클래스
 st.markdown("""
 <style>
+/* 전체 앱 배경 설정 */
+.stApp {
+    background-color: #F8FAFC !important;
+}
+
 /* 탭 전체 배경(스위치 트랙 형태) */
 .stTabs [data-baseweb="tab-list"] {
     background-color: #f1f3f5;
@@ -82,7 +87,7 @@ st.markdown("""
 /* 선택된(활성화) 탭 스타일 (팝업되는 입체적인 스위치) */
 .stTabs [aria-selected="true"] {
     background-color: #ffffff !important;
-    color: #212529 !important;
+    color: #1E3A8A !important;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
@@ -92,22 +97,14 @@ st.markdown("""
     display: none !important;
 }
 
-/* Expander를 예쁜 공고 카드 형태로 디자인 */
-[data-testid="stExpander"] {
-    border-left: 6px solid #2563eb;
-    border-radius: 12px;
-    background-color: #f8fafc;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-    margin-bottom: 1.5rem;
-    border-top: 1px solid #e2e8f0;
-    border-right: 1px solid #e2e8f0;
-    border-bottom: 1px solid #e2e8f0;
-}
-[data-testid="stExpander"] > details > summary {
-    font-size: 1.15rem;
-    font-weight: bold;
-    color: #1e293b;
-    padding: 10px;
+/* 커스텀 카드 CSS (policy-card-marker 다음 요소 적용) */
+.policy-card-marker + div {
+    background-color: #ffffff !important;
+    border-radius: 16px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 4px 20px rgba(30, 58, 138, 0.02) !important;
+    padding: 24px !important;
+    margin-bottom: 24px !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -134,8 +131,9 @@ def get_latest_policies():
                 "pblanc_nm": p.pblanc_nm or "제목 없음",
                 "jrsd_instt_nm": p.jrsd_instt_nm or "기관 정보 없음",
                 "reqst_begin_end_de": p.reqst_begin_end_de or "기간 미정",
-                "bsns_sumry_cn": strip_html(p.bsns_sumry_cn),
-                "reqst_mth_papers_cn": strip_html(p.reqst_mth_papers_cn),
+                "trget_nm": strip_html(p.trget_nm) if hasattr(p, 'trget_nm') and p.trget_nm else "지원 대상 상세 정보는 공고문 참조",
+                "bsns_sumry_cn": strip_html(p.bsns_sumry_cn) or "혜택 상세 정보는 공고문 참조",
+                "reqst_mth_papers_cn": strip_html(p.reqst_mth_papers_cn) or "신청 방법은 공식 사이트 확인",
                 "pldir_sport_realm_lclas_code_nm": p.pldir_sport_realm_lclas_code_nm or "",
                 "pblanc_url": p.pblanc_url or ""
             })
@@ -153,21 +151,47 @@ policies = get_latest_policies()
 
 def render_policy_card(p):
     """단일 정책의 Card 스타일 렌더링"""
-    with st.expander(f"✨ {p['pblanc_nm']}", expanded=False):
-        st.markdown(f"🏢 **소관기관:** {p['jrsd_instt_nm']}")
-        st.markdown(f"📅 **신청기간:** <span style='color:#ef4444; font-weight:bold;'>{p['reqst_begin_end_de']}</span>", unsafe_allow_html=True)
-        st.divider()
+    st.markdown('<div class="policy-card-marker"></div>', unsafe_allow_html=True)
+    with st.container():
+        category_nm = p['pldir_sport_realm_lclas_code_nm'] if p['pldir_sport_realm_lclas_code_nm'] else "지원사업"
+        st.markdown(f"""
+<div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
+    <span style="background-color: #fff0ea; color: #FF8C42; padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: bold;">⚡ 접수중</span>
+    <span style="background-color: #eff6ff; color: #1E3A8A; padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: bold;">{category_nm}</span>
+    <span style="background-color: #f1f5f9; color: #475569; padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: bold;">{p['jrsd_instt_nm']}</span>
+</div>
+<h3 style="color: #1E3A8A; margin-top: 0; margin-bottom: 16px; font-size: 1.35rem; line-height: 1.4;">{p['pblanc_nm']}</h3>
+
+<h4 style="color: #1E3A8A; margin-top: 20px; margin-bottom: 8px; font-size: 1.05rem;">🎯 1. 누가 받을 수 있나요?</h4>
+<p style="color: #334155; line-height: 1.6; margin-bottom: 16px;">{p['trget_nm']}</p>
+
+<h4 style="color: #1E3A8A; margin-top: 16px; margin-bottom: 8px; font-size: 1.05rem;">💰 2. 어떤 혜택을 받나요?</h4>
+<p style="color: #334155; line-height: 1.6; margin-bottom: 16px;">{p['bsns_sumry_cn']}</p>
+
+<h4 style="color: #1E3A8A; margin-top: 16px; margin-bottom: 8px; font-size: 1.05rem;">📋 3. 어떻게 신청하나요?</h4>
+<p style="color: #334155; line-height: 1.6; margin-bottom: 16px;">{p['reqst_mth_papers_cn']}</p>
+
+<div style="color: #ef4444; font-weight: bold; margin-bottom: 16px; font-size: 0.95rem;">📅 신청기간: {p['reqst_begin_end_de']}</div>
+""", unsafe_allow_html=True)
         
-        if p['bsns_sumry_cn']:
-            st.markdown("##### 📝 **사업개요**")
-            st.markdown(f"> {p['bsns_sumry_cn'][:300]}..." if len(p['bsns_sumry_cn']) > 300 else f"> {p['bsns_sumry_cn']}")
-            
-        if p['reqst_mth_papers_cn']:
-            st.markdown("##### 📎 **신청방법**")
-            st.markdown(f"{p['reqst_mth_papers_cn']}")
-            
         if p['pblanc_url'] and p['pblanc_url'].startswith('http'):
             st.link_button("👉 원본 공고문 바로가기", p['pblanc_url'], use_container_width=True)
+
+
+def render_fallback_card(title, instt, trget, summary, reqst, link_url=None):
+    """DB 장애 시 폴백용 수동 렌더링 카드"""
+    p = {
+        "pblanc_nm": title,
+        "jrsd_instt_nm": instt,
+        "reqst_begin_end_de": "예산 소진 시까지 (상시 접수)",
+        "trget_nm": trget,
+        "bsns_sumry_cn": summary,
+        "reqst_mth_papers_cn": reqst,
+        "pldir_sport_realm_lclas_code_nm": "지원사업",
+        "pblanc_url": link_url
+    }
+    render_policy_card(p)
+
 
 # --- 탭 1: 정부 지원금 ---
 with tab1:
@@ -178,21 +202,23 @@ with tab1:
         for p in tab1_policies[:10]:
             render_policy_card(p)
     else:
-        # DB 장애 시 Fallback (기존 원본 코드)
-        with st.expander("1. 점포철거비 지원 (희망리턴패키지)", expanded=True):
-            st.markdown("""
-            * **지원 대상:** 폐업을 예정하거나 기폐업한 소상공인
-            * **지원 내용:** 전용면적(평) 당 13만 원 (최대 250만 원 한도)
-            * **신청 방법:** 소상공인시장진흥공단 희망리턴패키지 홈페이지 신청
-            """)
-            st.link_button("👉 희망리턴패키지 바로가기", "https://hope.sbiz.or.kr/")
-            
-        with st.expander("2. 재창업 사업화 자금 지원"):
-            st.markdown("""
-            * **지원 대상:** 폐업 후 재창업을 준비 중인 소상공인
-            * **지원 내용:** 사업화 자금(임대료, 마케팅, 시제품 제작 등) 최대 2,000만 원 한도 차등 지원
-            * **필수 조건:** 소상공인시장진흥공단의 재창업 교육 수료
-            """)
+        # DB 장애 시 Fallback
+        render_fallback_card(
+            title="점포철거비 지원 (희망리턴패키지)",
+            instt="소상공인시장진흥공단",
+            trget="폐업을 예정하거나 기폐업한 소상공인",
+            summary="전용면적(평) 당 13만 원 (최대 250만 원 한도) 실비 지원",
+            reqst="소상공인시장진흥공단 희망리턴패키지 홈페이지에서 온라인 신청 접수",
+            link_url="https://hope.sbiz.or.kr/"
+        )
+        render_fallback_card(
+            title="재창업 사업화 자금 지원",
+            instt="소상공인시장진흥공단",
+            trget="폐업 후 재창업을 준비 중인 소상공인 (단, 공단의 재창업 교육 수료 필수)",
+            summary="사업화 자금(임대료, 마케팅, 시제품 제작 등) 최대 2,000만 원 한도 내 차등 지원",
+            reqst="소상공인시장진흥공단 홈페이지 공고 확인 후 신청",
+            link_url=""
+        )
 
 # --- 탭 2: 컨설팅 프로그램 ---
 with tab2:
@@ -204,17 +230,22 @@ with tab2:
             render_policy_card(p)
     else:
         # DB 장애 시 Fallback
-        with st.expander("1. 사업정리 컨설팅", expanded=True):
-            st.markdown("""
-            * **지원 내용:** 폐업 시 발생하는 세무, 부동산, 노무 등의 문제를 전문가가 1:1 방문하여 무료로 컨설팅
-            * **자부담금:** 전액 무료 (정부 100% 지원)
-            * **분야:** 세무, 부동산(권리금/보증금 보호), 직무/노무
-            """)
-            
-        with st.expander("2. 업종전환·재창업 컨설팅"):
-            st.markdown("""
-            * **지원 내용:** 상권 분석, 아이템 검증, 마케팅 전략 등 성공적인 재창업을 위한 전문가 멘토링
-            """)
+        render_fallback_card(
+            title="사업정리 컨설팅",
+            instt="소상공인시장진흥공단",
+            trget="폐업을 준비 중인 소상공인 누구나",
+            summary="세무, 부동산(권리금/보증금 보호), 노무 등의 문제를 전문가가 1:1 방문하여 무료로 컨설팅 (정부 100% 지원)",
+            reqst="가까운 지역센터 방문 또는 온라인 신청",
+            link_url=""
+        )
+        render_fallback_card(
+            title="업종전환·재창업 컨설팅",
+            instt="소상공인시장진흥공단",
+            trget="업종을 변경하거나 재창업을 희망하는 기폐업 소상공인",
+            summary="상권 분석, 아이템 검증, 마케팅 전략 등 성공적인 재창업을 위한 전문가 멘토링 제공",
+            reqst="온라인 신청",
+            link_url=""
+        )
 
 # --- 탭 3: 세제 혜택 및 법무 (기타) ---
 with tab3:
@@ -226,26 +257,27 @@ with tab3:
             render_policy_card(p)
     else:
         # DB 장애 시 Fallback
-        with st.expander("1. 폐업 시 부가가치세 신고 가이드", expanded=True):
-            st.info("폐업일이 속한 달의 다음 달 25일까지 반드시 폐업 부가가치세 확정 신고를 해야 합니다.")
-            st.markdown("""
-            * **잔존재화 부가세:** 판매하지 못한 재고품, 비품 등은 본인에게 공급한 것으로 보아 부가세를 납부해야 할 수 있습니다.
-            * **종합소득세:** 다음 해 5월에 폐업일까지의 소득에 대해 종합소득세를 신고해야 합니다.
-            """)
-            st.link_button("👉 국세청 홈택스 바로가기", "https://www.hometax.go.kr/")
-            
-        with st.expander("2. 상가임대차 분쟁 조정 지원"):
-            st.markdown("""
-            * **지원 내용:** 임대료 지연, 권리금 회수 방해, 원상복구 범위 등 임대인과의 분쟁 발생 시 법률 상담 및 조정 지원
-            * **신청 기관:** 대한법률구조공단 상가건물임대차 분쟁조정위원회
-            """)
+        render_fallback_card(
+            title="폐업 시 부가가치세 신고 가이드",
+            instt="국세청",
+            trget="사업자등록을 말소하고 폐업을 진행하는 모든 개인/법인 사업자",
+            summary="잔존재화 부가세(판매하지 못한 재고품 등) 신고 및 종합소득세 신고 의무 안내",
+            reqst="폐업일이 속한 달의 다음 달 25일까지 국세청 홈택스에서 반드시 확정 신고 진행",
+            link_url="https://www.hometax.go.kr/"
+        )
+        render_fallback_card(
+            title="상가임대차 분쟁 조정 지원",
+            instt="대한법률구조공단",
+            trget="임대인과의 임대료, 권리금, 보증금 반환 관련 분쟁을 겪고 있는 임차인",
+            summary="분쟁 발생 시 법률 상담 및 조정을 통해 원만한 합의 유도",
+            reqst="대한법률구조공단 상가건물임대차 분쟁조정위원회 접수",
+            link_url=""
+        )
 
 # 5. 하단 문의/안내 및 TODO 영역
 st.divider()
 st.caption("💡 **안내:** 위 정보는 정부 및 지자체의 예산 상황에 따라 조기 마감되거나 정책 내용이 변동될 수 있습니다. 반드시 해당 기관의 공식 홈페이지 공고문을 확인하시기 바랍니다.")
-
-# 기존 TODO 주석 반영
-st.caption("※ **업데이트 예정:** 향후 실시간 정책 데이터 연동 및 맞춤형 검색 기능이 추가될 예정입니다.")
+st.caption("※ **업데이트 예정:** 실시간 정책 데이터 연동 및 맞춤형 검색 기능이 추가될 예정입니다.")
 
 # ==========================================
 # 🌟 추가된 영역: 페이지 최하단 광고 배너
