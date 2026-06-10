@@ -2,7 +2,6 @@ import streamlit as st
 st.set_page_config(page_title="폐업 비용 계산기 | RebornBiz", page_icon="🧮", layout="wide", initial_sidebar_state="auto")
 
 import streamlit.components.v1 as components
-import plotly.express as px
 import sys
 import os
 
@@ -83,27 +82,43 @@ with mcol2:
 with mcol3:
     st.metric(label="정부 지원금 적용 후 실부담액", value=f"{final_cost:,.0f} 원")
 
-# (2) Plotly 파이 차트
-st.write("#### 항목별 비용 비중")
-# 파이 차트에 들어갈 데이터 구성 (차감 요소 제외)
-chart_data = {
-    "비용 항목": ["철거비", "원상복구비", "임대료 위약금", "인건비 정산"],
-    "금액": [results["철거비"], results["원상복구비"], results["임대료 위약금"], results["인건비 정산"]]
-}
+import pandas as pd
 
-# 모든 금액이 0일 경우 에러 방지
-if total_expense > 0:
-    fig = px.pie(
-        chart_data, 
-        names="비용 항목", 
-        values="금액", 
-        hole=0.4, # 도넛 차트 형태
-        color_discrete_sequence=px.colors.sequential.RdBu
-    )
-    fig.update_traces(textposition='inside', textinfo='percent+label')
-    st.plotly_chart(fig, use_container_width=True)
-else:
-    st.info("비용이 발생하지 않는 조건입니다.")
+# (2) 상세 비용 명세서 및 체크리스트
+st.markdown("#### 📝 항목별 상세 비용 명세서")
+breakdown_data = [
+    {"항목": "임대료 위약금", "예상 금액(원)": f"{results['임대료 위약금']:,}", "산출 근거": "월 임대료 × 남은 계약 기간"},
+    {"항목": "철거비", "예상 금액(원)": f"{results['철거비']:,}", "산출 근거": "평당 약 15~20만 원 기준"},
+    {"항목": "원상복구비", "예상 금액(원)": f"{results['원상복구비']:,}", "산출 근거": "평당 약 10~15만 원 기준"},
+    {"항목": "인건비 정산", "예상 금액(원)": f"{results['인건비 정산']:,}", "산출 근거": "직원 수에 따른 해고수당 및 퇴직금 추정"},
+]
+df_breakdown = pd.DataFrame(breakdown_data)
+st.dataframe(df_breakdown, hide_index=True, use_container_width=True)
+
+st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("#### ✅ 폐업 필수 체크리스트 타임라인")
+st.markdown("""
+<div class="reborn-card" style="margin-top: 10px;">
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div style="padding: 16px; background-color: #f8fafc; border-radius: 8px; border-left: 4px solid #3b82f6;">
+            <b style="color: #1e293b; font-size: 1.05rem;">1. 임대차 계약 해지 통보</b><br>
+            <span style="color: #64748b; font-size: 0.95rem; line-height: 1.5; display: inline-block; margin-top: 4px;">최소 1~3개월 전 임대인에게 내용증명 또는 서면으로 해지 의사를 명확히 통보해야 위약금을 최소화할 수 있습니다.</span>
+        </div>
+        <div style="padding: 16px; background-color: #f8fafc; border-radius: 8px; border-left: 4px solid #10b981;">
+            <b style="color: #1e293b; font-size: 1.05rem;">2. 직원 해고 통보 및 4대 보험 정산</b><br>
+            <span style="color: #64748b; font-size: 0.95rem; line-height: 1.5; display: inline-block; margin-top: 4px;">30일 전 해고 예고를 하지 않으면 해고예고수당이 발생합니다. 퇴직금 및 4대 보험 상실 신고를 신속히 처리하세요.</span>
+        </div>
+        <div style="padding: 16px; background-color: #f8fafc; border-radius: 8px; border-left: 4px solid #f59e0b;">
+            <b style="color: #1e293b; font-size: 1.05rem;">3. 철거 및 원상복구 진행 (지원금 신청)</b><br>
+            <span style="color: #64748b; font-size: 0.95rem; line-height: 1.5; display: inline-block; margin-top: 4px;">공사 시작 전에 반드시 '희망리턴패키지' 원상복구 지원금을 신청하여 최대 250만 원의 실비를 지원받으세요.</span>
+        </div>
+        <div style="padding: 16px; background-color: #f8fafc; border-radius: 8px; border-left: 4px solid #ef4444;">
+            <b style="color: #1e293b; font-size: 1.05rem;">4. 세무서 폐업 신고 및 부가세 납부</b><br>
+            <span style="color: #64748b; font-size: 0.95rem; line-height: 1.5; display: inline-block; margin-top: 4px;">폐업일 기준 다음 달 25일까지 부가가치세(폐업 시 잔존재화 포함)를 신고하고 납부해야 가산세를 피할 수 있습니다.</span>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 st.markdown("---")
 
