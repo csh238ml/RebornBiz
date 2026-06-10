@@ -343,7 +343,7 @@ def render_footer():
     RebornBiz는 공개된 정부·공공 지원사업 공고 및 상권 데이터를 사장님이 이해하기 쉬운 형태로 재구성한 참고용 정보 사이트입니다. 최종 판단 및 신청은 반드시 각 공고의 원문과 발행 기관 안내에 따라 주세요. 공고 조건·금액·기한은 사전 고지 없이 변경될 수 있습니다.
     <br><br>
     <div style="display: flex; gap: 16px; font-weight: 600; color: #64748b; margin-bottom: 12px; flex-wrap: wrap;">
-        <a href="/" target="_self" style="color: inherit; text-decoration: none;">사이트 소개</a>
+        <a href="/about" target="_self" style="color: inherit; text-decoration: none;">사이트 소개</a>
         <span>·</span>
         <a href="/policy" target="_self" style="color: inherit; text-decoration: none;">개인정보처리방침</a>
         <span>·</span>
