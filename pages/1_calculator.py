@@ -8,7 +8,7 @@ import os
 # 모듈 폴더 경로 추가 (calculators 함수를 불러오기 위함)
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from modules.calculators import calculate_closure_cost
-from modules.components import set_custom_sidebar, inject_seo_tags, inject_global_css
+from modules.components import set_custom_sidebar, inject_seo_tags, inject_global_css, render_footer
 from modules.database import log_page_access
 
 set_custom_sidebar()
@@ -134,3 +134,6 @@ st.info("""
 
 # 6. 페이지 최하단 광고
 ad_space()
+
+# 7. 푸터 적용
+render_footer()

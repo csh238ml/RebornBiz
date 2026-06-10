@@ -221,9 +221,7 @@ def set_custom_sidebar():
     st.sidebar.page_link("pages/4_market_analysis.py", label="내 주변 상권 분석", icon="📍")
     st.sidebar.page_link("pages/3_guide.py", label="정부 지원 정책", icon="🏛️")
     
-    # 하단 푸터 느낌의 약관 및 정책 링크 추가
-    st.sidebar.divider()
-    st.sidebar.page_link("pages/5_policy.py", label="이용약관 및 처리방침", icon="📜")
+
 
 
 def inject_seo_tags():
@@ -335,3 +333,23 @@ padding: 32px 24px !important;
 margin-bottom: 24px !important;
 }
 </style>""", unsafe_allow_html=True)
+
+def render_footer():
+    """앱 전체 하단에 노출되는 공통 Footer 컴포넌트"""
+    st.markdown("""
+<hr style="border: 0; border-top: 1px solid #e2e8f0; margin-top: 60px; margin-bottom: 24px;">
+<div style="color: #94a3b8; font-size: 13px; line-height: 1.6; font-family: 'Pretendard', sans-serif; padding-bottom: 40px;">
+    <strong style="color: #64748b; font-size: 14px; display: block; margin-bottom: 8px;">면책 고지</strong>
+    RebornBiz는 공개된 정부·공공 지원사업 공고 및 상권 데이터를 사장님이 이해하기 쉬운 형태로 재구성한 참고용 정보 사이트입니다. 최종 판단 및 신청은 반드시 각 공고의 원문과 발행 기관 안내에 따라 주세요. 공고 조건·금액·기한은 사전 고지 없이 변경될 수 있습니다.
+    <br><br>
+    <div style="display: flex; gap: 16px; font-weight: 600; color: #64748b; margin-bottom: 12px; flex-wrap: wrap;">
+        <a href="/" target="_self" style="color: inherit; text-decoration: none;">사이트 소개</a>
+        <span>·</span>
+        <a href="/policy" target="_self" style="color: inherit; text-decoration: none;">개인정보처리방침</a>
+        <span>·</span>
+        <a href="/policy" target="_self" style="color: inherit; text-decoration: none;">이용약관</a>
+    </div>
+    © 2026 RebornBiz (rebornbiz.co.kr) · All Rights Reserved.<br>
+    본 사이트의 쉬운 말 요약·자격 체크리스트·데이터 가공 문구는 저작물입니다. 무단 복제·재배포·스크래핑 금지.
+</div>
+    """, unsafe_allow_html=True)

@@ -16,7 +16,7 @@ except locale.Error:
 st.set_page_config(page_title="폐업 세금 자동 계산기 | RebornBiz", page_icon="🧾", layout="wide", initial_sidebar_state="auto")
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from modules.components import set_custom_sidebar, inject_seo_tags, inject_global_css
+from modules.components import set_custom_sidebar, inject_seo_tags, inject_global_css, render_footer
 from modules.database import log_page_access
 
 set_custom_sidebar()
@@ -142,3 +142,5 @@ def ad_space(text="AD Space (Google AdSense)"):
         height=120
     )
 ad_space("AD Space (Bottom Banner)")
+
+render_footer()

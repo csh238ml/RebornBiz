@@ -5,7 +5,7 @@ import os
 st.set_page_config(page_title="이용약관 및 개인정보처리방침 | RebornBiz", page_icon="📜", layout="wide", initial_sidebar_state="auto")
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from modules.components import set_custom_sidebar, inject_seo_tags
+from modules.components import set_custom_sidebar, inject_seo_tags, render_footer
 from modules.database import log_page_access
 
 set_custom_sidebar()
@@ -48,3 +48,5 @@ st.markdown("""
 
 st.divider()
 st.caption("본 약관 및 개인정보처리방침은 2026년 6월 8일부터 적용됩니다.")
+
+render_footer()

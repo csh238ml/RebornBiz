@@ -13,7 +13,7 @@ import modules.market_api
 from modules.market_api import fetch_stores_in_radius
 from modules.kakao_component import kakao_map
 
-from modules.components import set_custom_sidebar, inject_seo_tags, inject_global_css
+from modules.components import set_custom_sidebar, inject_seo_tags, inject_global_css, render_footer
 from modules.database import log_page_access
 
 set_custom_sidebar()
@@ -180,3 +180,5 @@ else:
                         store_names = competitors[['bizesNm', 'indsSclsNm']].reset_index(drop=True)
                         store_names.columns = ['상호명', '상세 업종']
                         st.dataframe(store_names, hide_index=True, use_container_width=True, height=400)
+
+render_footer()

@@ -43,7 +43,7 @@ components.html("""
 """, width=0, height=0)
 
 # 4. 사이드바 메뉴 렌더링
-from modules.components import set_custom_sidebar, inject_seo_tags
+from modules.components import set_custom_sidebar, inject_seo_tags, render_footer
 set_custom_sidebar()
 inject_seo_tags()
 
@@ -178,3 +178,6 @@ st.html("""
         <h3>AD Space</h3>
     </div>
 """)
+
+# 7. 푸터 적용
+render_footer()

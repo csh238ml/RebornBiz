@@ -18,7 +18,7 @@ if 'modules.region_selector' in sys.modules:
     importlib.reload(sys.modules['modules.region_selector'])
 
 from modules.industry_analyzer import compare_industries, INDUSTRY_DATA
-from modules.components import set_custom_sidebar, inject_seo_tags, inject_global_css
+from modules.components import set_custom_sidebar, inject_seo_tags, inject_global_css, render_footer
 from modules.database import get_large_categories, get_medium_categories, get_small_categories, get_industry_metrics, log_page_access
 from modules.region_selector import render_region_selector
 
@@ -374,3 +374,5 @@ if st.button("시뮬레이션 실행 ➡️", type="primary", use_container_widt
 
 # 페이지 하단 광고
 ad_space()
+
+render_footer()
