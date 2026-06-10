@@ -113,12 +113,21 @@ st.markdown("""
 from modules.database import SessionLocal, GovPolicyGuide
 import re
 
+from sqlalchemy import or_
+
 @st.cache_data(ttl=600, show_spinner=False)
 def get_latest_policies():
-    """DB에서 최신 정책 데이터를 가져옵니다."""
+    """DB에서 '소상공인' 관련 최신 정책 데이터를 가져옵니다."""
     db = SessionLocal()
     try:
-        policies = db.query(GovPolicyGuide).order_by(GovPolicyGuide.creat_pnttm.desc()).limit(50).all()
+        # 소상공인 키워드가 타겟이나 제목에 포함된 정책만 필터링
+        policies = db.query(GovPolicyGuide).filter(
+            or_(
+                GovPolicyGuide.trget_nm.like('%소상공인%'),
+                GovPolicyGuide.pblanc_nm.like('%소상공인%')
+            )
+        ).order_by(GovPolicyGuide.creat_pnttm.desc()).limit(50).all()
+        
         result = []
         for p in policies:
             # HTML 태그 제거 함수
