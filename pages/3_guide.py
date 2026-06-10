@@ -160,31 +160,77 @@ policies = get_latest_policies()
 
 def render_policy_card(p):
     """단일 정책의 Card 스타일 렌더링"""
-    st.markdown('<div class="policy-card-marker"></div>', unsafe_allow_html=True)
-    with st.container():
-        category_nm = p['pldir_sport_realm_lclas_code_nm'] if p['pldir_sport_realm_lclas_code_nm'] else "지원사업"
-        st.markdown(f"""
-<div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
-    <span style="background-color: #fff0ea; color: #FF8C42; padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: bold;">⚡ 접수중</span>
-    <span style="background-color: #eff6ff; color: #1E3A8A; padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: bold;">{category_nm}</span>
-    <span style="background-color: #f1f5f9; color: #475569; padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: bold;">{p['jrsd_instt_nm']}</span>
-</div>
-<h3 style="color: #1E3A8A; margin-top: 0; margin-bottom: 16px; font-size: 1.35rem; line-height: 1.4;">{p['pblanc_nm']}</h3>
-
-<h4 style="color: #1E3A8A; margin-top: 20px; margin-bottom: 8px; font-size: 1.05rem;">🎯 1. 누가 받을 수 있나요?</h4>
-<p style="color: #334155; line-height: 1.6; margin-bottom: 16px;">{p['trget_nm']}</p>
-
-<h4 style="color: #1E3A8A; margin-top: 16px; margin-bottom: 8px; font-size: 1.05rem;">💰 2. 어떤 혜택을 받나요?</h4>
-<p style="color: #334155; line-height: 1.6; margin-bottom: 16px;">{p['bsns_sumry_cn']}</p>
-
-<h4 style="color: #1E3A8A; margin-top: 16px; margin-bottom: 8px; font-size: 1.05rem;">📋 3. 어떻게 신청하나요?</h4>
-<p style="color: #334155; line-height: 1.6; margin-bottom: 16px;">{p['reqst_mth_papers_cn']}</p>
-
-<div style="color: #ef4444; font-weight: bold; margin-bottom: 16px; font-size: 0.95rem;">📅 신청기간: {p['reqst_begin_end_de']}</div>
-""", unsafe_allow_html=True)
+    category_nm = p['pldir_sport_realm_lclas_code_nm'] if p['pldir_sport_realm_lclas_code_nm'] else "지원사업"
+    
+    # 텍스트 불릿(•) 및 줄바꿈 포맷팅 함수
+    def format_bullets(text):
+        if not text:
+            return "• 상세 내용은 공식 공고문을 참조하세요."
+        lines = text.split('\n')
+        formatted_lines = []
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+            # 이미 기호가 있으면 제거하고 • 통일
+            if line.startswith('-') or line.startswith('•') or line.startswith('*'):
+                line = line[1:].strip()
+            formatted_lines.append(f"• {line}")
+        return "<br>".join(formatted_lines)
         
-        if p['pblanc_url'] and p['pblanc_url'].startswith('http'):
-            st.link_button("👉 원본 공고문 바로가기", p['pblanc_url'], use_container_width=True)
+    trget_text = format_bullets(p['trget_nm'])
+    summary_text = format_bullets(p['bsns_sumry_cn'])
+    reqst_text = format_bullets(p['reqst_mth_papers_cn'])
+
+    # 버튼 HTML 조립
+    btn_html = ""
+    if p['pblanc_url'] and p['pblanc_url'].startswith('http'):
+        btn_html = f"""
+        <a href="{p['pblanc_url']}" target="_blank" style="
+            display: block;
+            width: 100%;
+            text-align: center;
+            background-color: #ffffff;
+            color: #0f172a;
+            border: 1px solid #cbd5e1;
+            padding: 14px 0;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.05rem;
+            box-sizing: border-box;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            margin-top: 10px;
+        ">👉 원본 공고문 바로가기</a>
+        """
+
+    # 가장 바깥쪽 컨테이너(카드 프레임워크)를 단일 HTML 블록으로 감쌈
+    st.markdown(f"""
+<div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; box-shadow: 0 4px 20px rgba(30, 58, 138, 0.02); padding: 32px 24px; margin-bottom: 24px;">
+    
+    <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
+        <span style="background-color: #fff0ea; color: #FF8C42; padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: bold;">⚡ 접수중</span>
+        <span style="background-color: #eff6ff; color: #1E3A8A; padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: bold;">{category_nm}</span>
+        <span style="background-color: #f1f5f9; color: #475569; padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: bold;">{p['jrsd_instt_nm']}</span>
+    </div>
+    
+    <h3 style="color: #1E3A8A; margin-top: 0; margin-bottom: 24px; font-size: 1.35rem; line-height: 1.5; word-break: keep-all; letter-spacing: -0.02em;">{p['pblanc_nm']}</h3>
+    
+    <h4 style="color: #1E3A8A; margin-top: 0; margin-bottom: 10px; font-size: 1.05rem; font-weight: 700;">🎯 1. 누가 받을 수 있나요?</h4>
+    <p style="color: #475569; line-height: 1.7; margin-bottom: 24px; font-size: 0.95rem; font-weight: 400; word-break: keep-all; letter-spacing: -0.01em;">{trget_text}</p>
+    
+    <h4 style="color: #1E3A8A; margin-top: 0; margin-bottom: 10px; font-size: 1.05rem; font-weight: 700;">💰 2. 어떤 혜택을 받나요?</h4>
+    <p style="color: #475569; line-height: 1.7; margin-bottom: 24px; font-size: 0.95rem; font-weight: 400; word-break: keep-all; letter-spacing: -0.01em;">{summary_text}</p>
+    
+    <h4 style="color: #1E3A8A; margin-top: 0; margin-bottom: 10px; font-size: 1.05rem; font-weight: 700;">📋 3. 어떻게 신청하나요?</h4>
+    <p style="color: #475569; line-height: 1.7; margin-bottom: 28px; font-size: 0.95rem; font-weight: 400; word-break: keep-all; letter-spacing: -0.01em;">{reqst_text}</p>
+    
+    <div style="color: #ef4444; font-weight: bold; margin-bottom: 16px; font-size: 0.95rem;">📅 신청기간: {p['reqst_begin_end_de']}</div>
+    
+    {btn_html}
+    
+</div>
+""", unsafe_allow_html=True)
 
 
 def render_fallback_card(title, instt, trget, summary, reqst, link_url=None):
