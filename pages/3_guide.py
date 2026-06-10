@@ -116,17 +116,30 @@ import re
 from sqlalchemy import or_
 
 @st.cache_data(ttl=600, show_spinner=False)
-def get_latest_policies():
-    """DB에서 '소상공인' 관련 최신 정책 데이터를 가져옵니다."""
+def get_latest_policies(search_keyword=None):
+    """DB에서 정책 데이터를 가져옵니다. 검색어가 있으면 통합 검색을 수행합니다."""
     db = SessionLocal()
     try:
-        # 소상공인 키워드가 타겟이나 제목에 포함된 정책만 필터링
-        policies = db.query(GovPolicyGuide).filter(
-            or_(
-                GovPolicyGuide.trget_nm.like('%소상공인%'),
-                GovPolicyGuide.pblanc_nm.like('%소상공인%')
+        query = db.query(GovPolicyGuide)
+        
+        if search_keyword:
+            # 통합 검색: 공고명 또는 사업개요에 키워드 포함
+            query = query.filter(
+                or_(
+                    GovPolicyGuide.pblanc_nm.like(f'%{search_keyword}%'),
+                    GovPolicyGuide.bsns_sumry_cn.like(f'%{search_keyword}%')
+                )
             )
-        ).order_by(GovPolicyGuide.creat_pnttm.desc()).limit(50).all()
+        else:
+            # 기본 화면: 소상공인 키워드가 타겟이나 제목에 포함된 정책만 필터링
+            query = query.filter(
+                or_(
+                    GovPolicyGuide.trget_nm.like('%소상공인%'),
+                    GovPolicyGuide.pblanc_nm.like('%소상공인%')
+                )
+            )
+            
+        policies = query.order_by(GovPolicyGuide.creat_pnttm.desc()).limit(50).all()
         
         result = []
         for p in policies:
@@ -153,10 +166,8 @@ def get_latest_policies():
     finally:
         db.close()
 
-# 4. 탭(Tabs)을 활용한 카테고리 분류
-tab1, tab2, tab3 = st.tabs(["💰 정부 지원금 (금융/자금)", "👨‍💼 컨설팅 프로그램 (경영/창업)", "🧾 기타 정책 (세제/일반)"])
-
-policies = get_latest_policies()
+# 4. 통합 검색 UI
+search_keyword = st.text_input("🔍 지원 정책 통합 검색", placeholder="예: 철거비, 청년 창업, 대출 등")
 
 def render_policy_card(p):
     """단일 정책의 Card 스타일 렌더링"""
@@ -246,86 +257,98 @@ def render_fallback_card(title, instt, trget, summary, reqst, link_url=None):
     render_policy_card(p)
 
 
-# --- 탭 1: 정부 지원금 ---
-with tab1:
-    st.header("정부 지원금 안내")
-    tab1_policies = [p for p in policies if '금융' in p['pldir_sport_realm_lclas_code_nm'] or '자금' in p['pblanc_nm']]
-    
-    if tab1_policies:
-        for p in tab1_policies[:10]:
+if search_keyword:
+    st.markdown(f"<h4 style='color: #1E3A8A; margin-top: 10px; margin-bottom: 20px;'>🔎 '{search_keyword}' 검색 결과</h4>", unsafe_allow_html=True)
+    policies = get_latest_policies(search_keyword)
+    if policies:
+        for p in policies:
             render_policy_card(p)
     else:
-        # DB 장애 시 Fallback
-        render_fallback_card(
-            title="점포철거비 지원 (희망리턴패키지)",
-            instt="소상공인시장진흥공단",
-            trget="폐업을 예정하거나 기폐업한 소상공인",
-            summary="전용면적(평) 당 13만 원 (최대 250만 원 한도) 실비 지원",
-            reqst="소상공인시장진흥공단 희망리턴패키지 홈페이지에서 온라인 신청 접수",
-            link_url="https://hope.sbiz.or.kr/"
-        )
-        render_fallback_card(
-            title="재창업 사업화 자금 지원",
-            instt="소상공인시장진흥공단",
-            trget="폐업 후 재창업을 준비 중인 소상공인 (단, 공단의 재창업 교육 수료 필수)",
-            summary="사업화 자금(임대료, 마케팅, 시제품 제작 등) 최대 2,000만 원 한도 내 차등 지원",
-            reqst="소상공인시장진흥공단 홈페이지 공고 확인 후 신청",
-            link_url=""
-        )
+        st.info("검색 결과가 없습니다. 다른 키워드로 검색해 보세요.")
+else:
+    tab1, tab2, tab3 = st.tabs(["💰 정부 지원금 (금융/자금)", "👨‍💼 컨설팅 프로그램 (경영/창업)", "🧾 기타 정책 (세제/일반)"])
+    policies = get_latest_policies()
 
-# --- 탭 2: 컨설팅 프로그램 ---
-with tab2:
-    st.header("컨설팅 프로그램")
-    tab2_policies = [p for p in policies if '경영' in p['pldir_sport_realm_lclas_code_nm'] or '창업' in p['pldir_sport_realm_lclas_code_nm']]
-    
-    if tab2_policies:
-        for p in tab2_policies[:10]:
-            render_policy_card(p)
-    else:
-        # DB 장애 시 Fallback
-        render_fallback_card(
-            title="사업정리 컨설팅",
-            instt="소상공인시장진흥공단",
-            trget="폐업을 준비 중인 소상공인 누구나",
-            summary="세무, 부동산(권리금/보증금 보호), 노무 등의 문제를 전문가가 1:1 방문하여 무료로 컨설팅 (정부 100% 지원)",
-            reqst="가까운 지역센터 방문 또는 온라인 신청",
-            link_url=""
-        )
-        render_fallback_card(
-            title="업종전환·재창업 컨설팅",
-            instt="소상공인시장진흥공단",
-            trget="업종을 변경하거나 재창업을 희망하는 기폐업 소상공인",
-            summary="상권 분석, 아이템 검증, 마케팅 전략 등 성공적인 재창업을 위한 전문가 멘토링 제공",
-            reqst="온라인 신청",
-            link_url=""
-        )
+    # --- 탭 1: 정부 지원금 ---
+    with tab1:
+        st.header("정부 지원금 안내")
+        tab1_policies = [p for p in policies if '금융' in p['pldir_sport_realm_lclas_code_nm'] or '자금' in p['pblanc_nm']]
+        
+        if tab1_policies:
+            for p in tab1_policies[:10]:
+                render_policy_card(p)
+        else:
+            # DB 장애 시 Fallback
+            render_fallback_card(
+                title="점포철거비 지원 (희망리턴패키지)",
+                instt="소상공인시장진흥공단",
+                trget="폐업을 예정하거나 기폐업한 소상공인",
+                summary="전용면적(평) 당 13만 원 (최대 250만 원 한도) 실비 지원",
+                reqst="소상공인시장진흥공단 희망리턴패키지 홈페이지에서 온라인 신청 접수",
+                link_url="https://hope.sbiz.or.kr/"
+            )
+            render_fallback_card(
+                title="재창업 사업화 자금 지원",
+                instt="소상공인시장진흥공단",
+                trget="폐업 후 재창업을 준비 중인 소상공인 (단, 공단의 재창업 교육 수료 필수)",
+                summary="사업화 자금(임대료, 마케팅, 시제품 제작 등) 최대 2,000만 기 한도 내 차등 지원",
+                reqst="소상공인시장진흥공단 홈페이지 공고 확인 후 신청",
+                link_url=""
+            )
 
-# --- 탭 3: 세제 혜택 및 법무 (기타) ---
-with tab3:
-    st.header("세제 혜택 및 기타 지원")
-    tab3_policies = [p for p in policies if p not in tab1_policies and p not in tab2_policies]
-    
-    if tab3_policies:
-        for p in tab3_policies[:10]:
-            render_policy_card(p)
-    else:
-        # DB 장애 시 Fallback
-        render_fallback_card(
-            title="폐업 시 부가가치세 신고 가이드",
-            instt="국세청",
-            trget="사업자등록을 말소하고 폐업을 진행하는 모든 개인/법인 사업자",
-            summary="잔존재화 부가세(판매하지 못한 재고품 등) 신고 및 종합소득세 신고 의무 안내",
-            reqst="폐업일이 속한 달의 다음 달 25일까지 국세청 홈택스에서 반드시 확정 신고 진행",
-            link_url="https://www.hometax.go.kr/"
-        )
-        render_fallback_card(
-            title="상가임대차 분쟁 조정 지원",
-            instt="대한법률구조공단",
-            trget="임대인과의 임대료, 권리금, 보증금 반환 관련 분쟁을 겪고 있는 임차인",
-            summary="분쟁 발생 시 법률 상담 및 조정을 통해 원만한 합의 유도",
-            reqst="대한법률구조공단 상가건물임대차 분쟁조정위원회 접수",
-            link_url=""
-        )
+    # --- 탭 2: 컨설팅 프로그램 ---
+    with tab2:
+        st.header("컨설팅 프로그램")
+        tab2_policies = [p for p in policies if '경영' in p['pldir_sport_realm_lclas_code_nm'] or '창업' in p['pldir_sport_realm_lclas_code_nm']]
+        
+        if tab2_policies:
+            for p in tab2_policies[:10]:
+                render_policy_card(p)
+        else:
+            # DB 장애 시 Fallback
+            render_fallback_card(
+                title="사업정리 컨설팅",
+                instt="소상공인시장진흥공단",
+                trget="폐업을 준비 중인 소상공인 누구나",
+                summary="세무, 부동산(권리금/보증금 보호), 노무 등의 문제를 전문가가 1:1 방문하여 무료로 컨설팅 (정부 100% 지원)",
+                reqst="가까운 지역센터 방문 또는 온라인 신청",
+                link_url=""
+            )
+            render_fallback_card(
+                title="업종전환·재창업 컨설팅",
+                instt="소상공인시장진흥공단",
+                trget="업종을 변경하거나 재창업을 희망하는 기폐업 소상공인",
+                summary="상권 분석, 아이템 검증, 마케팅 전략 등 성공적인 재창업을 위한 전문가 멘토링 제공",
+                reqst="온라인 신청",
+                link_url=""
+            )
+
+    # --- 탭 3: 세제 혜택 및 법무 (기타) ---
+    with tab3:
+        st.header("세제 혜택 및 기타 지원")
+        tab3_policies = [p for p in policies if p not in tab1_policies and p not in tab2_policies]
+        
+        if tab3_policies:
+            for p in tab3_policies[:10]:
+                render_policy_card(p)
+        else:
+            # DB 장애 시 Fallback
+            render_fallback_card(
+                title="폐업 시 부가가치세 신고 가이드",
+                instt="국세청",
+                trget="사업자등록을 말소하고 폐업을 진행하는 모든 개인/법인 사업자",
+                summary="잔존재화 부가세(판매하지 못한 재고품 등) 신고 및 종합소득세 신고 의무 안내",
+                reqst="폐업일이 속한 달의 다음 달 25일까지 국세청 홈택스에서 반드시 확정 신고 진행",
+                link_url="https://www.hometax.go.kr/"
+            )
+            render_fallback_card(
+                title="상가임대차 분쟁 조정 지원",
+                instt="대한법률구조공단",
+                trget="임대인과의 임대료, 권리금, 보증금 반환 관련 분쟁을 겪고 있는 임차인",
+                summary="분쟁 발생 시 법률 상담 및 조정을 통해 원만한 합의 유도",
+                reqst="대한법률구조공단 상가건물임대차 분쟁조정위원회 접수",
+                link_url=""
+            )
 
 # 5. 하단 문의/안내 및 TODO 영역
 st.divider()
