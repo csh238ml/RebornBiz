@@ -103,8 +103,15 @@ else:
         with st.container(border=True):
             st.markdown("#### 📍 주변 상권 지도 (카카오 맵)")
             
-            # 데이터를 딕셔너리로 직렬화 (간소화) - 필터링된 데이터 사용
-            simple_stores = [{"lat": row["lat"], "lon": row["lon"], "bizesNm": row.get("bizesNm", "알수없음"), "indsMclsNm": row.get("indsMclsNm", "")} for row in df_stores.to_dict('records')]
+            # 세션 상태에서 선택된 업종 가져오기 (초기값: '전체')
+            selected_industry_val = st.session_state.get("selected_industry_widget", "전체")
+            
+            # 데이터를 딕셔너리로 직렬화 및 선택된 업종으로 필터링
+            simple_stores = []
+            for row in df_stores.to_dict('records'):
+                indsMclsNm = row.get("indsMclsNm", "")
+                if selected_industry_val == "전체" or indsMclsNm == selected_industry_val:
+                    simple_stores.append({"lat": row["lat"], "lon": row["lon"], "bizesNm": row.get("bizesNm", "알수없음"), "indsMclsNm": indsMclsNm})
             
             # 컴포넌트 호출 및 자동 위치 조회 플래그 전달
             clicked_data = kakao_map(lat=lat, lon=lon, stores=simple_stores, auto_locate=auto_locate, key="kakaomap_comp")
@@ -198,14 +205,18 @@ else:
             if "indsMclsNm" in df_stores.columns:
                 st.markdown("##### 반경 내 특정 업종의 매장들을 확인합니다.")
                 # 업종 리스트 추출
-                industry_options = sorted(df_stores['indsMclsNm'].dropna().unique().tolist())
-                selected_industry = st.selectbox("분석할 업종을 고르세요", options=industry_options)
+                industry_options = ["전체"] + sorted(df_stores['indsMclsNm'].dropna().unique().tolist())
+                selected_industry = st.selectbox("분석할 업종을 고르세요", options=industry_options, key="selected_industry_widget")
                 
                 if selected_industry:
-                    competitors = df_stores[df_stores['indsMclsNm'] == selected_industry]
-                    competitor_count = len(competitors)
-                    
-                    st.metric(label=f"반경 {radius}m 내 '{selected_industry}' 매장 수", value=f"{competitor_count} 개")
+                    if selected_industry == "전체":
+                        competitors = df_stores
+                        competitor_count = len(competitors)
+                        st.metric(label=f"반경 {radius}m 내 전체 매장 수", value=f"{competitor_count} 개")
+                    else:
+                        competitors = df_stores[df_stores['indsMclsNm'] == selected_industry]
+                        competitor_count = len(competitors)
+                        st.metric(label=f"반경 {radius}m 내 '{selected_industry}' 매장 수", value=f"{competitor_count} 개")
                     
                     if competitor_count > 0 and 'bizesNm' in competitors.columns:
                         st.markdown("<b>🏪 매장 리스트</b>", unsafe_allow_html=True)
