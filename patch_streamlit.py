@@ -77,11 +77,11 @@ def patch_streamlit():
     <meta property="og:url" content="https://rebornbiz.co.kr">
     <meta property="og:title" content="RebornBiz(리본비즈) | 소상공인 폐업 및 업종 변경 시뮬레이터">
     <meta property="og:description" content="폐업 비용 계산, 희망 업종 수익성 시뮬레이션, 내 주변 상권 분석부터 정부 지원 정책 가이드까지 1분 만에 무료로 확인하세요.">
-    <meta property="og:image" content="https://rebornbiz.co.kr/assets/og-image.png">
+    <meta property="og:image" content="https://rebornbiz.co.kr/assets/og-image.png?v=20260611">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="RebornBiz(리본비즈)">
     <meta name="twitter:description" content="소상공인 폐업 비용 및 비즈니스 전환 올인원 시뮬레이터">
-    <meta name="twitter:image" content="https://rebornbiz.co.kr/assets/og-image.png">
+    <meta name="twitter:image" content="https://rebornbiz.co.kr/assets/og-image.png?v=20260611">
     
     <!-- Naver Analytics -->
     <script type="text/javascript" src="//wcs.pstatic.net/wcslog.js"></script>
