@@ -1,4 +1,14 @@
 # Streamlit Watcher Trigger
+import os
+import sys
+
+# [핵심] 원격 서버(클라우드) 배포 시 자동으로 패치 스크립트를 실행하도록 설정
+try:
+    import patch_streamlit
+    patch_streamlit.patch_streamlit()
+except Exception as e:
+    print(f"Warning: Failed to auto-patch Streamlit index.html - {e}")
+
 import streamlit as st
 import streamlit.components.v1 as components
 from modules.database import init_db, log_page_access
