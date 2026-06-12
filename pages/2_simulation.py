@@ -247,9 +247,7 @@ def calculate_simulation(region, budget, curr_industry, target_industry):
         
     return result
 
-# 페이지 기본 설정 (와이드 모드 권장)
-set_custom_sidebar()
-inject_seo_tags()
+
 
 def ad_space():
     """광고 플레이스홀더를 렌더링하는 함수"""
