@@ -213,14 +213,15 @@ def set_custom_sidebar():
     </script>
     """, width=0, height=0)
 
-    # 2. 페이지 링크 - 태그 없이 순수 텍스트만 입력
-    st.sidebar.page_link("app.py", label="홈", icon="🏠")
-    st.sidebar.page_link("pages/1_calculator.py", label="폐업 비용 계산기", icon="🧮")
-    st.sidebar.page_link("pages/tax_cal.py", label="폐업 세금 계산기", icon="🧾")
-    st.sidebar.page_link("pages/2_simulation.py", label="업종 변경 시뮬레이션", icon="📈")
-    st.sidebar.page_link("pages/4_market_analysis.py", label="내 주변 상권 분석", icon="📍")
-    st.sidebar.page_link("pages/3_guide.py", label="정부 지원 정책", icon="🏛️")
-    st.sidebar.page_link("pages/7_magazine.py", label="Reborn 매거진", icon="📰")
+    # 2. 페이지 링크 - 하나의 컨테이너로 묶어서 분할 현상 방지
+    with st.sidebar.container():
+        st.page_link("app.py", label="홈", icon="🏠")
+        st.page_link("pages/1_calculator.py", label="폐업 비용 계산기", icon="🧮")
+        st.page_link("pages/tax_cal.py", label="폐업 세금 계산기", icon="🧾")
+        st.page_link("pages/2_simulation.py", label="업종 변경 시뮬레이션", icon="📈")
+        st.page_link("pages/4_market_analysis.py", label="내 주변 상권 분석", icon="📍")
+        st.page_link("pages/3_guide.py", label="정부 지원 정책", icon="🏛️")
+        st.page_link("pages/7_magazine.py", label="Reborn 매거진", icon="📰")
     
 
 
@@ -329,6 +330,11 @@ display: none !important;
 header[data-testid="stHeader"] div[data-testid="stActionButton"] {
 visibility: hidden !important;
 display: none !important;
+}
+
+/* Streamlit 기본 사이드바 내비게이션 강제 숨김 (중복 방지) */
+[data-testid="stSidebarNav"] {
+    display: none !important;
 }
 
 /* 커스텀 사이드바 활성화(선택된) 메뉴 스타일 */
