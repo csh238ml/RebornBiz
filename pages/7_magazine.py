@@ -84,57 +84,69 @@ def show_detail_view(post):
 
     import streamlit.components.v1 as components
     
-    st.markdown("""
-    <style>
-    /* Streamlit 기본 버튼이 줄바꿈 되지 않도록 방지 */
-    div[data-testid="stButton"] button {
-        white-space: nowrap !important;
-        height: 38px !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+
 
     def render_buttons(key_prefix):
         col1, col2, col3 = st.columns([7.4, 1.3, 1.3])
         with col2:
-            # 기본 Streamlit 버튼 사용 (가장 안전하고 확실한 라우팅)
-            if st.button("⬅️ 목록으로", use_container_width=True, key=f"back_{key_prefix}"):
-                st.query_params.clear()
-                st.rerun()
+            st.markdown("""
+            <div style="margin-top: 0px;">
+                <a href="?" target="_self" style="text-decoration: none;">
+                    <button style="
+                        background-color: #fff; 
+                        color: #333; 
+                        border: 1px solid #ccc; 
+                        border-radius: 6px; 
+                        cursor: pointer; 
+                        font-weight: bold;
+                        font-size: 0.95rem;
+                        height: 38px;
+                        width: 100%;
+                        white-space: nowrap;
+                        font-family: sans-serif;
+                        padding: 0;
+                        margin: 0;
+                    ">⬅️ 목록으로</button>
+                </a>
+            </div>
+            """, unsafe_allow_html=True)
         with col3:
             # 복사 버튼은 onclick 이벤트를 위해 iframe 사용
             components.html("""
-            <button onclick="copyToClipboard()" style="
-                background-color: #FF8C42; 
-                color: white; 
-                border: none; 
-                padding: 0;
-                border-radius: 6px; 
-                cursor: pointer; 
-                font-weight: bold;
-                font-size: 0.95rem;
-                white-space: nowrap;
-                height: 38px;
-                width: 100%;
-                font-family: sans-serif;
-            ">🔗 링크 복사</button>
-            <script>
-            function copyToClipboard() {
-                var url = window.parent.location.href;
-                navigator.clipboard.writeText(url).then(function() {
-                    alert('링크가 복사되었습니다!');
-                }).catch(function(err) {
-                    var dummy = document.createElement('input');
-                    document.body.appendChild(dummy);
-                    dummy.value = url;
-                    dummy.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(dummy);
-                    alert('링크가 복사되었습니다!');
-                });
-            }
-            </script>
-            """, height=40)
+            <body style="margin: 0; padding: 0; overflow: hidden;">
+                <button onclick="copyToClipboard()" style="
+                    background-color: #FF8C42; 
+                    color: white; 
+                    border: none; 
+                    border-radius: 6px; 
+                    cursor: pointer; 
+                    font-weight: bold;
+                    font-size: 0.95rem;
+                    height: 38px;
+                    width: 100%;
+                    white-space: nowrap;
+                    font-family: sans-serif;
+                    padding: 0;
+                    margin: 0;
+                ">🔗 링크 복사</button>
+                <script>
+                function copyToClipboard() {
+                    var url = window.parent.location.href;
+                    navigator.clipboard.writeText(url).then(function() {
+                        alert('링크가 복사되었습니다!');
+                    }).catch(function(err) {
+                        var dummy = document.createElement('input');
+                        document.body.appendChild(dummy);
+                        dummy.value = url;
+                        dummy.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(dummy);
+                        alert('링크가 복사되었습니다!');
+                    });
+                }
+                </script>
+            </body>
+            """, height=38)
 
     # 상단 버튼 렌더링
     render_buttons("top")
