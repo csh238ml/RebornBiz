@@ -333,13 +333,15 @@ display: none !important;
 
 /* 커스텀 사이드바 활성화(선택된) 메뉴 스타일 */
 [data-testid="stSidebar"] a[data-testid="stPageLink-NavLink"][aria-current="page"] {
-    background-color: rgba(30, 58, 138, 0.08) !important;
-    border-left: 4px solid #1E3A8A !important;
+    background-color: rgba(255, 255, 255, 0.12) !important;
+    border-left: 4px solid #38bdf8 !important;
     border-radius: 0 6px 6px 0 !important;
 }
-[data-testid="stSidebar"] a[data-testid="stPageLink-NavLink"][aria-current="page"] p {
+[data-testid="stSidebar"] a[data-testid="stPageLink-NavLink"][aria-current="page"] p,
+[data-testid="stSidebar"] a[data-testid="stPageLink-NavLink"][aria-current="page"] span,
+[data-testid="stSidebar"] a[data-testid="stPageLink-NavLink"][aria-current="page"] * {
     font-weight: 700 !important;
-    color: #1E3A8A !important;
+    color: #ffffff !important;
 }
 
 /* 재사용 가능한 아싸지원사업 스타일 통합 카드 클래스 */
