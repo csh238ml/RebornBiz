@@ -7,7 +7,10 @@ import re
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from modules.components import inject_global_css, render_footer, set_custom_sidebar, inject_seo_tags
-from modules.database import get_board_list, get_board_detail
+from modules.database import get_board_list, get_board_detail, log_page_access
+
+# 페이지 접속 로그 기록
+log_page_access("Reborn 매거진")
 
 post_id_param = st.query_params.get("post_id")
 current_post = None
