@@ -114,6 +114,7 @@ st.html("""
 .area .card-icon-box { background: var(--accent-3); } .area .card-badge { background: #dbeafe; color: #1e40af; }
 .gov .card-icon-box { background: var(--accent-4); } .gov .card-badge { background: #ede9fe; color: #5b21b6; }
 .tax .card-icon-box { background: var(--accent-5); } .tax .card-badge { background: #fee2e2; color: #991b1b; }
+.mag .card-icon-box { background: linear-gradient(135deg, #ffedd5 0%, #fdba74 100%); } .mag .card-badge { background: #ffedd5; color: #c2410c; }
 </style>
 
 <div class="custom-main">
@@ -170,6 +171,16 @@ st.html("""
                 <h3>정부 지원 정책</h3>
                 <p>재취업, 재창업 등 소상공인에게 꼭 필요한 정부 지원금을 한눈에 확인하고 신청하세요.</p>
                 <button class="custom-btn" data-target="guide">지원 정책 확인</button>
+            </div>
+        </div>
+
+        <div class="custom-card mag">
+            <div class="card-icon-box">📰</div>
+            <div class="card-content">
+                <span class="card-badge">인사이트</span>
+                <h3>Reborn 매거진</h3>
+                <p>빠르게 변화하는 소상공인 트렌드, 성공적인 비즈니스를 위한 인사이트와 가이드를 만나보세요.</p>
+                <button class="custom-btn" data-target="magazine">매거진 읽기</button>
             </div>
         </div>
     </div>
