@@ -11,11 +11,7 @@ import importlib
 # 모듈 폴더 경로 추가 (industry_analyzer 함수를 불러오기 위함)
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# 강제로 최신 모듈을 다시 읽어오도록 캐시 클리어
-if 'modules.database' in sys.modules:
-    importlib.reload(sys.modules['modules.database'])
-if 'modules.region_selector' in sys.modules:
-    importlib.reload(sys.modules['modules.region_selector'])
+
 
 from modules.industry_analyzer import compare_industries, INDUSTRY_DATA
 from modules.components import set_custom_sidebar, inject_seo_tags, inject_global_css, render_footer
