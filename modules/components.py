@@ -140,6 +140,16 @@ def set_custom_sidebar():
             visibility: hidden !important;
             display: none !important;
         }
+
+        /* 🌟 Streamlit 기본 사이드바 내비게이션 완벽하게 숨기기 (중복 버그 원인) */
+        [data-testid="stSidebarNav"], 
+        [data-testid="stSidebarNavItems"], 
+        [data-testid="stSidebarNavSeparator"],
+        nav {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0px !important;
+        }
     </style>
     <div class="custom-logo">RebornBiz</div>
     """, unsafe_allow_html=True)
