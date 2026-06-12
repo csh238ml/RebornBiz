@@ -264,13 +264,13 @@ def inject_seo_tags(title=None, description=None):
     addMetaTag('twitter:image', 'https://rebornbiz.co.kr/assets/og-image.png');
 
     // 구글 애드센스 스크립트 주입
-    if (!window.parent.document.querySelector('script[src*="adsbygoogle.js"]')) {
+    if (!window.parent.document.querySelector('script[src*="adsbygoogle.js"]')) {{
         let adsScript = window.parent.document.createElement('script');
         adsScript.async = true;
         adsScript.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4577150400116930';
         adsScript.crossOrigin = 'anonymous';
         window.parent.document.head.appendChild(adsScript);
-    }
+    }}
     </script>
     """
     components.html(seo_html, width=0, height=0)
