@@ -220,39 +220,47 @@ def set_custom_sidebar():
     st.sidebar.page_link("pages/2_simulation.py", label="업종 변경 시뮬레이션", icon="📈")
     st.sidebar.page_link("pages/4_market_analysis.py", label="내 주변 상권 분석", icon="📍")
     st.sidebar.page_link("pages/3_guide.py", label="정부 지원 정책", icon="🏛️")
+    st.sidebar.page_link("pages/7_magazine.py", label="Reborn 매거진", icon="📰")
     
 
 
 
-def inject_seo_tags():
+def inject_seo_tags(title=None, description=None):
     """SEO, Open Graph 메타 태그 및 애드센스 스크립트를 부모 HTML의 <head>에 동적으로 주입합니다."""
     
-    seo_html = """
+    # 기본값 설정
+    seo_title = title if title else 'RebornBiz(리본비즈) | 소상공인 폐업 및 업종 변경 시뮬레이터'
+    seo_desc = description if description else '소상공인의 안전한 폐업과 성공적인 재창업을 돕습니다. 폐업 비용 계산, 상권 분석, 정부 지원 정책을 한 번에 확인하세요.'
+    og_desc = description if description else '폐업 비용 계산, 희망 업종 수익성 시뮬레이션, 내 주변 상권 분석부터 정부 지원 정책 가이드까지 1분 만에 무료로 확인하세요.'
+
+    # JavaScript 문자열 포매팅 방식을 템플릿 리터럴 호환성 문제 방지를 위해 일반 문자열로 처리
+    # 파이썬에서 변환 후 JS로 넘김
+    seo_html = f"""
     <script>
-    function addMetaTag(name, content, isProperty=false) {
+    function addMetaTag(name, content, isProperty=false) {{
         let attr = isProperty ? 'property' : 'name';
-        let meta = window.parent.document.querySelector(`meta[${attr}="${name}"]`);
-        if (!meta) {
+        let meta = window.parent.document.querySelector(`meta[${{attr}}="${{name}}"]`);
+        if (!meta) {{
             meta = window.parent.document.createElement('meta');
             meta.setAttribute(attr, name);
             window.parent.document.head.appendChild(meta);
-        }
+        }}
         meta.setAttribute('content', content);
-    }
+    }}
 
-    addMetaTag('description', '소상공인의 안전한 폐업과 성공적인 재창업을 돕습니다. 폐업 비용 계산, 상권 분석, 정부 지원 정책을 한 번에 확인하세요.');
+    addMetaTag('description', `{seo_desc}`);
     addMetaTag('keywords', '소상공인, 폐업 비용 계산기, 업종 변경, 상권 분석, 희망리턴패키지, 재창업, RebornBiz');
     addMetaTag('naver-site-verification', '60e370a04a68c7125d47cc27112186c48372d8b8');
     addMetaTag('google-site-verification', 'KJ_THHy7VKDvnXerQT1S5I0B2U2glszxIeS5Ge34Gvs');
     addMetaTag('og:type', 'website', true);
     addMetaTag('og:url', 'https://rebornbiz.co.kr', true);
-    addMetaTag('og:title', 'RebornBiz(리본비즈) | 소상공인 폐업 및 업종 변경 시뮬레이터', true);
-    addMetaTag('og:description', '폐업 비용 계산, 희망 업종 수익성 시뮬레이션, 내 주변 상권 분석부터 정부 지원 정책 가이드까지 1분 만에 무료로 확인하세요.', true);
+    addMetaTag('og:title', `{seo_title}`, true);
+    addMetaTag('og:description', `{og_desc}`, true);
     addMetaTag('og:image', 'https://rebornbiz.co.kr/assets/og-image.png', true);
 
     addMetaTag('twitter:card', 'summary_large_image');
-    addMetaTag('twitter:title', 'RebornBiz(리본비즈)');
-    addMetaTag('twitter:description', '소상공인 폐업 비용 및 비즈니스 전환 올인원 시뮬레이터');
+    addMetaTag('twitter:title', `{seo_title}`);
+    addMetaTag('twitter:description', `{og_desc}`);
     addMetaTag('twitter:image', 'https://rebornbiz.co.kr/assets/og-image.png');
 
     // 구글 애드센스 스크립트 주입

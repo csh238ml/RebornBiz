@@ -124,8 +124,16 @@ class GovPolicyGuide(Base):
     refrnc_nm = Column(Text)
     rcept_engn_hmpg_url = Column(Text)
     fetched_at = Column(DateTime, default=datetime.datetime.utcnow)
-
-
+    
+# Reborn 매거진 (게시판) 테이블 정의
+class RebornBoard(Base):
+    __tablename__ = "reborn_board"
+    
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    title = Column(String(255), nullable=False)
+    content_html = Column(Text, nullable=False)
+    views = Column(Integer, default=0)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
 def init_db():
     """DB 연결을 확인하고 테이블을 자동 생성합니다."""
@@ -136,9 +144,67 @@ def init_db():
             
         # 테이블 생성 (이미 존재하면 무시됨)
         Base.metadata.create_all(bind=engine)
-        print("[SUCCESS] 데이터베이스 테이블(Users, Simulations, industry_master) 초기화 완료.")
+        print("[SUCCESS] 데이터베이스 테이블 초기화 완료.")
+        
+        # 더미 데이터 삽입 (게시글이 없을 경우)
+        with SessionLocal() as db:
+            if db.query(RebornBoard).count() == 0:
+                dummy1 = RebornBoard(
+                    title="2026년 소상공인 폐업 지원금 완벽 가이드",
+                    content_html="""
+                    <h3>폐업지원금 최대 250만원 지원</h3>
+                    <p>정부에서 제공하는 희망리턴패키지를 통해 폐업 시 발생하는 철거비와 원상복구 비용을 지원받을 수 있습니다.</p>
+                    <p>자세한 신청 방법과 필요 서류는 관할 센터에 문의하세요.</p>
+                    """
+                )
+                dummy2 = RebornBoard(
+                    title="상권 분석: 어느 동네가 요즘 뜨고 있을까?",
+                    content_html="""
+                    <h3>성공적인 재창업을 위한 상권 분석</h3>
+                    <p>최근 실거래가 데이터와 유동인구 데이터를 기반으로 한 최신 상권 트렌드를 분석합니다.</p>
+                    <p>특히 수도권 주요 상권의 매출액 증가 추이를 눈여겨 보세요!</p>
+                    """
+                )
+                db.add_all([dummy1, dummy2])
+                db.commit()
+                print("[INFO] 매거진 더미 데이터 삽입 완료.")
+                
     except Exception as e:
         print(f"[ERROR] DB 연결 실패: {e}")
+
+# ==========================================
+# Reborn 매거진 (게시판) 데이터 접근 로직
+# ==========================================
+
+def get_board_list(search_term=None):
+    """게시판 리스트 조회 (검색 필터 포함)"""
+    db = SessionLocal()
+    try:
+        query = db.query(RebornBoard)
+        if search_term:
+            query = query.filter(RebornBoard.title.like(f"%{search_term}%"))
+        return query.order_by(RebornBoard.created_at.desc()).all()
+    except Exception as e:
+        print(f"[ERROR] 매거진 리스트 조회 실패: {e}")
+        return []
+    finally:
+        db.close()
+
+def get_board_detail(post_id):
+    """게시판 단건 상세 조회 (조회수 증가 포함)"""
+    db = SessionLocal()
+    try:
+        post = db.query(RebornBoard).filter(RebornBoard.id == post_id).first()
+        if post:
+            post.views += 1
+            db.commit()
+            db.refresh(post)
+        return post
+    except Exception as e:
+        print(f"[ERROR] 매거진 상세 조회 실패: {e}")
+        return None
+    finally:
+        db.close()
 
 @st.cache_data(show_spinner=False)
 def get_large_categories():
