@@ -331,6 +331,17 @@ visibility: hidden !important;
 display: none !important;
 }
 
+/* 커스텀 사이드바 활성화(선택된) 메뉴 스타일 */
+[data-testid="stSidebar"] a[data-testid="stPageLink-NavLink"][aria-current="page"] {
+    background-color: rgba(30, 58, 138, 0.08) !important;
+    border-left: 4px solid #1E3A8A !important;
+    border-radius: 0 6px 6px 0 !important;
+}
+[data-testid="stSidebar"] a[data-testid="stPageLink-NavLink"][aria-current="page"] p {
+    font-weight: 700 !important;
+    color: #1E3A8A !important;
+}
+
 /* 재사용 가능한 아싸지원사업 스타일 통합 카드 클래스 */
 .reborn-card, .reborn-card-marker + div {
 background-color: #ffffff !important;
