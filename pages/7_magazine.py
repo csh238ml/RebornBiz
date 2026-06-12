@@ -181,5 +181,16 @@ if post_id_param:
 else:
     show_list_view()
 
-# 4. 푸터 렌더링
+# 4. 하단 광고 영역
+st.html("""
+    <div style="
+        display: flex; justify-content: center; align-items: center; 
+        height: 150px; border: 2px dashed #cccccc; border-radius: 10px; 
+        background-color: #f8f9fa; color: #adb5bd; font-family: 'Segoe UI', Tahoma, sans-serif;
+        margin-top: 20px; margin-bottom: 20px;">
+        <h3>AD Space</h3>
+    </div>
+""")
+
+# 5. 푸터 렌더링
 render_footer()
