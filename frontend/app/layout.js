@@ -1,4 +1,4 @@
-import './globals.css';
+import './reborn.css';
 import Link from 'next/link';
 import AdSlot from '@/components/AdSlot';
 import Sidebar from '@/components/Sidebar';
