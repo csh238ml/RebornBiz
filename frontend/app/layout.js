@@ -3,6 +3,7 @@ import Link from 'next/link';
 import AdSlot from '@/components/AdSlot';
 
 export const metadata = {
+  metadataBase: new URL('https://rebornbiz.co.kr'),
   title: 'RebornBiz | 소상공인 폐업 및 재창업 지원 플랫폼',
   description: '폐업 비용 진단, 상권 분석 시뮬레이션, 정부 지원 정책 안내 플랫폼',
   openGraph: {
