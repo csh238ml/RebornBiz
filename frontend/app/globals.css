@@ -1,0 +1,71 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f7f9;
+  color: #333;
+}
+
+.site-header {
+  background-color: #1E3A8A;
+  padding: 1rem;
+}
+
+.site-header nav {
+  display: flex;
+  gap: 15px;
+}
+
+.site-header a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.site-footer {
+  text-align: center;
+  padding: 2rem;
+  background-color: #e2e8f0;
+  color: #475569;
+  margin-top: 2rem;
+}
+
+.service-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: 20px;
+}
+
+.service-list li {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  flex: 1;
+}
+
+.service-list a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.magazine-detail {
+  background: white;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.meta-info {
+  color: #64748b;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 15px;
+}
