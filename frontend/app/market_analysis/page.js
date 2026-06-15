@@ -7,8 +7,9 @@ export default function MarketAnalysisPage() {
   const [stores, setStores] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [addressStr, setAddressStr] = useState("서울 강남구 역삼동");
+  const [addressStr, setAddressStr] = useState("주소를 불러오는 중...");
   const [selectedIndustry, setSelectedIndustry] = useState("전체");
+  const [mapLoaded, setMapLoaded] = useState(false);
 
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
@@ -17,7 +18,7 @@ export default function MarketAnalysisPage() {
   // Load Kakao Map Script
   useEffect(() => {
     const script = document.createElement('script');
-    script.src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=709c40315079132e50e64ff31f511a13&libraries=clusterer&autoload=false";
+    script.src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=709c40315079132e50e64ff31f511a13&libraries=clusterer,services&autoload=false";
     script.async = true;
     document.head.appendChild(script);
 
@@ -29,6 +30,7 @@ export default function MarketAnalysisPage() {
         };
         const map = new window.kakao.maps.Map(mapContainer.current, options);
         mapRef.current = map;
+        setMapLoaded(true);
 
         const clusterer = new window.kakao.maps.MarkerClusterer({
           map: map,
@@ -55,15 +57,28 @@ export default function MarketAnalysisPage() {
 
   // Fetch Stores when position or radius changes
   useEffect(() => {
-    if (!mapRef.current) return;
+    if (!mapLoaded || !mapRef.current) return;
     
     const fetchStores = async () => {
       setLoading(true);
       setError(null);
       try {
-        // Reverse geocoding placeholder or real fetch
-        // In real app, reverse geocoding happens on backend or via kakao API. Let's just use placeholder for frontend.
-        setAddressStr(`위도: ${position.lat.toFixed(4)}, 경도: ${position.lon.toFixed(4)}`);
+        // Reverse geocoding using Kakao Maps services
+        const geocoder = new window.kakao.maps.services.Geocoder();
+        geocoder.coord2RegionCode(position.lon, position.lat, (result, status) => {
+          if (status === window.kakao.maps.services.Status.OK) {
+            let addr = result[0].address_name;
+            for(let i = 0; i < result.length; i++) {
+              if (result[i].region_type === 'H') { // 행정동 기준
+                addr = result[i].address_name;
+                break;
+              }
+            }
+            setAddressStr(addr);
+          } else {
+            setAddressStr(`위도: ${position.lat.toFixed(4)}, 경도: ${position.lon.toFixed(4)}`);
+          }
+        });
         
         mapRef.current.setCenter(new window.kakao.maps.LatLng(position.lat, position.lon));
         
@@ -91,7 +106,7 @@ export default function MarketAnalysisPage() {
     };
 
     fetchStores();
-  }, [position.lat, position.lon, radius]);
+  }, [position.lat, position.lon, radius, mapLoaded]);
 
   const drawMarkers = (data) => {
     if (!clustererRef.current || !window.kakao) return;
