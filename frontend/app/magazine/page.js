@@ -12,8 +12,7 @@ export default function MagazineListPage() {
     setLoading(true);
     setError(null);
     try {
-      const FASTAPI_URL = 'http://localhost:8000';
-      const url = search ? `${FASTAPI_URL}/api/magazine?search=${encodeURIComponent(search)}` : `${FASTAPI_URL}/api/magazine`;
+      const url = search ? `/api/magazine?search=${encodeURIComponent(search)}` : `/api/magazine`;
       const res = await fetch(url);
       const data = await res.json();
       if (data.success) {

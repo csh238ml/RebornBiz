@@ -12,8 +12,7 @@ export default function MagazineDetailPage() {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const FASTAPI_URL = 'http://localhost:8000';
-        const res = await fetch(`${FASTAPI_URL}/api/magazine/${params.id}`);
+        const res = await fetch(`/api/magazine/${params.id}`);
         if (!res.ok) throw new Error('Failed to fetch');
         const data = await res.json();
         if (data.success) {

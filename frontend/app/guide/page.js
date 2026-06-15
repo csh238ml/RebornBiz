@@ -12,8 +12,7 @@ export default function GuidePage() {
     setLoading(true);
     setError(null);
     try {
-      const FASTAPI_URL = 'http://localhost:8000';
-      const url = search ? `${FASTAPI_URL}/api/policies?search=${encodeURIComponent(search)}` : `${FASTAPI_URL}/api/policies`;
+      const url = search ? `/api/policies?search=${encodeURIComponent(search)}` : `/api/policies`;
       const res = await fetch(url);
       const data = await res.json();
       if (data.success) {

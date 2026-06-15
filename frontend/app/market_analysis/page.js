@@ -67,8 +67,7 @@ export default function MarketAnalysisPage() {
         
         mapRef.current.setCenter(new window.kakao.maps.LatLng(position.lat, position.lon));
         
-        const FASTAPI_URL = 'http://localhost:8000';
-        const res = await fetch(`${FASTAPI_URL}/api/market_analysis`, {
+        const res = await fetch(`/api/market_analysis`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ lat: position.lat, lon: position.lon, radius: radius, address: addressStr })
