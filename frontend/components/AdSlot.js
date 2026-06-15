@@ -29,7 +29,7 @@ export default function AdSlot({ position = 'default' }) {
       {/* 실제 애드센스 ins 태그 등이 위치할 곳 (기본 UI 뼈대) */}
       <ins className="adsbygoogle"
            style={{ display: 'block', width: '100%', height: '100%' }}
-           data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+           data-ad-client="ca-pub-4577150400116930"
            data-ad-slot="1234567890"
            data-ad-format="auto"
            data-full-width-responsive="true"></ins>

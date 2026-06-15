@@ -1,5 +1,6 @@
 import './reborn.css';
 import Link from 'next/link';
+import Script from 'next/script';
 import AdSlot from '@/components/AdSlot';
 import Sidebar from '@/components/Sidebar';
 
@@ -23,6 +24,12 @@ export default function RootLayout({ children }) {
     <html lang="ko">
       <head>
         <link rel="stylesheet" as="style" crossOrigin="true" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
+        <Script 
+          async 
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4577150400116930" 
+          crossOrigin="anonymous" 
+          strategy="afterInteractive"
+        />
       </head>
       <body>
         <div className="layout-container">
