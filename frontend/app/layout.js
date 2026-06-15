@@ -1,6 +1,7 @@
 import './globals.css';
 import Link from 'next/link';
 import AdSlot from '@/components/AdSlot';
+import Sidebar from '@/components/Sidebar';
 
 export const metadata = {
   metadataBase: new URL('https://rebornbiz.co.kr'),
@@ -22,19 +23,7 @@ export default function RootLayout({ children }) {
     <html lang="ko">
       <body>
         <div className="layout-container">
-          {/* 1. 좌측 사이드바 (고정) */}
-          <aside className="sidebar">
-            <Link href="/" className="sidebar-title">RebornBiz</Link>
-            <nav>
-              <Link href="/">🏠 홈</Link>
-              <Link href="/calculator">🧮 폐업 비용 계산기</Link>
-              <Link href="/tax_cal">🧾 폐업 세금 계산기</Link>
-              <Link href="/simulation">📈 업종 변경 시뮬레이션</Link>
-              <Link href="/market_analysis">📍 내 주변 상권 분석</Link>
-              <Link href="/guide">🏛️ 정부 지원 정책</Link>
-              <Link href="/magazine">📰 Reborn 매거진</Link>
-            </nav>
-          </aside>
+          <Sidebar />
 
           {/* 2. 우측 메인 콘텐츠 영역 */}
           <div className="main-wrapper">
