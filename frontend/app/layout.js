@@ -40,7 +40,7 @@ export default function RootLayout({ children }) {
                   maxHeight: '200px',
                   objectFit: 'cover', 
                   borderRadius: '12px', 
-                  marginBottom: '2rem' 
+                  marginBottom: '1rem' 
                 }} 
               />
               {children}
