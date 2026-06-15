@@ -1,7 +1,7 @@
 import mysql from 'mysql2/promise';
 
-// Next.js(frontend) 환경에서 상위 폴더의 .env를 자동으로 불러오지 못해 연결이 실패하는(502 에러) 현상을 방지하기 위해,
-// process.env가 없을 경우 실제 운영 환경의 DB 접속 정보를 Fallback으로 사용하도록 구성했습니다.
+// RebornBiz 프로젝트의 실제 DB 접속 환경 변수를 참조하여 Connection Pool 구성
+// Next.js 환경 특성상 .env 로드가 누락될 경우를 대비해 기존 파이썬 백엔드의 실제 값을 Fallback으로 지정
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'reborn-biz-db.cf08ake2amg0.ap-northeast-2.rds.amazonaws.com',
   user: process.env.DB_USER || 'admin',
@@ -20,7 +20,8 @@ const pool = mysql.createPool({
  */
 export async function getBoardDetail(id) {
   try {
-    // 실제 사용 중인 테이블(reborn_board)과 컬럼들을 정확히 매핑하여 SELECT 쿼리를 실행합니다.
+    // 파이썬 SQLAlchemy 모델(RebornBoard)에 매핑된 실제 DB 테이블명 'reborn_board' 사용
+    // 진짜 컬럼 명세: id, title, content_html, views, created_at
     const [rows] = await pool.query(
       'SELECT id, title, content_html, views, created_at FROM reborn_board WHERE id = ?',
       [id]
@@ -32,20 +33,19 @@ export async function getBoardDetail(id) {
 
     const post = rows[0];
 
-    // 기존 백엔드(database.py)와 동일하게 게시글 상세 조회 시 조회수(views)를 1 증가시킵니다.
+    // 조회수 증가 업데이트 (기존 백엔드 로직 유지)
     await pool.query('UPDATE reborn_board SET views = views + 1 WHERE id = ?', [id]);
 
     return {
       id: post.id,
       title: post.title,
       content_html: post.content_html,
-      views: post.views + 1, // 반영된 조회수 반환
+      views: post.views + 1, // 방금 업데이트된 조회수
       created_at: post.created_at,
-      thumbnail_url: null // reborn_board 스키마에 thumbnail_url이 없으므로 null 처리
+      thumbnail_url: null // 현재 스키마에 존재하지 않으므로 null
     };
   } catch (error) {
     console.error(`[DB Error] getBoardDetail failed for id ${id}:`, error);
-    // 502 에러 등의 원인 파악을 위해 에러를 던져 서버 로그에 남깁니다.
     throw error;
   }
 }
