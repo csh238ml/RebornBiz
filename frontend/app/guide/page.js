@@ -36,14 +36,25 @@ export async function generateMetadata({ searchParams }) {
   };
 }
 
-const renderBullets = (text) => {
-  if (!text) return "• 상세 내용은 공식 공고문을 참조하세요.";
-  return text.split('\n').filter(line => line.trim()).map((line, idx) => {
+const renderBullets = (rawText) => {
+  if (!rawText) return "• 상세 내용은 공식 공고문을 참조하세요.";
+  
+  // 1. Remove complete <!--[data-hwpjson] ... --> blocks
+  let text = rawText.replace(/<!--\[data-hwpjson\][\s\S]*?-->/g, '');
+  
+  // 2. Remove if truncated (no closing tag)
+  const idx = text.indexOf('<!--[data-hwpjson]');
+  if (idx !== -1) text = text.substring(0, idx);
+
+  return text.split('\n').filter(line => line.trim()).map((line, i) => {
     let cleanLine = line.trim();
     if (cleanLine.startsWith('-') || cleanLine.startsWith('•') || cleanLine.startsWith('*')) {
       cleanLine = cleanLine.substring(1).trim();
     }
-    return <div key={idx} style={{marginBottom: '4px'}}>• {cleanLine}</div>;
+    // 3. Skip stray JSON lines if any escaped
+    if (cleanLine === '{' || cleanLine === '}' || cleanLine.startsWith('"')) return null;
+    
+    return <div key={i} style={{marginBottom: '4px'}}>• {cleanLine}</div>;
   });
 };
 
