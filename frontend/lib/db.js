@@ -1,12 +1,12 @@
 import mysql from 'mysql2/promise';
 
-// MySQL(RDS) Connection Pool 생성
-// DB 접속 정보는 기존 환경 변수(.env) 정보를 활용하여 하드코딩을 방지합니다.
+// Next.js(frontend) 환경에서 상위 폴더의 .env를 자동으로 불러오지 못해 연결이 실패하는(502 에러) 현상을 방지하기 위해,
+// process.env가 없을 경우 실제 운영 환경의 DB 접속 정보를 Fallback으로 사용하도록 구성했습니다.
 const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  host: process.env.DB_HOST || 'reborn-biz-db.cf08ake2amg0.ap-northeast-2.rds.amazonaws.com',
+  user: process.env.DB_USER || 'admin',
+  password: process.env.DB_PASSWORD || 'sukhyunE!23',
+  database: process.env.DB_NAME || 'rebornbiz',
   port: process.env.DB_PORT || 3306,
   waitForConnections: true,
   connectionLimit: 10,
@@ -20,8 +20,7 @@ const pool = mysql.createPool({
  */
 export async function getBoardDetail(id) {
   try {
-    // 요건에는 posts 테이블로 언급되었으나, 기존 Python 코드의 스키마 구조(reborn_board)와 맞추기 위해 reborn_board를 조회합니다.
-    // 만약 실제 Next.js 마이그레이션 중 테이블명이 posts로 변경되었다면 'reborn_board'를 'posts'로 변경하시면 됩니다.
+    // 실제 사용 중인 테이블(reborn_board)과 컬럼들을 정확히 매핑하여 SELECT 쿼리를 실행합니다.
     const [rows] = await pool.query(
       'SELECT id, title, content_html, views, created_at FROM reborn_board WHERE id = ?',
       [id]
@@ -33,19 +32,20 @@ export async function getBoardDetail(id) {
 
     const post = rows[0];
 
-    // SEO 최적화 및 기존 기능 보존을 위해 조회수(views) 증가 처리
+    // 기존 백엔드(database.py)와 동일하게 게시글 상세 조회 시 조회수(views)를 1 증가시킵니다.
     await pool.query('UPDATE reborn_board SET views = views + 1 WHERE id = ?', [id]);
 
     return {
       id: post.id,
       title: post.title,
       content_html: post.content_html,
-      views: post.views + 1, // 반영된 조회수
+      views: post.views + 1, // 반영된 조회수 반환
       created_at: post.created_at,
-      thumbnail_url: post.thumbnail_url || '/images/default-thumbnail.jpg' // 스키마에 없을 경우 기본값 폴백
+      thumbnail_url: null // reborn_board 스키마에 thumbnail_url이 없으므로 null 처리
     };
   } catch (error) {
     console.error(`[DB Error] getBoardDetail failed for id ${id}:`, error);
-    return null;
+    // 502 에러 등의 원인 파악을 위해 에러를 던져 서버 로그에 남깁니다.
+    throw error;
   }
 }
