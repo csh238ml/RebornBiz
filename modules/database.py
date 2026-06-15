@@ -1,5 +1,17 @@
 import os
-import streamlit as st
+try:
+    import streamlit as st
+    HAS_STREAMLIT = True
+except ImportError:
+    st = None
+    HAS_STREAMLIT = False
+
+def cache_data_fallback(*args, **kwargs):
+    def decorator(func):
+        return func
+    return decorator
+
+st_cache_data = st.cache_data if HAS_STREAMLIT else cache_data_fallback
 from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, ForeignKey, Text
 from sqlalchemy.orm import declarative_base, sessionmaker
 from dotenv import load_dotenv
@@ -206,7 +218,7 @@ def get_board_detail(post_id):
     finally:
         db.close()
 
-@st.cache_data(show_spinner=False)
+@st_cache_data(show_spinner=False)
 def get_large_categories():
     """DB에서 대분류 목록을 조회합니다."""
     db = SessionLocal()
@@ -219,7 +231,7 @@ def get_large_categories():
     finally:
         db.close()
 
-@st.cache_data(show_spinner=False)
+@st_cache_data(show_spinner=False)
 def get_medium_categories(large_cat_name):
     """선택된 대분류에 속하는 중분류 목록을 조회합니다."""
     if not large_cat_name:
@@ -236,7 +248,7 @@ def get_medium_categories(large_cat_name):
     finally:
         db.close()
 
-@st.cache_data(show_spinner=False)
+@st_cache_data(show_spinner=False)
 def get_small_categories(medium_cat_name):
     """선택된 중분류에 속하는 소분류 목록을 조회합니다."""
     if not medium_cat_name:
@@ -253,7 +265,7 @@ def get_small_categories(medium_cat_name):
     finally:
         db.close()
 
-@st.cache_data(show_spinner=False)
+@st_cache_data(show_spinner=False)
 def get_sido_list():
     """DB에서 시/도 목록을 조회합니다."""
     db = SessionLocal()
@@ -273,7 +285,7 @@ def get_sido_list():
     finally:
         db.close()
 
-@st.cache_data(show_spinner=False)
+@st_cache_data(show_spinner=False)
 def get_sigungu_list(sido_name):
     """선택된 시/도에 속하는 시/군/구 목록을 조회합니다. (sort_order 오름차순)"""
     if not sido_name:
@@ -298,7 +310,7 @@ def get_sigungu_list(sido_name):
     finally:
         db.close()
 
-@st.cache_data(show_spinner=False)
+@st_cache_data(show_spinner=False)
 def get_dong_list(sido_name, sigungu_name):
     """선택된 시/도, 시/군/구에 속하는 읍/면/동 목록을 조회합니다."""
     if not sido_name or not sigungu_name:
@@ -317,7 +329,12 @@ def get_dong_list(sido_name, sigungu_name):
     finally:
         db.close()
 
-@st.cache_data(show_spinner=False, ttl=3600)
+def st_cache_data_fallback(func):
+    if HAS_STREAMLIT:
+        return st.cache_data(show_spinner=False, ttl=3600)(func)
+    return func
+
+@st_cache_data_fallback
 def get_industry_metrics():
     """DB에서 업종 지표를 조회합니다. DB가 비어있으면 기본 하드코딩 데이터를 반환합니다."""
     # 1. Fallback / Seed 데이터 정의
@@ -366,7 +383,7 @@ def get_client_info():
     user_agent = "Unknown"
     
     try:
-        if hasattr(st, "context") and hasattr(st.context, "headers"):
+        if HAS_STREAMLIT and hasattr(st, "context") and hasattr(st.context, "headers"):
             headers = st.context.headers
             
             # X-Forwarded-For에서 우선 추출 (Nginx 프록시 환경)
