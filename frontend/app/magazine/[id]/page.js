@@ -12,9 +12,18 @@ export default function MagazineDetailPage() {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const res = await fetch(`/api/magazine/${params.id}`);
+        const id = params.id;
+        const res = await fetch(`/api/magazine/${id}`);
+        
+        if (res.status === 404) {
+          setError('게시글을 찾을 수 없거나 삭제되었습니다.');
+          setLoading(false);
+          return;
+        }
+        
         if (!res.ok) throw new Error('Failed to fetch');
         const data = await res.json();
+        
         if (data.success) {
           setPost(data.data);
         } else {
