@@ -1,83 +1,81 @@
-import { notFound } from 'next/navigation';
-import { getBoardDetail } from '@/lib/db'; 
-import AdSlot from '@/components/AdSlot';
+'use client';
+import { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 
-// 1. 동적 메타데이터 생성 (SEO 및 공유 썸네일 최적화)
-export async function generateMetadata({ params }) {
-  const { id } = params;
-  const post = await getBoardDetail(id);
+export default function MagazineDetailPage() {
+  const params = useParams();
+  const router = useRouter();
+  const [post, setPost] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  if (!post) {
-    return { title: '게시글을 찾을 수 없습니다 | Reborn 매거진' };
-  }
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const FASTAPI_URL = 'http://localhost:8000';
+        const res = await fetch(`${FASTAPI_URL}/api/magazine/${params.id}`);
+        if (!res.ok) throw new Error('Failed to fetch');
+        const data = await res.json();
+        if (data.success) {
+          setPost(data.data);
+        } else {
+          setError('게시글을 찾을 수 없거나 삭제되었습니다.');
+        }
+      } catch (err) {
+        setError('서버에 연결할 수 없습니다.');
+      }
+      setLoading(false);
+    };
 
-  // HTML 태그 제거 및 150자 추출 로직 적용
-  const plainText = post.content_html.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
-  const description = plainText.length > 150 ? plainText.slice(0, 150) + '...' : plainText;
+    fetchPost();
+  }, [params.id]);
 
-  // DB에 썸네일이 없다면 기본 이미지 사용
-  const imageUrl = post.thumbnail_url || '/images/default-magazine.jpg';
-
-  return {
-    title: `${post.title} | Reborn 매거진`,
-    description: description,
-    openGraph: {
-      title: post.title,
-      description: description,
-      url: `https://rebornbiz.co.kr/magazine/${id}`,
-      type: 'article',
-      images: [
-        {
-          url: imageUrl,
-          width: 1200,
-          height: 630,
-          alt: post.title,
-        },
-      ],
-    },
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(window.location.href)
+      .then(() => alert('링크가 복사되었습니다!'))
+      .catch(() => alert('링크 복사에 실패했습니다.'));
   };
-}
 
-// 2. 서버 사이드 데이터 패칭 (Server Component)
-export default async function MagazineDetailPage({ params }) {
-  const { id } = params;
-  const post = await getBoardDetail(id);
-
-  if (!post) {
-    notFound(); // 404 페이지로 라우팅
-  }
+  if (loading) return <div style={{padding: '3rem', textAlign: 'center'}}>로딩 중...</div>;
+  if (error || !post) return (
+    <div style={{padding: '3rem', textAlign: 'center'}}>
+      <div style={{color: '#ef4444', marginBottom: '1rem'}}>{error || '게시글을 찾을 수 없습니다.'}</div>
+      <button onClick={() => router.push('/magazine')} style={{padding: '0.5rem 1rem', cursor: 'pointer'}}>⬅️ 목록으로 돌아가기</button>
+    </div>
+  );
 
   return (
-    <article className="magazine-detail">
-      {/* 시맨틱 태그 준수 */}
-      <header>
-        <h1>{post.title}</h1>
-        <div className="meta-info">
-          <span>📅 {new Date(post.created_at).toLocaleDateString('ko-KR')}</span>
-          <span>👁️ 조회수: {post.views}</span>
-        </div>
-      </header>
+    <div style={{maxWidth: '900px', margin: '0 auto', padding: '2rem', fontFamily: 'sans-serif', color: '#31333F'}}>
+      <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '1rem'}}>
+        <button onClick={() => router.push('/magazine')} style={{padding: '0.5rem 1rem', backgroundColor: '#fff', color: '#333', border: '1px solid #ccc', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold'}}>
+          ⬅️ 목록으로
+        </button>
+        <button onClick={copyToClipboard} style={{padding: '0.5rem 1rem', backgroundColor: '#FF8C42', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold'}}>
+          🔗 링크 복사
+        </button>
+      </div>
 
-      {/* 썸네일 이미지가 있을 경우 alt 속성 필수 적용 */}
-      {post.thumbnail_url && (
-        <figure>
-          <img 
-            src={post.thumbnail_url} 
-            alt={`매거진 이미지: ${post.title}`} 
-            width="100%" 
-            loading="lazy"
-          />
-        </figure>
-      )}
+      <hr style={{borderTop: '1px solid rgba(49, 51, 63, 0.2)', margin: '1rem 0 2rem 0'}} />
 
-      {/* 본문 콘텐츠: HTML 통째로 주입 (보안 유의, sanitize 등 필요) */}
-      <section 
-        className="content-body" 
-        dangerouslySetInnerHTML={{ __html: post.content_html }} 
-      />
+      <h1 style={{color: '#1E3A8A', marginBottom: '10px', fontSize: '2rem'}}>{post.title}</h1>
+      
+      <div style={{color: '#888', fontSize: '0.95rem', marginBottom: '30px'}}>
+        <span>📅 작성일: {post.created_at}</span>
+        <span style={{marginLeft: '15px'}}>👁️ 조회수: {post.views}</span>
+      </div>
 
-      {/* 본문 하단 광고 */}
-      <AdSlot position="content_bottom" />
-    </article>
+      <div style={{lineHeight: '1.8', fontSize: '1.1rem'}} dangerouslySetInnerHTML={{__html: post.content_html}} />
+
+      <hr style={{borderTop: '1px solid rgba(49, 51, 63, 0.2)', margin: '2rem 0'}} />
+
+      <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '2rem'}}>
+        <button onClick={() => router.push('/magazine')} style={{padding: '0.5rem 1rem', backgroundColor: '#fff', color: '#333', border: '1px solid #ccc', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold'}}>
+          ⬅️ 목록으로
+        </button>
+        <button onClick={copyToClipboard} style={{padding: '0.5rem 1rem', backgroundColor: '#FF8C42', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold'}}>
+          🔗 링크 복사
+        </button>
+      </div>
+    </div>
   );
 }
