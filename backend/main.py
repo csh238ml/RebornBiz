@@ -118,7 +118,11 @@ def api_policies(search: Optional[str] = None):
 @app.get("/api/magazine")
 def api_magazine(search: Optional[str] = None):
     posts = get_board_list(search)
-    data = [{"id": p.id, "title": p.title, "views": p.views, "created_at": p.created_at.strftime("%Y-%m-%d")} for p in posts]
+    data = []
+    for p in posts:
+        created_dt = p.created_at.strftime("%Y-%m-%d") if p.created_at else ""
+        views = p.views if p.views is not None else 0
+        data.append({"id": p.id, "title": p.title, "views": views, "created_at": created_dt})
     return {"success": True, "data": data}
 
 @app.get("/api/magazine/{post_id}")
@@ -127,18 +131,25 @@ def api_magazine_detail(post_id: int):
         post = get_board_detail(post_id)
         if not post:
             raise HTTPException(status_code=404, detail="Post not found")
+        
+        created_dt = post.created_at.strftime("%Y-%m-%d %H:%M") if post.created_at else ""
+        views = post.views if post.views is not None else 0
+        
         return {
             "success": True,
             "data": {
                 "id": post.id,
                 "title": post.title,
-                "views": post.views,
-                "created_at": post.created_at.strftime("%Y-%m-%d %H:%M"),
+                "views": views,
+                "created_at": created_dt,
                 "content_html": post.content_html
             }
         }
+    except HTTPException as he:
+        raise he
     except Exception as e:
-        raise HTTPException(status_code=404, detail="Post not found")
+        print(f"Error in api_magazine_detail: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 @app.post("/api/market_analysis")
 def api_market_analysis(req: MarketAnalysisRequest):

@@ -208,6 +208,8 @@ def get_board_detail(post_id):
     try:
         post = db.query(RebornBoard).filter(RebornBoard.id == post_id).first()
         if post:
+            if post.views is None:
+                post.views = 0
             post.views += 1
             db.commit()
             db.refresh(post)
