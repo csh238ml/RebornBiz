@@ -122,9 +122,19 @@ body {
     overflow-x: hidden;
   }
   .main-content {
-    padding: 5rem 1rem 3rem; /* 상단 햄버거 버튼 공간 및 좌우 여백 */
+    padding: 5rem 0 3rem; /* 상단 햄버거 버튼 공간. 좌우 여백은 제거하고 자식에게 위임 */
     margin: 0 auto;
     width: 100%;
+  }
+  
+  /* 모든 페이지 최상단 컨테이너의 하드코딩된 여백(padding: 2rem)을 모바일에 맞게 강제 축소 */
+  .main-content > div {
+    padding: 1rem !important;
+  }
+  
+  /* 메인 배너 이미지 좌우 여백 유지 */
+  .main-content > img {
+    padding: 0 1rem;
   }
   /* 모바일 탭 가로 스크롤 처리 */
   .main-content > div[style*="gap: 1rem"],
