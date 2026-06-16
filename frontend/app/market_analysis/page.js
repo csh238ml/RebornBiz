@@ -71,7 +71,10 @@ export default function MarketAnalysisPage() {
             let addr = result[0].address_name;
             for (let i = 0; i < result.length; i++) {
               if (result[i].region_type === 'H') { // 행정동 기준
-                addr = result[i].address_name;
+                const r2 = result[i].region_2depth_name;
+                const r3 = result[i].region_3depth_name;
+                const r4 = result[i].region_4depth_name;
+                addr = `${r2} / ${r3}${r4 ? ' ' + r4 : ''}`;
                 break;
               }
             }
@@ -163,7 +166,7 @@ export default function MarketAnalysisPage() {
       <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem' }}>📋 상권 요약 지표</h3>
       <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
         <div style={{ flex: '1 1 200px', padding: '1.5rem', border: '1px solid rgba(49, 51, 63, 0.2)', borderRadius: '0.5rem' }}>
-          <div style={{ fontSize: '0.875rem', color: '#64748b', marginBottom: '0.25rem' }}>📍 현재 분석 위치</div>
+          <div style={{ fontSize: '0.875rem', color: '#64748b', marginBottom: '0.25rem' }}>📍 현재 위치</div>
           <div style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>{addressStr}</div>
         </div>
         <div style={{ flex: '1 1 200px', padding: '1.5rem', border: '1px solid rgba(49, 51, 63, 0.2)', borderRadius: '0.5rem' }}>
@@ -171,7 +174,7 @@ export default function MarketAnalysisPage() {
           <div style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>{radius}m</div>
         </div>
         <div style={{ flex: '1 1 200px', padding: '1.5rem', border: '1px solid rgba(49, 51, 63, 0.2)', borderRadius: '0.5rem' }}>
-          <div style={{ fontSize: '0.875rem', color: '#64748b', marginBottom: '0.25rem' }}>🏪 검색된 주요 자영업 점포</div>
+          <div style={{ fontSize: '0.875rem', color: '#64748b', marginBottom: '0.25rem' }}>점포 수</div>
           <div style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>{filteredStores.length} 개</div>
         </div>
       </div>
