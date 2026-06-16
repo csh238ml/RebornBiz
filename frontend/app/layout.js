@@ -13,7 +13,7 @@ export const metadata = {
     description: '소상공인 창업 및 상권 분석 가이드',
     url: 'https://rebornbiz.co.kr',
     siteName: 'RebornBiz',
-    images: [{ url: '/images/default-thumbnail.jpg' }],
+    images: [{ url: '/images/og-image.png' }],
     locale: 'ko_KR',
     type: 'website',
   },
