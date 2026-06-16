@@ -4,6 +4,7 @@ import Script from 'next/script';
 import AdSlot from '@/components/AdSlot';
 import FooterAd from '@/components/FooterAd';
 import Sidebar from '@/components/Sidebar';
+import PageLogger from '@/components/PageLogger';
 
 export const metadata = {
   metadataBase: new URL('https://rebornbiz.co.kr'),
@@ -33,6 +34,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>
+        <PageLogger />
         <div className="layout-container">
           <Sidebar />
 

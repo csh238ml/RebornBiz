@@ -54,19 +54,19 @@ export default function CalculatorPage() {
       <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem' }}>매장 정보 입력</h3>
 
       <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
-        <div style={{ flex: '1 1 200px' }}>
+        <div style={{ flex: '1 1 calc(50% - 1rem)', minWidth: '130px' }}>
           <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.5rem' }}>매장 평수(평)</label>
           <input type="number" name="area_pyeong" value={formData.area_pyeong} onChange={handleChange} style={{ width: '100%', padding: '0.5rem 0.75rem', borderRadius: '0.25rem', border: '1px solid rgba(49, 51, 63, 0.2)', fontSize: '1rem', backgroundColor: '#FAFAFA' }} />
         </div>
-        <div style={{ flex: '1 1 200px' }}>
+        <div style={{ flex: '1 1 calc(50% - 1rem)', minWidth: '130px' }}>
           <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.5rem' }}>월 임대료(만원)</label>
           <input type="number" name="monthly_rent_manwon" value={formData.monthly_rent_manwon} onChange={handleChange} style={{ width: '100%', padding: '0.5rem 0.75rem', borderRadius: '0.25rem', border: '1px solid rgba(49, 51, 63, 0.2)', fontSize: '1rem', backgroundColor: '#FAFAFA' }} />
         </div>
-        <div style={{ flex: '1 1 200px' }}>
+        <div style={{ flex: '1 1 calc(50% - 1rem)', minWidth: '130px' }}>
           <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.5rem' }}>남은 계약 기간(개월)</label>
           <input type="number" name="remaining_months" value={formData.remaining_months} onChange={handleChange} style={{ width: '100%', padding: '0.5rem 0.75rem', borderRadius: '0.25rem', border: '1px solid rgba(49, 51, 63, 0.2)', fontSize: '1rem', backgroundColor: '#FAFAFA' }} />
         </div>
-        <div style={{ flex: '1 1 200px' }}>
+        <div style={{ flex: '1 1 calc(50% - 1rem)', minWidth: '130px' }}>
           <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.5rem' }}>직원 수(명)</label>
           <input type="number" name="num_employees" value={formData.num_employees} onChange={handleChange} style={{ width: '100%', padding: '0.5rem 0.75rem', borderRadius: '0.25rem', border: '1px solid rgba(49, 51, 63, 0.2)', fontSize: '1rem', backgroundColor: '#FAFAFA' }} />
         </div>

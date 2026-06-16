@@ -14,6 +14,22 @@ const pool = mysql.createPool({
 });
 
 /**
+ * 접속 로그를 access_logs 테이블에 기록합니다.
+ */
+export async function logPageAccess(menu_name, ip_address = 'unknown', user_agent = 'unknown') {
+  try {
+    // access_time은 DB의 기본값(NOW())을 사용하거나, 수동으로 입력할 수 있습니다.
+    // 백엔드 SQLAlchemy 모델에서는 datetime.utcnow가 기본값입니다.
+    await pool.query(
+      'INSERT INTO access_logs (access_time, ip_address, user_agent, accessed_menu) VALUES (NOW(), ?, ?, ?)',
+      [ip_address, user_agent, menu_name]
+    );
+  } catch (error) {
+    console.error(`[DB Error] logPageAccess failed:`, error);
+  }
+}
+
+/**
  * 특정 ID의 매거진(게시판) 글을 조회합니다.
  * @param {string|number} id - 게시글 ID
  * @returns {Promise<Object|null>} - 게시글 객체 또는 null
