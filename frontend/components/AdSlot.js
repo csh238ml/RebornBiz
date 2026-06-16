@@ -22,8 +22,7 @@ export default function AdSlot({ position = 'default' }) {
       className={`ad-container ad-pos-${position}`} 
       style={{
         display: 'flex', justifyContent: 'center', alignItems: 'center',
-        height: '150px', border: '2px dashed #cccccc', borderRadius: '10px',
-        backgroundColor: '#f8f9fa', color: '#adb5bd', margin: '20px 0'
+        minHeight: '90px', width: '100%', margin: '20px 0', overflow: 'hidden'
       }}
     >
       {/* 실제 애드센스 ins 태그 등이 위치할 곳 (기본 UI 뼈대) */}

@@ -2,6 +2,7 @@ import './reborn.css';
 import Link from 'next/link';
 import Script from 'next/script';
 import AdSlot from '@/components/AdSlot';
+import FooterAd from '@/components/FooterAd';
 import Sidebar from '@/components/Sidebar';
 
 export const metadata = {
@@ -53,9 +54,10 @@ export default function RootLayout({ children }) {
               {children}
             </main>
 
-            {/* 하단 공통 광고 영역 */}
+
+            {/* 하단 공통 광고 영역 (상권분석 메뉴 제외) */}
             <section style={{ padding: '0 2rem' }}>
-              <AdSlot position="bottom" />
+              <FooterAd />
             </section>
 
             {/* 공통 푸터 */}
