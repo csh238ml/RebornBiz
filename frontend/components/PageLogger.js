@@ -29,6 +29,15 @@ export default function PageLogger() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ menu_name: menuName })
     }).catch(e => console.error('Logging failed:', e));
+    
+    // 네이버 애널리틱스 SPA 라우팅 추적
+    if (typeof window !== 'undefined') {
+      if (!window.wcs_add) window.wcs_add = {};
+      window.wcs_add["wa"] = "cb815cb694e138";
+      if (window.wcs) {
+        window.wcs_do();
+      }
+    }
   }, [pathname]);
 
   return null;

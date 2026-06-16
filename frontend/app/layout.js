@@ -32,6 +32,10 @@ export default function RootLayout({ children }) {
           crossOrigin="anonymous" 
           strategy="afterInteractive"
         />
+        <Script 
+          src="//wcs.pstatic.net/wcslog.js"
+          strategy="afterInteractive"
+        />
       </head>
       <body>
         <PageLogger />
