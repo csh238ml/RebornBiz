@@ -40,7 +40,7 @@ export default function MarketAnalysisPage() {
         });
         clustererRef.current = clusterer;
 
-        window.kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+        window.kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
           const latlng = mouseEvent.latLng;
           setPosition({ lat: latlng.getLat(), lon: latlng.getLng() });
         });
@@ -49,7 +49,7 @@ export default function MarketAnalysisPage() {
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition((pos) => {
             setPosition({ lat: pos.coords.latitude, lon: pos.coords.longitude });
-          }, () => {}, { enableHighAccuracy: true, timeout: 5000, maximumAge: Infinity });
+          }, () => { }, { enableHighAccuracy: true, timeout: 5000, maximumAge: Infinity });
         }
       });
     };
@@ -59,7 +59,7 @@ export default function MarketAnalysisPage() {
   // Fetch Stores when position or radius changes
   useEffect(() => {
     if (!mapLoaded || !mapRef.current) return;
-    
+
     const fetchStores = async () => {
       setLoading(true);
       setError(null);
@@ -69,7 +69,7 @@ export default function MarketAnalysisPage() {
         geocoder.coord2RegionCode(position.lon, position.lat, (result, status) => {
           if (status === window.kakao.maps.services.Status.OK) {
             let addr = result[0].address_name;
-            for(let i = 0; i < result.length; i++) {
+            for (let i = 0; i < result.length; i++) {
               if (result[i].region_type === 'H') { // 행정동 기준
                 addr = result[i].address_name;
                 break;
@@ -80,16 +80,16 @@ export default function MarketAnalysisPage() {
             setAddressStr(`위도: ${position.lat.toFixed(4)}, 경도: ${position.lon.toFixed(4)}`);
           }
         });
-        
+
         mapRef.current.setCenter(new window.kakao.maps.LatLng(position.lat, position.lon));
-        
+
         const res = await fetch(`/api/market_analysis`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ lat: position.lat, lon: position.lon, radius: radius, address: addressStr })
         });
         const data = await res.json();
-        
+
         if (data.success) {
           setStores(data.data || []);
           drawMarkers(data.data || []);
@@ -121,7 +121,7 @@ export default function MarketAnalysisPage() {
       });
       const iwContent = `<div style="padding:5px;font-size:12px;max-width:200px;white-space:normal;word-break:keep-all;">${store.bizesNm || '알수없음'}<br>(${store.indsMclsNm})</div>`;
       const infowindow = new window.kakao.maps.InfoWindow({ content: iwContent });
-      
+
       window.kakao.maps.event.addListener(marker, 'mouseover', () => infowindow.open(mapRef.current, marker));
       window.kakao.maps.event.addListener(marker, 'mouseout', () => infowindow.close());
       return marker;
@@ -137,7 +137,7 @@ export default function MarketAnalysisPage() {
   const coreIndustries = ['음식', '소매', '생활서비스', '수리·개인·기타서비스', '예술·스포츠·여가'];
   const filteredStores = stores.filter(s => coreIndustries.includes(s.indsLclsNm));
   const uniqueIndustries = ["전체", ...new Set(filteredStores.map(s => s.indsMclsNm).filter(Boolean))].sort();
-  
+
   const displayStores = selectedIndustry === "전체" ? filteredStores : filteredStores.filter(s => s.indsMclsNm === selectedIndustry);
 
   // Top 3 industries
@@ -148,85 +148,85 @@ export default function MarketAnalysisPage() {
   const top3 = Object.entries(industryCounts).sort((a, b) => b[1] - a[1]).slice(0, 3).map(x => x[0]);
 
   return (
-    <div style={{maxWidth: '1200px', margin: '0 auto', padding: '2rem', fontFamily: 'sans-serif', color: '#31333F'}}>
-      <h1 style={{fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem'}}>🗺️ 내 주변 상권 분석</h1>
-      <p style={{fontSize: '1rem', marginBottom: '2rem'}}>현재 내 위치를 기반으로 주변 반경 내에 어떤 상권이 형성되어 있는지 시각적으로 확인합니다. 지도를 클릭하면 중심점이 이동합니다.</p>
+    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem', fontFamily: 'sans-serif', color: '#31333F' }}>
+      <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem' }}>내 주변 상권 분석</h1>
+      <p style={{ fontSize: '1rem', marginBottom: '2rem' }}>현재 내 위치를 기반으로 주변 반경 내에 어떤 상권이 형성되어 있는지 시각적으로 확인합니다. 지도를 클릭하면 중심점이 이동합니다.</p>
 
-      <hr style={{borderTop: '1px solid rgba(49, 51, 63, 0.2)', margin: '1.5rem 0'}} />
+      <hr style={{ borderTop: '1px solid rgba(49, 51, 63, 0.2)', margin: '1.5rem 0' }} />
 
-      <h3 style={{fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem'}}>1. 상권 분석 반경 설정</h3>
-      <div style={{marginBottom: '2rem'}}>
-        <input type="range" min="100" max="2000" step="100" value={radius} onChange={(e) => setRadius(Number(e.target.value))} style={{width: '100%', maxWidth: '400px'}} />
-        <div style={{marginTop: '0.5rem', fontWeight: 'bold'}}>{radius} 미터</div>
+      <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem' }}>1. 상권 분석 반경 설정</h3>
+      <div style={{ marginBottom: '2rem' }}>
+        <input type="range" min="100" max="2000" step="100" value={radius} onChange={(e) => setRadius(Number(e.target.value))} style={{ width: '100%', maxWidth: '400px' }} />
+        <div style={{ marginTop: '0.5rem', fontWeight: 'bold' }}>{radius} 미터</div>
       </div>
 
-      <h3 style={{fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem'}}>📋 상권 요약 지표</h3>
+      <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem' }}>📋 상권 요약 지표</h3>
       <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
-        <div style={{flex: '1 1 200px', padding: '1.5rem', border: '1px solid rgba(49, 51, 63, 0.2)', borderRadius: '0.5rem'}}>
+        <div style={{ flex: '1 1 200px', padding: '1.5rem', border: '1px solid rgba(49, 51, 63, 0.2)', borderRadius: '0.5rem' }}>
           <div style={{ fontSize: '0.875rem', color: '#64748b', marginBottom: '0.25rem' }}>📍 현재 분석 위치</div>
           <div style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>{addressStr}</div>
         </div>
-        <div style={{flex: '1 1 200px', padding: '1.5rem', border: '1px solid rgba(49, 51, 63, 0.2)', borderRadius: '0.5rem'}}>
+        <div style={{ flex: '1 1 200px', padding: '1.5rem', border: '1px solid rgba(49, 51, 63, 0.2)', borderRadius: '0.5rem' }}>
           <div style={{ fontSize: '0.875rem', color: '#64748b', marginBottom: '0.25rem' }}>⭕ 검색 반경</div>
           <div style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>{radius}m</div>
         </div>
-        <div style={{flex: '1 1 200px', padding: '1.5rem', border: '1px solid rgba(49, 51, 63, 0.2)', borderRadius: '0.5rem'}}>
+        <div style={{ flex: '1 1 200px', padding: '1.5rem', border: '1px solid rgba(49, 51, 63, 0.2)', borderRadius: '0.5rem' }}>
           <div style={{ fontSize: '0.875rem', color: '#64748b', marginBottom: '0.25rem' }}>🏪 검색된 주요 자영업 점포</div>
           <div style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>{filteredStores.length} 개</div>
         </div>
       </div>
 
-      <h3 style={{fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem'}}>3. 상권 시각화 대시보드</h3>
-      
+      <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem' }}>3. 상권 시각화 대시보드</h3>
+
       <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
-        <div style={{flex: '1.2 1 400px', border: '1px solid rgba(49, 51, 63, 0.2)', borderRadius: '0.5rem', padding: '1rem'}}>
-          <h4 style={{fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1rem'}}>📍 주변 상권 지도 (카카오 맵)</h4>
+        <div style={{ flex: '1.2 1 400px', border: '1px solid rgba(49, 51, 63, 0.2)', borderRadius: '0.5rem', padding: '1rem' }}>
+          <h4 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1rem' }}>📍 주변 상권 지도 (카카오 맵)</h4>
           <div ref={mapContainer} style={{ width: '100%', height: '500px', borderRadius: '0.5rem', position: 'relative' }}>
-            {loading && <div style={{position: 'absolute', top:0, left:0, width:'100%', height:'100%', backgroundColor: 'rgba(255,255,255,0.7)', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>데이터 로딩중...</div>}
+            {loading && <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(255,255,255,0.7)', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>데이터 로딩중...</div>}
           </div>
-          <div style={{marginTop: '1.5rem'}}>
+          <div style={{ marginTop: '1.5rem' }}>
             <AdSlot />
           </div>
         </div>
 
-        <div style={{flex: '1 1 300px', border: '1px solid rgba(49, 51, 63, 0.2)', borderRadius: '0.5rem', padding: '1rem'}}>
-          <h4 style={{fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1rem'}}>🔍 주변 경쟁 매장 검색 및 리스트</h4>
-          
+        <div style={{ flex: '1 1 300px', border: '1px solid rgba(49, 51, 63, 0.2)', borderRadius: '0.5rem', padding: '1rem' }}>
+          <h4 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1rem' }}>🔍 주변 경쟁 매장 검색 및 리스트</h4>
+
           {top3.length > 0 && (
-            <div style={{marginBottom: '1rem'}}>
+            <div style={{ marginBottom: '1rem' }}>
               <b>🏆 반경 내 Top 3 업종:</b>
-              <div style={{marginTop: '0.5rem'}}>
-                {top3.map(inds => <span key={inds} style={{backgroundColor: '#e0f2fe', color: '#0284c7', padding: '4px 10px', borderRadius: '12px', fontSize: '0.85rem', fontWeight: '600', marginRight: '6px'}}>#{inds}</span>)}
+              <div style={{ marginTop: '0.5rem' }}>
+                {top3.map(inds => <span key={inds} style={{ backgroundColor: '#e0f2fe', color: '#0284c7', padding: '4px 10px', borderRadius: '12px', fontSize: '0.85rem', fontWeight: '600', marginRight: '6px' }}>#{inds}</span>)}
               </div>
             </div>
           )}
 
-          <div style={{marginBottom: '1.5rem'}}>
-            <label style={{display: 'block', fontSize: '0.875rem', marginBottom: '0.5rem'}}>분석할 업종을 고르세요</label>
-            <select value={selectedIndustry} onChange={e => setSelectedIndustry(e.target.value)} style={{width: '100%', padding: '0.5rem 0.75rem', borderRadius: '0.25rem', border: '1px solid rgba(49, 51, 63, 0.2)', fontSize: '1rem', backgroundColor: '#FAFAFA'}}>
+          <div style={{ marginBottom: '1.5rem' }}>
+            <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.5rem' }}>분석할 업종을 고르세요</label>
+            <select value={selectedIndustry} onChange={e => setSelectedIndustry(e.target.value)} style={{ width: '100%', padding: '0.5rem 0.75rem', borderRadius: '0.25rem', border: '1px solid rgba(49, 51, 63, 0.2)', fontSize: '1rem', backgroundColor: '#FAFAFA' }}>
               {uniqueIndustries.map(ind => <option key={ind} value={ind}>{ind}</option>)}
             </select>
           </div>
 
-          <div style={{padding: '1rem', backgroundColor: '#F8F9FA', borderRadius: '0.25rem', marginBottom: '1rem'}}>
-            <div style={{fontSize: '0.875rem', color: '#64748b'}}>반경 {radius}m 내 '{selectedIndustry}' 매장 수</div>
-            <div style={{fontSize: '1.5rem', fontWeight: 'bold'}}>{displayStores.length} 개</div>
+          <div style={{ padding: '1rem', backgroundColor: '#F8F9FA', borderRadius: '0.25rem', marginBottom: '1rem' }}>
+            <div style={{ fontSize: '0.875rem', color: '#64748b' }}>반경 {radius}m 내 '{selectedIndustry}' 매장 수</div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{displayStores.length} 개</div>
           </div>
 
           {displayStores.length > 0 && (
-            <div style={{maxHeight: '300px', overflowY: 'auto', border: '1px solid rgba(49, 51, 63, 0.2)', borderRadius: '0.25rem'}}>
-              <table style={{width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem'}}>
-                <thead style={{backgroundColor: '#f8fafc', position: 'sticky', top: 0}}>
+            <div style={{ maxHeight: '300px', overflowY: 'auto', border: '1px solid rgba(49, 51, 63, 0.2)', borderRadius: '0.25rem' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }}>
+                <thead style={{ backgroundColor: '#f8fafc', position: 'sticky', top: 0 }}>
                   <tr>
-                    <th style={{padding: '0.5rem', textAlign: 'left', borderBottom: '1px solid rgba(49, 51, 63, 0.2)'}}>상호명</th>
-                    <th style={{padding: '0.5rem', textAlign: 'left', borderBottom: '1px solid rgba(49, 51, 63, 0.2)'}}>상세 업종</th>
+                    <th style={{ padding: '0.5rem', textAlign: 'left', borderBottom: '1px solid rgba(49, 51, 63, 0.2)' }}>상호명</th>
+                    <th style={{ padding: '0.5rem', textAlign: 'left', borderBottom: '1px solid rgba(49, 51, 63, 0.2)' }}>상세 업종</th>
                   </tr>
                 </thead>
                 <tbody>
                   {displayStores.map((s, idx) => (
                     <tr key={idx}>
-                      <td style={{padding: '0.5rem', borderBottom: '1px solid rgba(49, 51, 63, 0.1)'}}>{s.bizesNm || '알수없음'}</td>
-                      <td style={{padding: '0.5rem', borderBottom: '1px solid rgba(49, 51, 63, 0.1)'}}>{s.indsSclsNm}</td>
+                      <td style={{ padding: '0.5rem', borderBottom: '1px solid rgba(49, 51, 63, 0.1)' }}>{s.bizesNm || '알수없음'}</td>
+                      <td style={{ padding: '0.5rem', borderBottom: '1px solid rgba(49, 51, 63, 0.1)' }}>{s.indsSclsNm}</td>
                     </tr>
                   ))}
                 </tbody>
