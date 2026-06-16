@@ -10,9 +10,9 @@ from modules.database import SessionLocal, RebornBoard
 
 # 서버에 배포될 XML 저장 절대 경로 (로컬 윈도우 테스트 시에는 임시 경로 사용)
 if os.name == 'nt':
-    SITEMAP_PATH = os.path.join(PROJECT_DIR, 'sitemap.xml')
+    SITEMAP_PATH = os.path.join(PROJECT_DIR, 'frontend', 'public', 'sitemap.xml')
 else:
-    SITEMAP_PATH = '/home/ubuntu/rebornbiz/sitemap.xml'
+    SITEMAP_PATH = '/home/ubuntu/rebornbiz/frontend/public/sitemap.xml'
 
 BASE_URL = "https://rebornbiz.co.kr"
 
@@ -54,7 +54,7 @@ def generate_sitemap():
         posts = db.query(RebornBoard).order_by(RebornBoard.id.desc()).all()
         
         for post in posts:
-            url = f"{BASE_URL}/magazine?post_id={post.id}"
+            url = f"{BASE_URL}/magazine/{post.id}"
             # created_at 값을 YYYY-MM-DD 형식으로 변환 (nullable 안전 장치)
             lastmod_str = post.created_at.strftime("%Y-%m-%d") if post.created_at else today_str
             
