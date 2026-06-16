@@ -121,7 +121,7 @@ export default function TaxCalculatorPage() {
       </div>
 
       <div style={{ marginBottom: '2rem' }}>
-        <button onClick={handleSubmit} style={{ width: '100%', padding: '0.5rem 1rem', backgroundColor: '#FFFFFF', color: '#FF4B4B', border: '1px solid #FF4B4B', borderRadius: '0.25rem', fontSize: '1rem', cursor: 'pointer' }}>
+        <button onClick={handleSubmit} style={{ width: '100%', padding: '0.75rem 1rem', backgroundColor: '#FF4B4B', color: '#FFFFFF', border: 'none', borderRadius: '0.25rem', fontSize: '1rem', fontWeight: 'bold', cursor: 'pointer', transition: 'background-color 0.2s' }}>
           세금 계산하기
         </button>
       </div>
@@ -137,24 +137,26 @@ export default function TaxCalculatorPage() {
           <hr style={{ borderTop: '1px solid rgba(49, 51, 63, 0.2)', margin: '1.5rem 0' }} />
           <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem' }}>📊 계산 결과</h3>
 
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '2rem', padding: '1.5rem', border: '1px solid rgba(49, 51, 63, 0.2)', borderRadius: '0.5rem' }}>
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.5rem', padding: '1.5rem', border: '1px solid rgba(49, 51, 63, 0.2)', borderRadius: '0.5rem' }}>
             <div style={{ flex: '1 1 200px' }}>
-              <div style={{ fontSize: '0.875rem', color: '#31333F', marginBottom: '0.25rem' }}>⏳ 경과된 과세기간</div>
+              <div style={{ fontSize: '0.875rem', color: '#31333F', marginBottom: '0.25rem' }}>⏳ 경과된 과세기간 수</div>
               <div style={{ fontSize: '2.25rem', color: '#31333F' }}>{result.passed_periods}기</div>
             </div>
             <div style={{ flex: '1 1 200px' }}>
-              <div style={{ fontSize: '0.875rem', color: '#31333F', marginBottom: '0.25rem' }}>📉 총 감가상각률</div>
+              <div style={{ fontSize: '0.875rem', color: '#31333F', marginBottom: '0.25rem' }}>📉 총 상각률</div>
               <div style={{ fontSize: '2.25rem', color: '#31333F' }}>{(result.total_depreciation_rate * 100).toFixed(0)}%</div>
             </div>
             <div style={{ flex: '1 1 300px' }}>
-              <div style={{ fontSize: '0.875rem', color: '#31333F', marginBottom: '0.25rem' }}>💰 잔존가치 (간주공급액)</div>
-              <div style={{ fontSize: '2.25rem', color: '#31333F' }}>{result.residual_value.toLocaleString()} 원</div>
+              <div style={{ fontSize: '0.875rem', color: '#31333F', marginBottom: '0.25rem' }}>💰 잔존가액</div>
+              <div style={{ fontSize: '2.25rem', color: '#31333F' }}>{result.residual_value.toLocaleString()}원</div>
             </div>
           </div>
 
-          <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem' }}>🚨 최종 예상 부가가치세</h3>
-          <div style={{ padding: '1.5rem', backgroundColor: '#FFF4E5', color: '#904F00', borderRadius: '0.25rem', marginBottom: '2rem', borderLeft: '4px solid #FFA421', fontSize: '1.1rem' }}>
-            예상 부가세는 약 <b>{result.vat_to_pay.toLocaleString()}</b>원입니다.
+          <div style={{ padding: '1rem', backgroundColor: '#FFEDED', color: '#900000', borderRadius: '0.25rem', marginBottom: '0.5rem', fontSize: '1.1rem', borderLeft: '4px solid #FF4B4B' }}>
+            🚨 예상 추가 납부 부가세: <b>{result.vat_to_pay.toLocaleString()}</b> 원
+          </div>
+          <div style={{ fontSize: '0.875rem', color: '#64748b', marginBottom: '2rem' }}>
+            취득가액 {formData.asset_price.toLocaleString()}원에서 총 상각률 {(result.total_depreciation_rate * 100).toFixed(0)}%({result.passed_periods}기 경과)를 제외한 잔존가액 {result.residual_value.toLocaleString()}원의 10%입니다.
           </div>
 
           <details style={{ border: '1px solid rgba(49, 51, 63, 0.2)', borderRadius: '0.25rem', padding: '1rem' }}>

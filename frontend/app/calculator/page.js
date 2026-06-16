@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function CalculatorPage() {
   const [formData, setFormData] = useState({
@@ -16,27 +16,33 @@ export default function CalculatorPage() {
     setFormData({ ...formData, [e.target.name]: Number(e.target.value) });
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch('/api/calculator', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-      const data = await res.json();
-      if (data.success) {
-        setResult(data.data);
-      } else {
-        setError(data.message);
+  useEffect(() => {
+    const fetchCalculation = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch('/api/calculator', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+        const data = await res.json();
+        if (data.success) {
+          setResult(data.data);
+        } else {
+          setError(data.message);
+        }
+      } catch (err) {
+        setError('서버 연동에 실패했습니다. 백엔드 서버(포트 8000)가 실행 중인지 확인하세요.');
       }
-    } catch (err) {
-      setError('서버 연동에 실패했습니다. 백엔드 서버(포트 8000)가 실행 중인지 확인하세요.');
-    }
-    setLoading(false);
-  }
+      setLoading(false);
+    };
+    
+    // Add a small debounce or just call it directly since it's a fast API
+    const timeoutId = setTimeout(fetchCalculation, 300);
+    return () => clearTimeout(timeoutId);
+  }, [formData]);
+
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem', fontFamily: 'sans-serif', color: '#31333F' }}>
@@ -66,11 +72,7 @@ export default function CalculatorPage() {
         </div>
       </div>
 
-      <div style={{ marginBottom: '2rem' }}>
-        <button onClick={handleSubmit} disabled={loading} style={{ padding: '0.5rem 1rem', backgroundColor: '#FFFFFF', color: '#FF4B4B', border: '1px solid #FF4B4B', borderRadius: '0.25rem', fontSize: '1rem', cursor: loading ? 'not-allowed' : 'pointer' }}>
-          {loading ? '계산 중...' : '비용 계산하기'}
-        </button>
-      </div>
+
 
       {error && (
         <div style={{ padding: '1rem', backgroundColor: '#ffbd45', color: '#31333F', borderRadius: '0.25rem', marginBottom: '2rem' }}>
@@ -130,6 +132,53 @@ export default function CalculatorPage() {
               </tr>
             </tbody>
           </table>
+
+          <h4 style={{ fontSize: '1.25rem', fontWeight: '600', marginTop: '2rem', marginBottom: '1rem' }}>✅ 폐업 필수 체크리스트 (가이드라인)</h4>
+          <div style={{ marginTop: '10px', backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '32px 24px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div style={{ padding: '16px', backgroundColor: '#f8fafc', borderRadius: '8px', borderLeft: '4px solid #3b82f6' }}>
+                      <b style={{ color: '#1e293b', fontSize: '1.05rem' }}>1. 임대차 계약 해지 통보</b><br/>
+                      <span style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: '1.5', display: 'inline-block', marginTop: '4px' }}>최소 1~3개월 전 임대인에게 내용증명 또는 서면으로 해지 의사를 명확히 통보해야 위약금을 최소화할 수 있습니다.</span>
+                  </div>
+                  <div style={{ padding: '16px', backgroundColor: '#f8fafc', borderRadius: '8px', borderLeft: '4px solid #10b981' }}>
+                      <b style={{ color: '#1e293b', fontSize: '1.05rem' }}>2. 직원 해고 통보 및 4대 보험 정산</b><br/>
+                      <span style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: '1.5', display: 'inline-block', marginTop: '4px' }}>30일 전 해고 예고를 하지 않으면 해고예고수당이 발생합니다. 퇴직금 및 4대 보험 상실 신고를 신속히 처리하세요.</span>
+                  </div>
+                  <div style={{ padding: '16px', backgroundColor: '#f8fafc', borderRadius: '8px', borderLeft: '4px solid #f59e0b' }}>
+                      <b style={{ color: '#1e293b', fontSize: '1.05rem' }}>3. 철거 및 원상복구 진행 (지원금 신청)</b><br/>
+                      <span style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: '1.5', display: 'inline-block', marginTop: '4px' }}>공사 시작 전에 반드시 '희망리턴패키지' 원상복구 지원금을 신청하여 최대 250만 원의 실비를 지원받으세요.</span>
+                  </div>
+                  <div style={{ padding: '16px', backgroundColor: '#f8fafc', borderRadius: '8px', borderLeft: '4px solid #ef4444' }}>
+                      <b style={{ color: '#1e293b', fontSize: '1.05rem' }}>4. 세무서 폐업 신고 및 부가세 납부</b><br/>
+                      <span style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: '1.5', display: 'inline-block', marginTop: '4px' }}>폐업일 기준 다음 달 25일까지 부가가치세(폐업 시 잔존재화 포함)를 신고하고 납부해야 가산세를 피할 수 있습니다.</span>
+                  </div>
+              </div>
+          </div>
+
+          <div style={{ backgroundColor: '#eff6ff', borderRadius: '12px', padding: '24px', marginTop: '32px', border: '1px solid #bfdbfe' }}>
+              <h4 style={{ color: '#1E3A8A', marginTop: '0', marginBottom: '12px', fontWeight: 'bold', fontSize: '18px' }}>💡 정부 지원금 신청 안내 (희망리턴패키지)</h4>
+              
+              <div style={{ fontSize: '14px', color: '#334155', lineHeight: '1.6' }}>
+                  <strong style={{ color: '#1E3A8A' }}>
+                      <a href="https://hope.sbiz.or.kr" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: '#1E3A8A' }}>소상공인시장진흥공단 '희망리턴패키지' 원스톱 폐업 지원</a>
+                  </strong>
+                  <ul style={{ marginTop: '8px', marginBottom: '20px', paddingLeft: '20px' }}>
+                      <li><strong>지원 대상:</strong> 폐업을 앞두고 있거나 이미 폐업한 소상공인</li>
+                      <li><strong>지원 내용:</strong> 점포 철거 및 원상복구 비용 (최대 250만 원 한도) 및 사업정리 컨설팅</li>
+                      <li><strong>신청 자격:</strong> 사업자등록증상 영업 기간이 60일 이상인 소상공인 등 <br/>(세부 조건은 <a href="https://hope.sbiz.or.kr" target="_blank" rel="noreferrer" style={{ color: '#007bff', textDecoration: 'underline', fontWeight: 'bold' }}>소진공 홈페이지 참조</a>)</li>
+                      <li style={{ color: '#ef4444', fontWeight: '700', marginTop: '4px' }}>⚠️ 주의 사항: 철거 공사 시작 전에 반드시 사전 신청 및 승인이 필요합니다. (공사 후 신청 시 지원금 수령 불가)</li>
+                  </ul>
+              </div>
+              
+              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                  <a href="https://hope.sbiz.or.kr" target="_blank" rel="noreferrer" style={{ display: 'inline-block', backgroundColor: '#1E3A8A', color: '#ffffff', textDecoration: 'none', padding: '12px 20px', borderRadius: '8px', fontSize: '14px', fontWeight: 'bold', textAlign: 'center', transition: 'all 0.2s' }}>
+                      희망리턴패키지 상세 보기 ↗
+                  </a>
+                  <a href="https://www.sbiz24.kr" target="_blank" rel="noreferrer" style={{ display: 'inline-block', backgroundColor: '#ffffff', color: '#1E3A8A', textDecoration: 'none', padding: '12px 20px', borderRadius: '8px', fontSize: '14px', fontWeight: 'bold', textAlign: 'center', border: '1px solid #1E3A8A', transition: 'all 0.2s' }}>
+                      점포철거비 공식 신청 (소상공인24) ↗
+                  </a>
+              </div>
+          </div>
         </div>
       )}
     </div>
