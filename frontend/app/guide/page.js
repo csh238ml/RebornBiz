@@ -97,7 +97,7 @@ export default async function GuidePage({ searchParams }) {
       </form>
 
       {!search && (
-        <div style={{ display: 'flex', gap: '1rem', borderBottom: '1px solid rgba(49, 51, 63, 0.2)', marginBottom: '2rem', flexWrap: 'wrap' }}>
+        <div className="mobile-scroll-tabs" style={{ display: 'flex', gap: '1rem', borderBottom: '1px solid rgba(49, 51, 63, 0.2)', marginBottom: '2rem', flexWrap: 'wrap' }}>
           {['지원금', '컨설팅', '기타'].map(tab => (
             <Link
               key={tab}

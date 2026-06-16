@@ -137,8 +137,7 @@ body {
     padding: 0 1rem;
   }
   /* 모바일 탭 가로 스크롤 처리 */
-  .main-content > div[style*="gap: 1rem"],
-  .main-content > div > div[style*="gap: 1rem"] {
+  .mobile-scroll-tabs {
     flex-wrap: nowrap !important;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
