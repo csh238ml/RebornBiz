@@ -5,8 +5,8 @@ export default function HomePage() {
   return (
     <div className="custom-main">
       <StickyHeader>
-        <h1>소상공인 지원 플랫폼</h1>
-        <p>여러분의 새로운 시작과 도약을 체계적이고 안전하게 돕기 위해 마련된 종합 플랫폼입니다.</p>
+        <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem' }}>소상공인 지원 플랫폼</h1>
+        <p style={{ fontSize: '1rem', marginBottom: '0' }}>여러분의 새로운 시작과 도약을 체계적이고 안전하게 돕기 위해 마련된 종합 플랫폼입니다.</p>
       </StickyHeader>
 
       <div className="custom-grid">

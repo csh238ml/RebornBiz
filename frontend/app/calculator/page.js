@@ -46,7 +46,7 @@ export default function CalculatorPage() {
 
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem 2rem 2rem', fontFamily: 'sans-serif', color: '#31333F' }}>
+    <div className="custom-main">
       <StickyHeader>
         <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem' }}>폐업 비용 계산기</h1>
         <p style={{ fontSize: '1rem', marginBottom: '0' }}>사업장 철거, 임대차 계약 위약금, 인건비 정산 등 폐업 시 발생하는 예상 비용을 계산해 보세요.</p>

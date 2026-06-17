@@ -62,11 +62,11 @@ export default function RootLayout({ children }) {
               </p>
               
               <div style={{ display: 'flex', gap: '16px', fontWeight: '600', color: '#64748b', marginBottom: '12px', flexWrap: 'wrap' }}>
-                <Link href="/about" style={{ color: 'inherit', textDecoration: 'none' }}>사이트 소개</Link>
+                <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>사이트 소개</a>
                 <span>·</span>
-                <Link href="/policy" style={{ color: 'inherit', textDecoration: 'none' }}>개인정보처리방침</Link>
+                <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>개인정보처리방침</a>
                 <span>·</span>
-                <a href="mailto:contact@rebornbiz.co.kr" style={{ color: 'inherit', textDecoration: 'none' }}>제휴 및 문의</a>
+                <a href="mailto:csh238ml@gmail.com" style={{ color: 'inherit', textDecoration: 'none' }}>제휴 및 문의</a>
               </div>
               
               <div style={{ fontSize: '12px' }}>

@@ -41,7 +41,7 @@ export default function SimulationPage() {
   const bizOptions = ["카페", "치킨전문점", "편의점", "배달전문점", "무인아이스크림", "알 수 없음"];
 
   return (
-    <div style={{maxWidth: '1200px', margin: '0 auto', padding: '0 2rem 2rem 2rem', fontFamily: 'sans-serif', color: '#31333F'}}>
+    <div className="custom-main">
       <StickyHeader>
         <h1 style={{fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem'}}>업종 변경 시뮬레이션</h1>
         <p style={{fontSize: '1rem', marginBottom: '0'}}>새로운 업종 전환 시의 예상 리스크와 수익성을 분석합니다.</p>

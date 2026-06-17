@@ -74,7 +74,7 @@ export default async function MagazineDetailPage({ params }) {
   }
 
   return (
-    <div style={{maxWidth: '900px', margin: '0 auto', padding: '0 2rem 2rem 2rem', fontFamily: 'sans-serif', color: '#31333F'}}>
+    <div className="custom-main">
       <StickyHeader>
         <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '1rem'}}>
           <Link href="/magazine" style={{

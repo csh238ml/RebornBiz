@@ -67,7 +67,7 @@ export default function TaxCalculatorPage() {
   }
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem 2rem 2rem', fontFamily: 'sans-serif', color: '#31333F' }}>
+    <div className="custom-main">
       <StickyHeader>
         <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem' }}>폐업 세금(부가세) 자동 계산기</h1>
         <p style={{ fontSize: '1rem', marginBottom: '0' }}>폐업 시 매입세액 공제를 받은 남아있는 자산(건물, 인테리어, 비품 등)에 대해 납부해야 할 <b>'폐업 시 잔존재화 간주공급'</b> 부가가치세를 손쉽게 계산해 보세요.</p>

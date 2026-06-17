@@ -152,7 +152,7 @@ export default function MarketAnalysisPage() {
   const top3 = Object.entries(industryCounts).sort((a, b) => b[1] - a[1]).slice(0, 3).map(x => x[0]);
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem 2rem 2rem', fontFamily: 'sans-serif', color: '#31333F' }}>
+    <div className="custom-main">
       <StickyHeader>
         <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem' }}>내 주변 상권 분석</h1>
         <p style={{ fontSize: '1rem', marginBottom: '0' }}>현재 내 위치를 기반으로 주변 반경 내에 어떤 상권이 형성되어 있는지 시각적으로 확인합니다. 지도를 클릭하면 중심점이 이동합니다.</p>

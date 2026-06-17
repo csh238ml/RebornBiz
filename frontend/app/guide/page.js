@@ -74,7 +74,7 @@ export default async function GuidePage({ searchParams }) {
   const currentPolicies = search ? policies : (activeTab === '지원금' ? tab1Policies : (activeTab === '컨설팅' ? tab2Policies : tab3Policies));
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem 2rem 2rem', fontFamily: 'sans-serif', color: '#31333F' }}>
+    <div className="custom-main">
       <StickyHeader>
         <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem' }}>정부 지원 정책</h1>
         <p style={{ fontSize: '1rem', marginBottom: '0', lineHeight: '1.6' }}>
