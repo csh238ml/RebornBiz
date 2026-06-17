@@ -58,8 +58,8 @@ export default function CalculatorPage() {
           </div>
         </div>
         <div className="mobile-only">
-          <div style={{ paddingLeft: '3rem', marginBottom: '1rem', minHeight: '40px' }}>
-            <img src="/images/rebornbiz_main.jpg" alt="RebornBiz Banner" style={{ width: '100%', height: 'auto', maxHeight: '40px', objectFit: 'contain', objectPosition: 'left center' }} />
+          <div style={{ paddingLeft: '3.5rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', minHeight: '48px' }}>
+            <img src="/images/rebornbiz_main_mobile.jpg" alt="RebornBiz Banner" style={{ width: '100%', height: '48px', objectFit: 'contain', objectPosition: 'left center' }} />
           </div>
           <h1 style={{ fontSize: '1.75rem', fontWeight: '700', marginBottom: '0.5rem', color: '#31333F' }}>폐업 비용 계산기</h1>
           <p style={{ fontSize: '0.95rem', marginBottom: '0', lineHeight: '1.5', color: '#555' }}>사업장 철거, 임대차 계약 위약금, 인건비 정산 등 폐업 시 발생하는 예상 비용을 계산해 보세요.</p>

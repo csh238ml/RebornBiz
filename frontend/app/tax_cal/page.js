@@ -79,8 +79,8 @@ export default function TaxCalculatorPage() {
           </div>
         </div>
         <div className="mobile-only">
-          <div style={{ paddingLeft: '3rem', marginBottom: '1rem', minHeight: '40px' }}>
-            <img src="/images/rebornbiz_main.jpg" alt="RebornBiz Banner" style={{ width: '100%', height: 'auto', maxHeight: '40px', objectFit: 'contain', objectPosition: 'left center' }} />
+          <div style={{ paddingLeft: '3.5rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', minHeight: '48px' }}>
+            <img src="/images/rebornbiz_main_mobile.jpg" alt="RebornBiz Banner" style={{ width: '100%', height: '48px', objectFit: 'contain', objectPosition: 'left center' }} />
           </div>
           <h1 style={{ fontSize: '1.75rem', fontWeight: '700', marginBottom: '0.5rem', color: '#31333F' }}>폐업 세금(부가세) 자동 계산기</h1>
           <p style={{ fontSize: '0.95rem', marginBottom: '0', lineHeight: '1.5', color: '#555' }}>폐업 시 매입세액 공제를 받은 남아있는 자산(건물, 인테리어, 비품 등)에 대해 납부해야 할 <b>'폐업 시 잔존재화 간주공급'</b> 부가가치세를 손쉽게 계산해 보세요.</p>
