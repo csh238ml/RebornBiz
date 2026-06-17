@@ -18,8 +18,8 @@ export default function PolicyPage() {
           </div>
         </div>
         <div className="mobile-only">
-          <div style={{ paddingLeft: '3.5rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', minHeight: '48px' }}>
-            <img src="/images/rebornbiz_main_mobile.jpg" alt="RebornBiz Banner" style={{ width: '100%', height: '48px', objectFit: 'contain', objectPosition: 'left center' }} />
+          <div style={{ paddingLeft: '3.5rem', marginBottom: '1rem', display: 'flex', alignItems: 'center' }}>
+            <img src="/images/rebornbiz_main_mobile.jpg" alt="RebornBiz Banner" style={{ width: '100%', height: 'auto', objectFit: 'contain', objectPosition: 'left center' }} />
           </div>
           <h1 style={{ fontSize: '1.75rem', fontWeight: '700', marginBottom: '0.5rem', color: '#1E3A8A' }}>📜 이용약관 및 개인정보처리방침</h1>
           <p style={{ fontSize: '0.95rem', marginBottom: '1rem', lineHeight: '1.5', color: '#64748b' }}>RebornBiz(이하 '본 사이트')의 이용약관 및 개인정보처리방침을 안내해 드립니다.</p>

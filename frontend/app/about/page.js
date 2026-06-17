@@ -17,8 +17,8 @@ export default function AboutPage() {
           </div>
         </div>
         <div className="mobile-only">
-          <div style={{ paddingLeft: '3.5rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', minHeight: '48px' }}>
-            <img src="/images/rebornbiz_main_mobile.jpg" alt="RebornBiz Banner" style={{ width: '100%', height: '48px', objectFit: 'contain', objectPosition: 'left center' }} />
+          <div style={{ paddingLeft: '3.5rem', marginBottom: '1rem', display: 'flex', alignItems: 'center' }}>
+            <img src="/images/rebornbiz_main_mobile.jpg" alt="RebornBiz Banner" style={{ width: '100%', height: 'auto', objectFit: 'contain', objectPosition: 'left center' }} />
           </div>
           <h1 style={{ fontSize: '1.75rem', fontWeight: '700', marginBottom: '1rem', color: '#1E3A8A' }}>📢 RebornBiz 소개</h1>
         </div>
