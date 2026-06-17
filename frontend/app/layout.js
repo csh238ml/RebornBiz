@@ -45,18 +45,6 @@ export default function RootLayout({ children }) {
           {/* 2. 우측 메인 콘텐츠 영역 */}
           <div className="main-wrapper">
             <main className="main-content">
-              <img 
-                src="/images/rebornbiz_main.jpg" 
-                alt="RebornBiz Banner" 
-                style={{ 
-                  width: '100%', 
-                  height: 'auto', 
-                  maxHeight: '200px',
-                  objectFit: 'cover', 
-                  borderRadius: '12px', 
-                  marginBottom: '1rem' 
-                }} 
-              />
               {children}
             </main>
 

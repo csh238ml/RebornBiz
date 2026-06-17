@@ -1,12 +1,13 @@
 import Link from 'next/link';
+import StickyHeader from '@/components/StickyHeader';
 
 export default function HomePage() {
   return (
     <div className="custom-main">
-      <div className="custom-header">
+      <StickyHeader>
         <h1>소상공인 지원 플랫폼</h1>
         <p>여러분의 새로운 시작과 도약을 체계적이고 안전하게 돕기 위해 마련된 종합 플랫폼입니다.</p>
-      </div>
+      </StickyHeader>
 
       <div className="custom-grid">
         {/* 폐업 비용 계산기 */}

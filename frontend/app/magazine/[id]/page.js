@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import StickyHeader from '@/components/StickyHeader';
 import CopyLinkButton from './CopyLinkButton';
 
 const FASTAPI_URL = process.env.FASTAPI_URL || 'http://127.0.0.1:8000';
@@ -73,32 +74,32 @@ export default async function MagazineDetailPage({ params }) {
   }
 
   return (
-    <div style={{maxWidth: '900px', margin: '0 auto', padding: '2rem', fontFamily: 'sans-serif', color: '#31333F'}}>
-      <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '1rem'}}>
-        <Link href="/magazine" style={{
-          padding: '0.5rem 1rem', 
-          backgroundColor: '#fff', 
-          color: '#333', 
-          border: '1px solid #ccc', 
-          borderRadius: '6px', 
-          textDecoration: 'none',
-          fontWeight: 'bold',
-          display: 'inline-flex',
-          alignItems: 'center'
-        }}>
-          ⬅️ 목록으로
-        </Link>
-        <CopyLinkButton />
-      </div>
+    <div style={{maxWidth: '900px', margin: '0 auto', padding: '0 2rem 2rem 2rem', fontFamily: 'sans-serif', color: '#31333F'}}>
+      <StickyHeader>
+        <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '1rem'}}>
+          <Link href="/magazine" style={{
+            padding: '0.5rem 1rem', 
+            backgroundColor: '#fff', 
+            color: '#333', 
+            border: '1px solid #ccc', 
+            borderRadius: '6px', 
+            textDecoration: 'none',
+            fontWeight: 'bold',
+            display: 'inline-flex',
+            alignItems: 'center'
+          }}>
+            ⬅️ 목록으로
+          </Link>
+          <CopyLinkButton />
+        </div>
 
-      <hr style={{borderTop: '1px solid rgba(49, 51, 63, 0.2)', margin: '1rem 0 2rem 0'}} />
-
-      <h1 style={{color: '#1E3A8A', marginBottom: '10px', fontSize: '2rem'}}>{post.title}</h1>
-      
-      <div style={{color: '#888', fontSize: '0.95rem', marginBottom: '30px'}}>
-        <span>📅 작성일: {post.created_at}</span>
-        <span style={{marginLeft: '15px'}}>👁️ 조회수: {post.views}</span>
-      </div>
+        <h1 style={{color: '#1E3A8A', marginBottom: '10px', fontSize: '2rem'}}>{post.title}</h1>
+        
+        <div style={{color: '#888', fontSize: '0.95rem', marginBottom: '10px'}}>
+          <span>📅 작성일: {post.created_at}</span>
+          <span style={{marginLeft: '15px'}}>👁️ 조회수: {post.views}</span>
+        </div>
+      </StickyHeader>
 
       <div style={{lineHeight: '1.8', fontSize: '1.1rem'}} dangerouslySetInnerHTML={{__html: post.content_html}} />
 

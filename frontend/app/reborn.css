@@ -74,8 +74,25 @@ body {
   flex: 1;
   max-width: 1000px; /* Streamlit의 wide layout 너비에 맞게 조절 */
   margin: 0 auto;
-  padding: 4rem 3rem; /* 기존보다 넉넉한 상하좌우 패딩 (간격 확보) */
+  padding: 0 3rem 4rem 3rem; /* 기존보다 넉넉한 상하좌우 패딩 (간격 확보) */
   width: 100%;
+}
+
+/* Sticky Header for PC */
+.sticky-header-pc {
+  background-color: #ffffff;
+  z-index: 100;
+  padding-top: 1.5rem; /* 원래 main-content의 상단 여백을 이쪽으로 이동 */
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+@media (min-width: 769px) {
+  .sticky-header-pc {
+    position: sticky;
+    top: 0;
+  }
 }
 
 .site-footer {

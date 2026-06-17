@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import StickyHeader from '@/components/StickyHeader';
 
 export default function TaxCalculatorPage() {
   const currentYear = new Date().getFullYear();
@@ -66,9 +67,11 @@ export default function TaxCalculatorPage() {
   }
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem', fontFamily: 'sans-serif', color: '#31333F' }}>
-      <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem' }}>폐업 세금(부가세) 자동 계산기</h1>
-      <p style={{ fontSize: '1rem', marginBottom: '1rem' }}>폐업 시 매입세액 공제를 받은 남아있는 자산(건물, 인테리어, 비품 등)에 대해 납부해야 할 <b>'폐업 시 잔존재화 간주공급'</b> 부가가치세를 손쉽게 계산해 보세요.</p>
+    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem 2rem 2rem', fontFamily: 'sans-serif', color: '#31333F' }}>
+      <StickyHeader>
+        <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem' }}>폐업 세금(부가세) 자동 계산기</h1>
+        <p style={{ fontSize: '1rem', marginBottom: '0' }}>폐업 시 매입세액 공제를 받은 남아있는 자산(건물, 인테리어, 비품 등)에 대해 납부해야 할 <b>'폐업 시 잔존재화 간주공급'</b> 부가가치세를 손쉽게 계산해 보세요.</p>
+      </StickyHeader>
 
       <div style={{ padding: '1rem', backgroundColor: '#E8F4FA', color: '#31333F', borderRadius: '0.25rem', marginBottom: '2rem', borderLeft: '4px solid #00A4A6' }}>
         💡 <b>알아두세요:</b> 매입 당시 부가세 환급(매입세액 공제)을 받은 자산에 대해서만 계산합니다. 환급을 받지 않았거나 면세사업자인 경우 납부 의무가 없습니다.

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import StickyHeader from '@/components/StickyHeader';
 
 const FASTAPI_URL = process.env.FASTAPI_URL || 'http://127.0.0.1:8000';
 
@@ -73,12 +74,14 @@ export default async function GuidePage({ searchParams }) {
   const currentPolicies = search ? policies : (activeTab === '지원금' ? tab1Policies : (activeTab === '컨설팅' ? tab2Policies : tab3Policies));
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem', fontFamily: 'sans-serif', color: '#31333F' }}>
-      <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem' }}>정부 지원 정책</h1>
-      <p style={{ fontSize: '1rem', marginBottom: '2rem', lineHeight: '1.6' }}>
-        폐업 예정자 및 재창업 소상공인을 위한 다양한 <b>정부 지원금, 컨설팅 프로그램, 세제 혜택</b> 등을 안내합니다.<br />
-        현재 상황에 맞는 지원 정책을 확인하고 혜택을 놓치지 마세요!
-      </p>
+    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem 2rem 2rem', fontFamily: 'sans-serif', color: '#31333F' }}>
+      <StickyHeader>
+        <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem' }}>정부 지원 정책</h1>
+        <p style={{ fontSize: '1rem', marginBottom: '0', lineHeight: '1.6' }}>
+          폐업 예정자 및 재창업 소상공인을 위한 다양한 <b>정부 지원금, 컨설팅 프로그램, 세제 혜택</b> 등을 안내합니다.<br />
+          현재 상황에 맞는 지원 정책을 확인하고 혜택을 놓치지 마세요!
+        </p>
+      </StickyHeader>
 
       <hr style={{ borderTop: '1px solid rgba(49, 51, 63, 0.2)', margin: '1.5rem 0' }} />
 
