@@ -67,8 +67,23 @@ export default function RootLayout({ children }) {
             </section>
 
             {/* 공통 푸터 */}
-            <footer className="site-footer">
-              <p>© {new Date().getFullYear()} RebornBiz. All rights reserved.</p>
+            <footer className="site-footer" style={{ textAlign: 'left', padding: '2rem 3rem', backgroundColor: '#ffffff', color: '#94a3b8', fontSize: '13px', lineHeight: '1.6', borderTop: '1px solid #f1f5f9', marginTop: 'auto' }}>
+              <strong style={{ color: '#64748b', fontSize: '14px', display: 'block', marginBottom: '8px' }}>면책 고지</strong>
+              <p style={{ margin: '0 0 20px 0' }}>
+                RebornBiz는 공개된 정부·공공 지자체의 공고 및 상권 데이터를 사장님들이 이해하기 쉬운 형태로 재구성한 참고용 정보 사이트입니다. 최종 판단 및 신청은 반드시 원 공고의 원문과 발행 기관의 안내에 따라 주세요. 공고의 조건·금액·기한은 사전 고지 없이 변경될 수 있습니다.
+              </p>
+              
+              <div style={{ display: 'flex', gap: '16px', fontWeight: '600', color: '#64748b', marginBottom: '12px', flexWrap: 'wrap' }}>
+                <Link href="/about" style={{ color: 'inherit', textDecoration: 'none' }}>사이트 소개</Link>
+                <span>·</span>
+                <Link href="/policy" style={{ color: 'inherit', textDecoration: 'none' }}>개인정보처리방침</Link>
+                <span>·</span>
+                <a href="mailto:contact@rebornbiz.co.kr" style={{ color: 'inherit', textDecoration: 'none' }}>제휴 및 문의</a>
+              </div>
+              
+              <div style={{ fontSize: '12px' }}>
+                © {new Date().getFullYear()} RebornBiz. All rights reserved.
+              </div>
             </footer>
           </div>
         </div>
