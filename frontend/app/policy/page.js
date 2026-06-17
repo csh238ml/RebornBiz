@@ -1,3 +1,5 @@
+import StickyHeader from '@/components/StickyHeader';
+
 export const metadata = {
   title: '이용약관 및 개인정보처리방침 | RebornBiz'
 };
@@ -5,15 +7,24 @@ export const metadata = {
 export default function PolicyPage() {
   return (
     <div className="custom-main">
-      <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #e2e8f0', padding: '1.5rem', borderRadius: '0.5rem', backgroundColor: '#ffffff', marginBottom: '2rem' }}>
-        <div style={{ flexShrink: 0, marginRight: '2rem' }}>
-          <img src="/rebornBiz_logo.png" alt="RebornBiz Logo" style={{ width: '200px', height: 'auto' }} />
+      <StickyHeader>
+        <div className="pc-only" style={{ alignItems: 'center', border: '1px solid #e2e8f0', padding: '1.5rem', borderRadius: '0.5rem', backgroundColor: '#ffffff', marginBottom: '2rem' }}>
+          <div style={{ flexShrink: 0, marginRight: '2rem' }}>
+            <img src="/rebornBiz_logo.png" alt="RebornBiz Logo" style={{ width: '200px', height: 'auto' }} />
+          </div>
+          <div>
+            <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem', color: '#1E3A8A' }}>📜 이용약관 및 개인정보처리방침</h1>
+            <p style={{ fontSize: '1.05rem', marginBottom: '0', lineHeight: '1.6', color: '#64748b' }}>RebornBiz(이하 '본 사이트')의 이용약관 및 개인정보처리방침을 안내해 드립니다.</p>
+          </div>
         </div>
-        <div>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem', color: '#1E3A8A' }}>📜 이용약관 및 개인정보처리방침</h1>
-          <p style={{ fontSize: '1.05rem', marginBottom: '0', lineHeight: '1.6', color: '#64748b' }}>RebornBiz(이하 '본 사이트')의 이용약관 및 개인정보처리방침을 안내해 드립니다.</p>
+        <div className="mobile-only">
+          <div style={{ paddingLeft: '3rem', marginBottom: '1rem', minHeight: '40px' }}>
+            <img src="/images/rebornbiz_main.jpg" alt="RebornBiz Banner" style={{ width: '100%', height: 'auto', maxHeight: '40px', objectFit: 'contain', objectPosition: 'left center' }} />
+          </div>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: '700', marginBottom: '0.5rem', color: '#1E3A8A' }}>📜 이용약관 및 개인정보처리방침</h1>
+          <p style={{ fontSize: '0.95rem', marginBottom: '1rem', lineHeight: '1.5', color: '#64748b' }}>RebornBiz(이하 '본 사이트')의 이용약관 및 개인정보처리방침을 안내해 드립니다.</p>
         </div>
-      </div>
+      </StickyHeader>
 
       <hr style={{ borderTop: '1px solid rgba(49, 51, 63, 0.2)', margin: '1.5rem 0' }} />
 

@@ -154,7 +154,7 @@ export default function MarketAnalysisPage() {
   return (
     <div className="custom-main">
       <StickyHeader>
-        <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #e2e8f0', padding: '1.5rem', borderRadius: '0.5rem', backgroundColor: '#ffffff', marginBottom: '1rem' }}>
+        <div className="pc-only" style={{ alignItems: 'center', border: '1px solid #e2e8f0', padding: '1.5rem', borderRadius: '0.5rem', backgroundColor: '#ffffff', marginBottom: '1rem' }}>
           <div style={{ flexShrink: 0, marginRight: '2rem' }}>
             <img src="/rebornBiz_logo.png" alt="RebornBiz Logo" style={{ width: '200px', height: 'auto' }} />
           </div>
@@ -162,6 +162,13 @@ export default function MarketAnalysisPage() {
             <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem', color: '#31333F' }}>내 주변 상권 분석</h1>
             <p style={{ fontSize: '1rem', marginBottom: '0', lineHeight: '1.6', color: '#555' }}>현재 내 위치를 기반으로 주변 반경 내에 어떤 상권이 형성되어 있는지 시각적으로 확인합니다. 지도를 클릭하면 중심점이 이동합니다.</p>
           </div>
+        </div>
+        <div className="mobile-only">
+          <div style={{ paddingLeft: '3rem', marginBottom: '1rem', minHeight: '40px' }}>
+            <img src="/images/rebornbiz_main.jpg" alt="RebornBiz Banner" style={{ width: '100%', height: 'auto', maxHeight: '40px', objectFit: 'contain', objectPosition: 'left center' }} />
+          </div>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: '700', marginBottom: '0.5rem', color: '#31333F' }}>내 주변 상권 분석</h1>
+          <p style={{ fontSize: '0.95rem', marginBottom: '0', lineHeight: '1.5', color: '#555' }}>현재 내 위치를 기반으로 주변 반경 내에 어떤 상권이 형성되어 있는지 시각적으로 확인합니다. 지도를 클릭하면 중심점이 이동합니다.</p>
         </div>
       </StickyHeader>
 

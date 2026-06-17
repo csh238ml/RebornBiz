@@ -43,7 +43,7 @@ export default function SimulationPage() {
   return (
     <div className="custom-main">
       <StickyHeader>
-        <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #e2e8f0', padding: '1.5rem', borderRadius: '0.5rem', backgroundColor: '#ffffff', marginBottom: '1rem' }}>
+        <div className="pc-only" style={{ alignItems: 'center', border: '1px solid #e2e8f0', padding: '1.5rem', borderRadius: '0.5rem', backgroundColor: '#ffffff', marginBottom: '1rem' }}>
           <div style={{ flexShrink: 0, marginRight: '2rem' }}>
             <img src="/rebornBiz_logo.png" alt="RebornBiz Logo" style={{ width: '200px', height: 'auto' }} />
           </div>
@@ -51,6 +51,13 @@ export default function SimulationPage() {
             <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem', color: '#31333F' }}>업종 변경 시뮬레이션</h1>
             <p style={{ fontSize: '1rem', marginBottom: '0', lineHeight: '1.6', color: '#555' }}>새로운 업종 전환 시의 예상 리스크와 수익성을 분석합니다.</p>
           </div>
+        </div>
+        <div className="mobile-only">
+          <div style={{ paddingLeft: '3rem', marginBottom: '1rem', minHeight: '40px' }}>
+            <img src="/images/rebornbiz_main.jpg" alt="RebornBiz Banner" style={{ width: '100%', height: 'auto', maxHeight: '40px', objectFit: 'contain', objectPosition: 'left center' }} />
+          </div>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: '700', marginBottom: '0.5rem', color: '#31333F' }}>업종 변경 시뮬레이션</h1>
+          <p style={{ fontSize: '0.95rem', marginBottom: '0', lineHeight: '1.5', color: '#555' }}>새로운 업종 전환 시의 예상 리스크와 수익성을 분석합니다.</p>
         </div>
       </StickyHeader>
 
