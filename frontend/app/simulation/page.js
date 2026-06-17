@@ -43,8 +43,15 @@ export default function SimulationPage() {
   return (
     <div className="custom-main">
       <StickyHeader>
-        <h1 style={{fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem'}}>업종 변경 시뮬레이션</h1>
-        <p style={{fontSize: '1rem', marginBottom: '0'}}>새로운 업종 전환 시의 예상 리스크와 수익성을 분석합니다.</p>
+        <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #e2e8f0', padding: '1.5rem', borderRadius: '0.5rem', backgroundColor: '#ffffff', marginBottom: '1rem' }}>
+          <div style={{ flexShrink: 0, marginRight: '2rem' }}>
+            <img src="/rebornBiz_logo.png" alt="RebornBiz Logo" style={{ width: '200px', height: 'auto' }} />
+          </div>
+          <div>
+            <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem', color: '#31333F' }}>업종 변경 시뮬레이션</h1>
+            <p style={{ fontSize: '1rem', marginBottom: '0', lineHeight: '1.6', color: '#555' }}>새로운 업종 전환 시의 예상 리스크와 수익성을 분석합니다.</p>
+          </div>
+        </div>
       </StickyHeader>
 
       <hr style={{borderTop: '1px solid rgba(49, 51, 63, 0.2)', margin: '1.5rem 0'}} />

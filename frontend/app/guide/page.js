@@ -76,11 +76,18 @@ export default async function GuidePage({ searchParams }) {
   return (
     <div className="custom-main">
       <StickyHeader>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem' }}>정부 지원 정책</h1>
-        <p style={{ fontSize: '1rem', marginBottom: '0', lineHeight: '1.6' }}>
-          폐업 예정자 및 재창업 소상공인을 위한 다양한 <b>정부 지원금, 컨설팅 프로그램, 세제 혜택</b> 등을 안내합니다.<br />
-          현재 상황에 맞는 지원 정책을 확인하고 혜택을 놓치지 마세요!
-        </p>
+        <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #e2e8f0', padding: '1.5rem', borderRadius: '0.5rem', backgroundColor: '#ffffff', marginBottom: '1rem' }}>
+          <div style={{ flexShrink: 0, marginRight: '2rem' }}>
+            <img src="/rebornBiz_logo.png" alt="RebornBiz Logo" style={{ width: '200px', height: 'auto' }} />
+          </div>
+          <div>
+            <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem', color: '#31333F' }}>정부 지원 정책</h1>
+            <p style={{ fontSize: '1rem', marginBottom: '0', lineHeight: '1.6', color: '#555' }}>
+              폐업 예정자 및 재창업 소상공인을 위한 다양한 <b>정부 지원금, 컨설팅 프로그램, 세제 혜택</b> 등을 안내합니다.<br />
+              현재 상황에 맞는 지원 정책을 확인하고 혜택을 놓치지 마세요!
+            </p>
+          </div>
+        </div>
       </StickyHeader>
 
       <hr style={{ borderTop: '1px solid rgba(49, 51, 63, 0.2)', margin: '1.5rem 0' }} />

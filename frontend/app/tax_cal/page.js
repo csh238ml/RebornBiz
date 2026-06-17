@@ -69,8 +69,15 @@ export default function TaxCalculatorPage() {
   return (
     <div className="custom-main">
       <StickyHeader>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem' }}>폐업 세금(부가세) 자동 계산기</h1>
-        <p style={{ fontSize: '1rem', marginBottom: '0' }}>폐업 시 매입세액 공제를 받은 남아있는 자산(건물, 인테리어, 비품 등)에 대해 납부해야 할 <b>'폐업 시 잔존재화 간주공급'</b> 부가가치세를 손쉽게 계산해 보세요.</p>
+        <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #e2e8f0', padding: '1.5rem', borderRadius: '0.5rem', backgroundColor: '#ffffff', marginBottom: '1rem' }}>
+          <div style={{ flexShrink: 0, marginRight: '2rem' }}>
+            <img src="/rebornBiz_logo.png" alt="RebornBiz Logo" style={{ width: '200px', height: 'auto' }} />
+          </div>
+          <div>
+            <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem', color: '#31333F' }}>폐업 세금(부가세) 자동 계산기</h1>
+            <p style={{ fontSize: '1rem', marginBottom: '0', lineHeight: '1.6', color: '#555' }}>폐업 시 매입세액 공제를 받은 남아있는 자산(건물, 인테리어, 비품 등)에 대해 납부해야 할 <b>'폐업 시 잔존재화 간주공급'</b> 부가가치세를 손쉽게 계산해 보세요.</p>
+          </div>
+        </div>
       </StickyHeader>
 
       <div style={{ padding: '1rem', backgroundColor: '#E8F4FA', color: '#31333F', borderRadius: '0.25rem', marginBottom: '2rem', borderLeft: '4px solid #00A4A6' }}>

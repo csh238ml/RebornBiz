@@ -46,11 +46,18 @@ export default async function MagazineListPage({ searchParams }) {
   return (
     <div className="custom-main">
       <StickyHeader>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem' }}>Reborn 매거진</h1>
-        <p style={{ fontSize: '1rem', marginBottom: '0', lineHeight: '1.6' }}>
-          소상공인을 위한 최신 정책, 창업 가이드, 그리고 상권 분석 인사이트를 만나보세요.<br />
-          빠르게 변화하는 트렌드를 확인하고 성공적인 비즈니스를 준비하세요!
-        </p>
+        <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #e2e8f0', padding: '1.5rem', borderRadius: '0.5rem', backgroundColor: '#ffffff', marginBottom: '1rem' }}>
+          <div style={{ flexShrink: 0, marginRight: '2rem' }}>
+            <img src="/rebornBiz_logo.png" alt="RebornBiz Logo" style={{ width: '200px', height: 'auto' }} />
+          </div>
+          <div>
+            <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem', color: '#31333F' }}>Reborn 매거진</h1>
+            <p style={{ fontSize: '1rem', marginBottom: '0', lineHeight: '1.6', color: '#555' }}>
+              소상공인을 위한 최신 정책, 창업 가이드, 그리고 상권 분석 인사이트를 만나보세요.<br />
+              빠르게 변화하는 트렌드를 확인하고 성공적인 비즈니스를 준비하세요!
+            </p>
+          </div>
+        </div>
       </StickyHeader>
 
       <hr style={{ borderTop: '1px solid rgba(49, 51, 63, 0.2)', margin: '1.5rem 0' }} />

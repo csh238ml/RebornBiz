@@ -5,8 +5,13 @@ export const metadata = {
 export default function AboutPage() {
   return (
     <div className="custom-main">
-      <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem', color: '#1E3A8A' }}>📢 RebornBiz 소개</h1>
+      <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #e2e8f0', padding: '1.5rem', borderRadius: '0.5rem', backgroundColor: '#ffffff', marginBottom: '2rem' }}>
+        <div style={{ flexShrink: 0, marginRight: '2rem' }}>
+          <img src="/rebornBiz_logo.png" alt="RebornBiz Logo" style={{ width: '200px', height: 'auto' }} />
+        </div>
+        <div>
+          <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '0', color: '#1E3A8A' }}>📢 RebornBiz 소개</h1>
+        </div>
       </div>
 
       <div style={{ lineHeight: '1.8', fontSize: '1.05rem', color: '#31333F' }}>
