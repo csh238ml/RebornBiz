@@ -144,9 +144,9 @@ body {
     width: 100%;
   }
   
-  /* 모든 페이지 최상단 컨테이너의 하드코딩된 여백(padding: 2rem)을 모바일에 맞게 강제 축소 */
+  /* 모든 페이지 최상단 컨테이너의 하드코딩된 여백(padding: 2rem)을 모바일에 맞게 강제 축소 (상단 여백 0) */
   .main-content > div {
-    padding: 1rem !important;
+    padding: 0 1rem 1rem 1rem !important;
   }
   
   /* 메인 배너 이미지 좌우 여백 유지 */

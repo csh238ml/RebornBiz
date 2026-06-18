@@ -18,7 +18,7 @@ export default function StickyHeader({ children, showBanner = false }) {
               marginBottom: '1rem' 
             }} 
           />
-          <div className="mobile-only" style={{ paddingLeft: '3.5rem', marginBottom: '1rem', display: 'flex', alignItems: 'center' }}>
+          <div className="mobile-only" style={{ paddingLeft: '3.5rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', minHeight: '48px' }}>
             <img 
               src="/images/rebornbiz_main_mobile.jpg" 
               alt="RebornBiz Banner (Mobile)" 
