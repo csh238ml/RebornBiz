@@ -136,7 +136,7 @@ body {
   .main-wrapper {
     margin-left: 0; /* 모바일에서는 사이드바가 덮으므로 마진 제거 */
     width: 100vw;
-    overflow-x: hidden;
+    overflow-x: clip; /* hidden 대신 clip을 사용하여 sticky 헤더 정상 작동 보장 */
   }
   .main-content {
     padding: 0 0 3rem; /* 상단 햄버거 버튼 공간. 좌우 여백은 제거하고 자식에게 위임 */
