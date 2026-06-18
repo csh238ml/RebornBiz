@@ -62,16 +62,8 @@ const renderBullets = (rawText) => {
 export default async function GuidePage({ searchParams }) {
   const resolvedParams = await searchParams;
   const search = resolvedParams?.search || '';
-  const activeTab = resolvedParams?.tab || '지원금';
-
   const policies = await fetchPolicies(search);
-
-  // 탭 필터링
-  const tab1Policies = policies.filter(p => p.pldir_sport_realm_lclas_code_nm?.includes('금융') || p.pblanc_nm?.includes('자금'));
-  const tab2Policies = policies.filter(p => p.pldir_sport_realm_lclas_code_nm?.includes('경영') || p.pldir_sport_realm_lclas_code_nm?.includes('창업'));
-  const tab3Policies = policies.filter(p => !tab1Policies.includes(p) && !tab2Policies.includes(p));
-
-  const currentPolicies = search ? policies : (activeTab === '지원금' ? tab1Policies : (activeTab === '컨설팅' ? tab2Policies : tab3Policies));
+  const currentPolicies = policies;
 
   return (
     <div className="custom-main">
@@ -103,7 +95,6 @@ export default async function GuidePage({ searchParams }) {
       <hr style={{ borderTop: '1px solid rgba(49, 51, 63, 0.2)', margin: '1.5rem 0' }} />
 
       <form action="/guide" method="GET" style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem' }}>
-        {activeTab && !search && <input type="hidden" name="tab" value={activeTab} />}
         <input
           type="text"
           name="search"
@@ -111,34 +102,10 @@ export default async function GuidePage({ searchParams }) {
           placeholder="🔍 지원 정책 통합 검색 (예: 철거비, 청년 창업, 대출 등)"
           style={{ flex: 1, padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid rgba(49, 51, 63, 0.2)', fontSize: '1rem', backgroundColor: '#FAFAFA' }}
         />
-        <button type="submit" style={{ padding: '0 1.5rem', backgroundColor: '#FFFFFF', color: '#FF4B4B', border: '1px solid #FF4B4B', borderRadius: '0.5rem', fontWeight: 'bold', cursor: 'pointer' }}>
-          검색
+        <button type="submit" style={{ padding: '0 1.5rem', backgroundColor: '#FFFFFF', color: '#31333F', border: '1px solid rgba(49, 51, 63, 0.2)', borderRadius: '0.5rem', fontWeight: 'bold', cursor: 'pointer' }}>
+          🔍 검색
         </button>
       </form>
-
-      {!search && (
-        <div className="mobile-scroll-tabs" style={{ display: 'flex', gap: '1rem', borderBottom: '1px solid rgba(49, 51, 63, 0.2)', marginBottom: '2rem', flexWrap: 'wrap' }}>
-          {['지원금', '컨설팅', '기타'].map(tab => (
-            <Link
-              key={tab}
-              href={`/guide?tab=${tab}`}
-              style={{
-                background: 'none',
-                border: 'none',
-                padding: '0.75rem 1rem',
-                fontSize: '1.1rem',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                textDecoration: 'none',
-                borderBottom: activeTab === tab ? '3px solid #FF4B4B' : '3px solid transparent',
-                color: activeTab === tab ? '#FF4B4B' : '#31333F'
-              }}
-            >
-              {tab === '지원금' ? '💰 정부 지원금 (금융/자금)' : (tab === '컨설팅' ? '👨‍💼 컨설팅 프로그램' : '🧾 기타 정책 (세제/일반)')}
-            </Link>
-          ))}
-        </div>
-      )}
 
       <div>
         {search && <h3 style={{ color: '#1E3A8A', marginBottom: '1.5rem' }}>🔎 '{search}' 검색 결과</h3>}
