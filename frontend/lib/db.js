@@ -2,7 +2,7 @@ import mysql from 'mysql2/promise';
 
 // RebornBiz 프로젝트의 실제 DB 접속 환경 변수를 참조하여 Connection Pool 구성
 // Next.js 환경 특성상 .env 로드가 누락될 경우를 대비해 기존 파이썬 백엔드의 실제 값을 Fallback으로 지정
-const pool = mysql.createPool({
+export const pool = mysql.createPool({
   host: process.env.DB_HOST || 'reborn-biz-db.cf08ake2amg0.ap-northeast-2.rds.amazonaws.com',
   user: process.env.DB_USER || 'admin',
   password: process.env.DB_PASSWORD || 'sukhyunE!23',
