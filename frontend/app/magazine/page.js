@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import StickyHeader from '@/components/StickyHeader';
+import Pagination from '@/components/Pagination';
+import AdSlot from '@/components/AdSlot';
 
 const FASTAPI_URL = process.env.FASTAPI_URL || 'http://127.0.0.1:8000';
 
@@ -40,8 +42,12 @@ export async function generateMetadata({ searchParams }) {
 export default async function MagazineListPage({ searchParams }) {
   const resolvedParams = await searchParams;
   const search = resolvedParams?.search || '';
+  const page = parseInt(resolvedParams?.page || '1', 10);
 
   const posts = await fetchPosts(search);
+  
+  const totalPages = Math.ceil(posts.length / 10);
+  const currentPosts = posts.slice((page - 1) * 10, page * 10);
 
   return (
     <div className="custom-main">
@@ -89,19 +95,25 @@ export default async function MagazineListPage({ searchParams }) {
         {posts.length === 0 ? (
           <div style={{ padding: '2rem', backgroundColor: '#F8F9FA', textAlign: 'center', borderRadius: '0.5rem' }}>검색 결과가 없습니다.</div>
         ) : (
-          posts.map(post => (
-            <div key={post.id} style={{ marginBottom: '1rem', padding: '1.5rem', backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '0.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', transition: 'transform 0.2s' }}>
-              <Link href={`/magazine/${post.id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
-                <h3 style={{ color: '#1E3A8A', marginTop: 0, fontSize: '1.3rem' }}>{post.title}</h3>
-                <div style={{ color: '#888', fontSize: '0.9rem', marginTop: '10px' }}>
-                  <span>📅 {post.created_at}</span>
-                  <span style={{ marginLeft: '15px' }}>👁️ 조회수 {post.views}</span>
-                </div>
-              </Link>
+          currentPosts.map((post, idx) => (
+            <div key={post.id}>
+              <div style={{ marginBottom: '1rem', padding: '1.5rem', backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '0.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', transition: 'transform 0.2s' }}>
+                <Link href={`/magazine/${post.id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
+                  <h3 style={{ color: '#1E3A8A', marginTop: 0, fontSize: '1.3rem' }}>{post.title}</h3>
+                  <div style={{ color: '#888', fontSize: '0.9rem', marginTop: '10px' }}>
+                    <span>📅 {post.created_at}</span>
+                    <span style={{ marginLeft: '15px' }}>👁️ 조회수 {post.views}</span>
+                  </div>
+                </Link>
+              </div>
+              {/* 5번째 아이템 뒤에 광고 삽입 (인덱스 4) */}
+              {idx === 4 && <AdSlot position="middle" />}
             </div>
           ))
         )}
       </div>
+
+      <Pagination currentPage={page} totalPages={totalPages} basePath="/magazine" search={search} />
     </div>
   );
 }

@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import StickyHeader from '@/components/StickyHeader';
+import Pagination from '@/components/Pagination';
+import AdSlot from '@/components/AdSlot';
 
 const FASTAPI_URL = process.env.FASTAPI_URL || 'http://127.0.0.1:8000';
 
@@ -62,8 +64,11 @@ const renderBullets = (rawText) => {
 export default async function GuidePage({ searchParams }) {
   const resolvedParams = await searchParams;
   const search = resolvedParams?.search || '';
+  const page = parseInt(resolvedParams?.page || '1', 10);
+  
   const policies = await fetchPolicies(search);
-  const currentPolicies = policies;
+  const totalPages = Math.ceil(policies.length / 10);
+  const currentPolicies = policies.slice((page - 1) * 10, page * 10);
 
   return (
     <div className="custom-main">
@@ -113,34 +118,41 @@ export default async function GuidePage({ searchParams }) {
           <div style={{ padding: '2rem', backgroundColor: '#F8F9FA', textAlign: 'center', borderRadius: '0.5rem' }}>정책 정보가 없습니다.</div>
         ) : (
           currentPolicies.map((p, idx) => (
-            <div key={idx} style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '16px', boxShadow: '0 4px 20px rgba(30, 58, 138, 0.02)', padding: '32px 24px', marginBottom: '24px' }}>
-              <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
-                <span style={{ backgroundColor: '#fff0ea', color: '#FF8C42', padding: '4px 10px', borderRadius: '20px', fontSize: '13px', fontWeight: 'bold' }}>⚡ 접수중</span>
-                <span style={{ backgroundColor: '#eff6ff', color: '#1E3A8A', padding: '4px 10px', borderRadius: '20px', fontSize: '13px', fontWeight: 'bold' }}>{p.pldir_sport_realm_lclas_code_nm || '지원사업'}</span>
-                <span style={{ backgroundColor: '#f1f5f9', color: '#475569', padding: '4px 10px', borderRadius: '20px', fontSize: '13px', fontWeight: 'bold' }}>{p.jrsd_instt_nm}</span>
+            <div key={idx}>
+              <div style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '16px', boxShadow: '0 4px 20px rgba(30, 58, 138, 0.02)', padding: '32px 24px', marginBottom: '24px' }}>
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
+                  <span style={{ backgroundColor: '#fff0ea', color: '#FF8C42', padding: '4px 10px', borderRadius: '20px', fontSize: '13px', fontWeight: 'bold' }}>⚡ 접수중</span>
+                  <span style={{ backgroundColor: '#eff6ff', color: '#1E3A8A', padding: '4px 10px', borderRadius: '20px', fontSize: '13px', fontWeight: 'bold' }}>{p.pldir_sport_realm_lclas_code_nm || '지원사업'}</span>
+                  <span style={{ backgroundColor: '#f1f5f9', color: '#475569', padding: '4px 10px', borderRadius: '20px', fontSize: '13px', fontWeight: 'bold' }}>{p.jrsd_instt_nm}</span>
+                </div>
+                <h3 style={{ color: '#1E3A8A', marginTop: 0, marginBottom: '24px', fontSize: '1.35rem', lineHeight: '1.5' }}>{p.pblanc_nm}</h3>
+
+                <h4 style={{ color: '#1E3A8A', marginTop: 0, marginBottom: '10px', fontSize: '1.05rem', fontWeight: '700' }}>🎯 1. 누가 받을 수 있나요?</h4>
+                <div style={{ color: '#475569', lineHeight: '1.7', marginBottom: '24px', fontSize: '0.95rem' }}>{renderBullets(p.trget_nm)}</div>
+
+                <h4 style={{ color: '#1E3A8A', marginTop: 0, marginBottom: '10px', fontSize: '1.05rem', fontWeight: '700' }}>💰 2. 어떤 혜택을 받나요?</h4>
+                <div style={{ color: '#475569', lineHeight: '1.7', marginBottom: '24px', fontSize: '0.95rem' }}>{renderBullets(p.bsns_sumry_cn)}</div>
+
+                <h4 style={{ color: '#1E3A8A', marginTop: 0, marginBottom: '10px', fontSize: '1.05rem', fontWeight: '700' }}>📋 3. 어떻게 신청하나요?</h4>
+                <div style={{ color: '#475569', lineHeight: '1.7', marginBottom: '28px', fontSize: '0.95rem' }}>{renderBullets(p.reqst_mth_papers_cn)}</div>
+
+                <div style={{ color: '#ef4444', fontWeight: 'bold', marginBottom: '16px', fontSize: '0.95rem' }}>📅 신청기간: {p.reqst_begin_end_de}</div>
+
+                {p.pblanc_url && p.pblanc_url.startsWith('http') && (
+                  <a href={p.pblanc_url} target="_blank" rel="noreferrer" style={{ display: 'block', width: '100%', textAlign: 'center', backgroundColor: '#ffffff', color: '#0f172a', border: '1px solid #cbd5e1', padding: '14px 0', borderRadius: '10px', textDecoration: 'none', fontWeight: '700', fontSize: '1.05rem', marginTop: '10px' }}>
+                    👉 원본 공고문 바로가기
+                  </a>
+                )}
               </div>
-              <h3 style={{ color: '#1E3A8A', marginTop: 0, marginBottom: '24px', fontSize: '1.35rem', lineHeight: '1.5' }}>{p.pblanc_nm}</h3>
-
-              <h4 style={{ color: '#1E3A8A', marginTop: 0, marginBottom: '10px', fontSize: '1.05rem', fontWeight: '700' }}>🎯 1. 누가 받을 수 있나요?</h4>
-              <div style={{ color: '#475569', lineHeight: '1.7', marginBottom: '24px', fontSize: '0.95rem' }}>{renderBullets(p.trget_nm)}</div>
-
-              <h4 style={{ color: '#1E3A8A', marginTop: 0, marginBottom: '10px', fontSize: '1.05rem', fontWeight: '700' }}>💰 2. 어떤 혜택을 받나요?</h4>
-              <div style={{ color: '#475569', lineHeight: '1.7', marginBottom: '24px', fontSize: '0.95rem' }}>{renderBullets(p.bsns_sumry_cn)}</div>
-
-              <h4 style={{ color: '#1E3A8A', marginTop: 0, marginBottom: '10px', fontSize: '1.05rem', fontWeight: '700' }}>📋 3. 어떻게 신청하나요?</h4>
-              <div style={{ color: '#475569', lineHeight: '1.7', marginBottom: '28px', fontSize: '0.95rem' }}>{renderBullets(p.reqst_mth_papers_cn)}</div>
-
-              <div style={{ color: '#ef4444', fontWeight: 'bold', marginBottom: '16px', fontSize: '0.95rem' }}>📅 신청기간: {p.reqst_begin_end_de}</div>
-
-              {p.pblanc_url && p.pblanc_url.startsWith('http') && (
-                <a href={p.pblanc_url} target="_blank" rel="noreferrer" style={{ display: 'block', width: '100%', textAlign: 'center', backgroundColor: '#ffffff', color: '#0f172a', border: '1px solid #cbd5e1', padding: '14px 0', borderRadius: '10px', textDecoration: 'none', fontWeight: '700', fontSize: '1.05rem', marginTop: '10px' }}>
-                  👉 원본 공고문 바로가기
-                </a>
-              )}
+              
+              {/* 5번째 아이템 뒤에 광고 삽입 (인덱스 4) */}
+              {idx === 4 && <AdSlot position="middle" />}
             </div>
           ))
         )}
       </div>
+
+      <Pagination currentPage={page} totalPages={totalPages} basePath="/guide" search={search} />
     </div>
   );
 }
