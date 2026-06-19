@@ -22,19 +22,24 @@ export default function AdSlot({ position = 'default' }) {
       className={`ad-container ad-pos-${position}`} 
       style={{
         display: 'flex', justifyContent: 'center', alignItems: 'center',
-        height: '90px', width: '100%', margin: '20px 0', overflow: 'hidden',
+        height: '90px', maxHeight: '90px', width: '100%', margin: '20px 0', overflow: 'hidden',
         border: '2px dashed #cccccc', borderRadius: '10px',
         backgroundColor: '#f8f9fa', color: '#adb5bd'
       }}
     >
+      <style>{`
+        .ad-container, .ad-container ins {
+          max-height: 90px !important;
+        }
+      `}</style>
       <div style={{position: 'absolute', fontSize: '0.875rem', fontWeight: 'bold'}}>AD Space</div>
       {/* 실제 애드센스 ins 태그 등이 위치할 곳 (기본 UI 뼈대) */}
       <ins className="adsbygoogle"
-           style={{ display: 'block', width: '100%', height: '100%', maxHeight: '90px' }}
+           style={{ display: 'inline-block', width: '100%', height: '90px' }}
            data-ad-client="ca-pub-4577150400116930"
            data-ad-slot="1234567890"
            data-ad-format="horizontal"
-           data-full-width-responsive="true"></ins>
+           data-full-width-responsive="false"></ins>
     </div>
   );
 }
