@@ -76,7 +76,7 @@ export default async function MagazineDetailPage({ params }) {
   return (
     <div className="custom-main">
       <StickyHeader>
-        <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '1rem'}}>
+        <div style={{display: 'flex', justifyContent: 'flex-end', gap: '10px', marginBottom: '1rem'}}>
           <Link href="/magazine" style={{
             padding: '0.5rem 1rem', 
             backgroundColor: '#fff', 
@@ -105,7 +105,7 @@ export default async function MagazineDetailPage({ params }) {
 
       <hr style={{borderTop: '1px solid rgba(49, 51, 63, 0.2)', margin: '2rem 0'}} />
 
-      <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '2rem'}}>
+      <div style={{display: 'flex', justifyContent: 'flex-end', gap: '10px', marginBottom: '2rem'}}>
         <Link href="/magazine" style={{
           padding: '0.5rem 1rem', 
           backgroundColor: '#fff', 
