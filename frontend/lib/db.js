@@ -65,3 +65,21 @@ export async function getBoardDetail(id) {
     throw error;
   }
 }
+
+/**
+ * 최신 매거진(게시판) 글 목록을 조회합니다. (RSS 피드용)
+ * @param {number} limit - 가져올 글의 개수
+ * @returns {Promise<Array>} - 게시글 목록
+ */
+export async function getLatestPosts(limit = 20) {
+  try {
+    const [rows] = await pool.query(
+      'SELECT id, title, content_html, created_at FROM reborn_board ORDER BY created_at DESC LIMIT ?',
+      [limit]
+    );
+    return rows;
+  } catch (error) {
+    console.error(`[DB Error] getLatestPosts failed:`, error);
+    throw error;
+  }
+}
