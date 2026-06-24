@@ -18,11 +18,14 @@ export const pool = mysql.createPool({
  */
 export async function logPageAccess(menu_name, ip_address = 'unknown', user_agent = 'unknown') {
   try {
-    // access_time은 DB의 기본값(NOW())을 사용하거나, 수동으로 입력할 수 있습니다.
-    // 백엔드 SQLAlchemy 모델에서는 datetime.utcnow가 기본값입니다.
+    // KST(한국 시간)로 현재 시간 계산
+    const now = new Date();
+    const kstDate = new Date(now.getTime() + (9 * 60 * 60 * 1000));
+    const kstString = kstDate.toISOString().slice(0, 19).replace('T', ' ');
+
     await pool.query(
-      'INSERT INTO access_logs (access_time, ip_address, user_agent, accessed_menu) VALUES (NOW(), ?, ?, ?)',
-      [ip_address, user_agent, menu_name]
+      'INSERT INTO access_logs (access_time, ip_address, user_agent, accessed_menu) VALUES (?, ?, ?, ?)',
+      [kstString, ip_address, user_agent, menu_name]
     );
   } catch (error) {
     console.error(`[DB Error] logPageAccess failed:`, error);
