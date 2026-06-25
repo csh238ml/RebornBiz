@@ -63,7 +63,7 @@ export default function AboutPage() {
         <section style={{ marginBottom: '2rem' }}>
           <h2 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '1rem' }}>피드백 및 문의</h2>
           <p>
-            잘못된 정보, 깨진 링크 신고 또는 서비스 기능 개선 제안은 운영팀(<a href="mailto:csh238ml@gmail.com" style={{ color: '#2563EB' }}>csh238ml@gmail.com</a>)으로 알려주시면 빠르게 검토하여 반영하겠습니다.
+            잘못된 정보, 깨진 링크 신고 또는 서비스 기능 개선 제안은 운영팀(<a href="mailto:help.rebornbiz@gmail.com" style={{ color: '#2563EB' }}>help.rebornbiz@gmail.com</a>)으로 알려주시면 빠르게 검토하여 반영하겠습니다.
           </p>
         </section>
       </div>

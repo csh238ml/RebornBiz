@@ -128,7 +128,7 @@ RebornBiz(rebornbiz.co.kr, 이하 “본 사이트”)는 이용자의 개인정
 
 **9. 개인정보 보호책임자 및 문의처**
 - 운영자: RebornBiz 운영팀
-- 문의 이메일: csh238ml@gmail.com
+- 문의 이메일: help.rebornbiz@gmail.com
 
 개인정보 침해 관련 신고나 상담은 아래 기관에 문의하실 수 있습니다.
 - 개인정보분쟁조정위원회: 1833-6972 / www.kopico.go.kr

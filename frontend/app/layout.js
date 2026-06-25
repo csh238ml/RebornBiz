@@ -66,7 +66,7 @@ export default function RootLayout({ children }) {
                 <span>·</span>
                 <Link href="/policy" style={{ color: 'inherit', textDecoration: 'none' }}>개인정보처리방침</Link>
                 <span>·</span>
-                <a href="mailto:csh238ml@gmail.com" style={{ color: 'inherit', textDecoration: 'none' }}>제휴 및 문의</a>
+                <a href="mailto:help.rebornbiz@gmail.com" style={{ color: 'inherit', textDecoration: 'none' }}>제휴 및 문의</a>
               </div>
               
               <div style={{ fontSize: '12px' }}>

@@ -197,7 +197,7 @@ export default function PolicyPage() {
           <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '0.5rem' }}>9. 개인정보 보호책임자 및 문의처</h3>
           <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', listStyle: 'none' }}>
             <li>- 운영자: RebornBiz 운영팀</li>
-            <li>- 문의 이메일: csh238ml@gmail.com</li>
+            <li>- 문의 이메일: help.rebornbiz@gmail.com</li>
           </ul>
           <p style={{ marginTop: '1rem' }}>개인정보 침해 관련 신고나 상담은 아래 기관에 문의하실 수 있습니다.</p>
           <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem' }}>
