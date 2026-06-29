@@ -80,11 +80,11 @@ async function getDashboardData(year, industry, tab) {
 
 export default async function StatisticsDashboard({ searchParams }) {
   const resolvedParams = await searchParams;
-  
+
   const filterOptions = await getFilterOptions();
-  
+
   const defaultYear = filterOptions.years.length > 0 ? filterOptions.years[0] : new Date().getFullYear().toString();
-  
+
   const currentYear = resolvedParams?.year || defaultYear;
   const currentIndustry = resolvedParams?.industry || '전체';
   const currentTab = resolvedParams?.tab || 'REGION';
@@ -108,7 +108,7 @@ export default async function StatisticsDashboard({ searchParams }) {
             <img src="/rebornBiz_logo.png" alt="RebornBiz Logo" style={{ width: '200px', height: 'auto' }} />
           </div>
           <div>
-            <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem', color: '#31333F' }}>📊 창업·폐업 트렌드</h1>
+            <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem', color: '#31333F' }}>창업·폐업 트렌드</h1>
             <p style={{ fontSize: '1rem', marginBottom: '0', lineHeight: '1.6', color: '#555' }}>
               연도와 업종을 선택하여 세부적인 현황을 입체적으로 분석해보세요.<br />
               국세청 및 KOSIS 확정 데이터를 바탕으로 실시간 집계됩니다.
@@ -119,7 +119,7 @@ export default async function StatisticsDashboard({ searchParams }) {
           <div style={{ paddingLeft: '3.5rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', minHeight: '48px' }}>
             <img src="/images/rebornbiz_main_mobile.jpg" alt="RebornBiz Banner" style={{ width: '100%', height: 'auto', objectFit: 'contain', objectPosition: 'left center' }} />
           </div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: '700', marginBottom: '0.5rem', color: '#31333F' }}>📊 창업·폐업 트렌드</h1>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: '700', marginBottom: '0.5rem', color: '#31333F' }}>창업·폐업 트렌드</h1>
           <p style={{ fontSize: '0.95rem', marginBottom: '0', lineHeight: '1.5', color: '#555' }}>
             다양한 기준의 트렌드를 한눈에 분석합니다.
           </p>
@@ -129,7 +129,7 @@ export default async function StatisticsDashboard({ searchParams }) {
       <hr style={{ borderTop: '1px solid rgba(49, 51, 63, 0.2)', margin: '1.5rem 0' }} />
 
       {/* 상단 필터 바 */}
-      <DashboardFilter 
+      <DashboardFilter
         years={filterOptions.years}
         industries={filterOptions.industries}
         currentYear={currentYear}
@@ -146,7 +146,7 @@ export default async function StatisticsDashboard({ searchParams }) {
           search.set('tab', tab.id);
 
           return (
-            <Link 
+            <Link
               key={tab.id}
               href={`/statistics?${search.toString()}`}
               style={{
@@ -219,7 +219,7 @@ export default async function StatisticsDashboard({ searchParams }) {
       </div>
 
       <AdSlot position="middle" />
-      
+
     </div>
   );
 }
