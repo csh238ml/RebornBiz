@@ -45,7 +45,8 @@ export async function fetchKosisData() {
   try {
     // 1. 메모리에 모든 데이터 먼저 선 수집 (API 호출)
     for (const api of API_LIST) {
-      const url = `https://kosis.kr/openapi/Param/statisticsParameterData.do?method=getList&apiKey=${KOSIS_API_KEY}&orgId=${ORG_ID}&tblId=${api.tblId}&prdSe=Y&format=json`;
+      // 필수 요청 변수 추가: itmId=ALL, objL1=ALL, objL2=ALL, newEstPrdCnt=1
+      const url = `https://kosis.kr/openapi/Param/statisticsParameterData.do?method=getList&apiKey=${KOSIS_API_KEY}&orgId=${ORG_ID}&tblId=${api.tblId}&prdSe=Y&format=json&itmId=ALL&objL1=ALL&objL2=ALL&newEstPrdCnt=1`;
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000);
@@ -94,7 +95,7 @@ export async function fetchKosisData() {
           api.categoryType,      // categoryType
           categoryValue,         // categoryValue
           industryName,          // industryName
-          parseInt(item.DTVAL_CO1, 10) || 0 // bizCount
+          parseInt(item.DT, 10) || 0 // bizCount (statisticsParameterData.do 에서는 DT 필드 사용)
         ];
       }).filter(item => item[0] && item[3] && item[4]); // targetYear, categoryValue, industryName이 존재하는지 유효성 검사
 
