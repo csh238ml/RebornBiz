@@ -23,7 +23,7 @@ STATIC_PAGES = [
     "/tax_cal",
     "/simulation",
     "/market_analysis",
-    "/guide"
+    "/statistics"
 ]
 
 def generate_sitemap():
