@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import StickyHeader from '@/components/StickyHeader';
+import AdSlot from '@/components/AdSlot';
 
 export default function TaxCalculatorPage() {
   const currentYear = new Date().getFullYear();
@@ -189,6 +190,10 @@ export default function TaxCalculatorPage() {
           </details>
         </div>
       )}
+      
+      <div style={{ marginTop: '3rem' }}>
+        <AdSlot />
+      </div>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import StickyHeader from '@/components/StickyHeader';
+import AdSlot from '@/components/AdSlot';
 
 export const metadata = {
   title: '이용약관 및 개인정보처리방침 | RebornBiz'
@@ -211,6 +212,10 @@ export default function PolicyPage() {
           <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '0.5rem' }}>10. 개정 및 고지</h3>
           <p>본 개인정보처리방침은 법령·정책 또는 서비스 내용(신규 API 도입 등) 변경에 따라 개정될 수 있으며, 변경 시 본 페이지를 통해 공지합니다. 중요한 변경 사항이 있을 경우 시행일 최소 7일 전부터 공지합니다.</p>
         </section>
+      </div>
+      
+      <div style={{ marginTop: '3rem' }}>
+        <AdSlot />
       </div>
     </div>
   );

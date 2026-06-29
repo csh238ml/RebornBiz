@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import StickyHeader from '@/components/StickyHeader';
+import AdSlot from '@/components/AdSlot';
 
 export default function SimulationPage() {
   const [loading, setLoading] = useState(false);
@@ -292,6 +293,10 @@ export default function SimulationPage() {
           </ul>
         </div>
       )}
+      
+      <div style={{ marginTop: '3rem' }}>
+        <AdSlot />
+      </div>
     </div>
   );
 }

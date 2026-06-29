@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import StickyHeader from '@/components/StickyHeader';
+import AdSlot from '@/components/AdSlot';
 
 export default function HomePage() {
   return (
@@ -75,6 +76,10 @@ export default function HomePage() {
             <Link href="/magazine" className="custom-btn">매거진 읽기</Link>
           </div>
         </div>
+      </div>
+      
+      <div style={{ marginTop: '3rem' }}>
+        <AdSlot />
       </div>
     </div>
   );

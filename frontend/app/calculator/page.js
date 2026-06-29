@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import StickyHeader from '@/components/StickyHeader';
+import AdSlot from '@/components/AdSlot';
 
 export default function CalculatorPage() {
   const [formData, setFormData] = useState({
@@ -198,6 +199,10 @@ export default function CalculatorPage() {
           </div>
         </div>
       )}
+      
+      <div style={{ marginTop: '3rem' }}>
+        <AdSlot />
+      </div>
     </div>
   );
 }

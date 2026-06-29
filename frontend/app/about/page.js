@@ -1,4 +1,5 @@
 import StickyHeader from '@/components/StickyHeader';
+import AdSlot from '@/components/AdSlot';
 
 export const metadata = {
   title: 'RebornBiz 소개 | RebornBiz'
@@ -66,6 +67,10 @@ export default function AboutPage() {
             잘못된 정보, 깨진 링크 신고 또는 서비스 기능 개선 제안은 운영팀(<a href="mailto:help.rebornbiz@gmail.com" style={{ color: '#2563EB' }}>help.rebornbiz@gmail.com</a>)으로 알려주시면 빠르게 검토하여 반영하겠습니다.
           </p>
         </section>
+      </div>
+      
+      <div style={{ marginTop: '3rem' }}>
+        <AdSlot />
       </div>
     </div>
   );

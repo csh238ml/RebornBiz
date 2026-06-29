@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import StickyHeader from '@/components/StickyHeader';
 import CopyLinkButton from './CopyLinkButton';
+import AdSlot from '@/components/AdSlot';
 
 const FASTAPI_URL = process.env.FASTAPI_URL || 'http://127.0.0.1:8000';
 
@@ -120,6 +121,10 @@ export default async function MagazineDetailPage({ params }) {
           ⬅️ 목록으로
         </Link>
         <CopyLinkButton />
+      </div>
+
+      <div style={{ marginTop: '2rem' }}>
+        <AdSlot />
       </div>
     </div>
   );

@@ -2,7 +2,6 @@ import './reborn.css';
 import Link from 'next/link';
 import Script from 'next/script';
 import AdSlot from '@/components/AdSlot';
-import FooterAd from '@/components/FooterAd';
 import Sidebar from '@/components/Sidebar';
 import PageLogger from '@/components/PageLogger';
 
@@ -48,11 +47,6 @@ export default function RootLayout({ children }) {
               {children}
             </main>
 
-
-            {/* 하단 공통 광고 영역 (상권분석 메뉴 제외) */}
-            <section style={{ padding: '0 2rem' }}>
-              <FooterAd />
-            </section>
 
             {/* 공통 푸터 */}
             <footer className="site-footer" style={{ textAlign: 'left', padding: '2rem 3rem', backgroundColor: '#ffffff', color: '#94a3b8', fontSize: '13px', lineHeight: '1.6', borderTop: '1px solid #f1f5f9', marginTop: 'auto' }}>
