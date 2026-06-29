@@ -27,10 +27,22 @@ export async function fetchKosisData() {
     clearTimeout(timeoutId);
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`[KOSIS API Error] Status: ${response.status}, Body: ${errorText}`);
       throw new Error(`KOSIS API Fetch Failed: ${response.status} ${response.statusText}`);
     }
 
-    const data = await response.json();
+    // JSON.parse() 전에 텍스트로 먼저 받아와서 PM2 로그용으로 남김
+    const text = await response.text();
+    console.log("KOSIS Raw Response:", text);
+
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (parseError) {
+      console.error("[KOSIS API JSON Parse Error] Raw text:", text);
+      throw new Error(`JSON 파싱 에러 발생. 파싱 실패한 텍스트: ${text.substring(0, 100)}...`);
+    }
 
     if (!Array.isArray(data)) {
       if (data.err) {
