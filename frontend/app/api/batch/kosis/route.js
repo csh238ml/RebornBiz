@@ -27,7 +27,7 @@ export async function GET(request) {
     // 3. 작업 완료 응답 반환
     return NextResponse.json({
       success: true,
-      message: "DB 적재 완료",
+      message: result.message,
       affectedRows: result.affectedRows
     });
     
