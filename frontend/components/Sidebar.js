@@ -30,7 +30,7 @@ export default function Sidebar() {
           <Link href="/tax_cal" onClick={() => setIsOpen(false)}>🧾 폐업 세금 계산기</Link>
           <Link href="/simulation" onClick={() => setIsOpen(false)}>📈 업종 변경 시뮬레이션</Link>
           <Link href="/market_analysis" onClick={() => setIsOpen(false)}>📍 내 주변 상권 분석</Link>
-          <Link href="/guide" onClick={() => setIsOpen(false)}>🏛️ 정부 지원 정책</Link>
+          <Link href="/statistics" onClick={() => setIsOpen(false)}>📊 창업·폐업 트렌드</Link>
           <Link href="/magazine" onClick={() => setIsOpen(false)}>📰 Reborn 매거진</Link>
         </nav>
       </aside>
