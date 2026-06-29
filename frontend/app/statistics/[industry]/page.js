@@ -39,7 +39,13 @@ async function getIndustryTrend(industry) {
     // 만약 category_value='전국' 이 별도로 있다면 WHERE category_value='전국'도 고려 가능하지만,
     // 현재는 지역별 합산으로 전체 트렌드를 유추함.
     
-    return rows;
+    const formattedRows = rows.map(r => ({
+      ...r,
+      new_count: Number(r.new_count) || 0,
+      close_count: Number(r.close_count) || 0
+    }));
+
+    return formattedRows;
   } catch (err) {
     console.error(`Failed to fetch industry trend for ${industry}:`, err);
     return [];

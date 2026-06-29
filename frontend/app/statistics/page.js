@@ -36,7 +36,13 @@ async function getStatisticsSummary(tab) {
     `;
     const [rows] = await pool.query(query, [categoryType, targetYear]);
 
-    return { rows, targetYear };
+    const formattedRows = rows.map(r => ({
+      ...r,
+      new_count: Number(r.new_count) || 0,
+      close_count: Number(r.close_count) || 0
+    }));
+
+    return { rows: formattedRows, targetYear };
   } catch (err) {
     console.error('Failed to fetch statistics summary:', err);
     return { rows: [], targetYear: '' };
@@ -189,10 +195,8 @@ export default async function StatisticsDashboard({ searchParams }) {
               textAlign: 'center',
               fontWeight: '500',
               boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
-              transition: 'transform 0.1s, boxShadow 0.1s',
+              transition: 'all 0.2s',
             }}
-            onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)'; e.currentTarget.style.borderColor = '#93C5FD'; }}
-            onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.05)'; e.currentTarget.style.borderColor = '#E2E8F0'; }}
           >
             {industry}
           </Link>
