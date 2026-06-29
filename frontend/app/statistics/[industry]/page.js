@@ -52,12 +52,56 @@ async function getIndustryTrend(industry) {
   }
 }
 
-export default async function IndustryTrendPage({ params }) {
+async function getIndustryDetails(industry, tab, targetYear) {
+  let categoryType = 'REGION';
+  if (tab === 'MONTH') categoryType = 'MONTH';
+  if (tab === 'AGE') categoryType = 'AGE';
+
+  try {
+    const query = `
+      SELECT 
+        category_value, 
+        SUM(CASE WHEN stat_type = 'NEW' THEN biz_count ELSE 0 END) as new_count, 
+        SUM(CASE WHEN stat_type = 'CLOSE' THEN biz_count ELSE 0 END) as close_count
+      FROM kosis_life_biz_stats 
+      WHERE industry_name = ? AND target_year = ? AND category_type = ? AND category_value != '합계'
+      GROUP BY category_type, category_value 
+      ORDER BY new_count DESC
+    `;
+    const [rows] = await pool.query(query, [industry, targetYear, categoryType]);
+
+    return rows.map(r => ({
+      ...r,
+      new_count: Number(r.new_count) || 0,
+      close_count: Number(r.close_count) || 0
+    }));
+  } catch (err) {
+    console.error(`Failed to fetch industry details for ${industry}:`, err);
+    return [];
+  }
+}
+
+export default async function IndustryTrendPage({ params, searchParams }) {
   const resolvedParams = await params;
   const industry = decodeURIComponent(resolvedParams.industry || '');
   
+  const resolvedSearchParams = await searchParams;
+  const currentTab = resolvedSearchParams?.tab || 'REGION';
+  
+  const [yearRows] = await pool.query('SELECT MAX(target_year) as maxYear FROM kosis_life_biz_stats');
+  const targetYear = yearRows[0]?.maxYear || new Date().getFullYear().toString();
+
   const trendData = await getIndustryTrend(industry);
+  const detailsData = await getIndustryDetails(industry, currentTab, targetYear);
+
   const maxCount = trendData.length > 0 ? Math.max(...trendData.map(r => Math.max(r.new_count, r.close_count))) : 1;
+  const detailsMaxCount = detailsData.length > 0 ? Math.max(...detailsData.map(r => Math.max(r.new_count, r.close_count))) : 1;
+
+  const tabs = [
+    { id: 'REGION', label: '📍 지역별 통계' },
+    { id: 'AGE', label: '🧑‍🤝‍🧑 연령별 통계' },
+    { id: 'MONTH', label: '📅 월별 동향' }
+  ];
 
   return (
     <div className="custom-main">
@@ -122,6 +166,84 @@ export default async function IndustryTrendPage({ params }) {
                   return (
                     <tr key={idx} style={{ borderBottom: '1px solid #F1F5F9' }}>
                       <td style={{ padding: '1rem', fontWeight: '600', color: '#334155' }}>{row.target_year}년</td>
+                      <td style={{ padding: '1rem', textAlign: 'right', color: '#2563EB', fontWeight: '500' }}>{row.new_count.toLocaleString()}</td>
+                      <td style={{ padding: '1rem', textAlign: 'right', color: '#DC2626', fontWeight: '500' }}>{row.close_count.toLocaleString()}</td>
+                      <td style={{ padding: '1rem' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '0.75rem', color: '#64748B', width: '24px' }}>신규</span>
+                            <div style={{ flex: 1, backgroundColor: '#F1F5F9', borderRadius: '4px', height: '8px', overflow: 'hidden' }}>
+                              <div style={{ width: `${newPercent}%`, backgroundColor: '#3B82F6', height: '100%', borderRadius: '4px' }}></div>
+                            </div>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '0.75rem', color: '#64748B', width: '24px' }}>폐업</span>
+                            <div style={{ flex: 1, backgroundColor: '#F1F5F9', borderRadius: '4px', height: '8px', overflow: 'hidden' }}>
+                              <div style={{ width: `${closePercent}%`, backgroundColor: '#EF4444', height: '100%', borderRadius: '4px' }}></div>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <hr style={{ borderTop: '1px solid rgba(49, 51, 63, 0.2)', margin: '3rem 0 2.5rem 0' }} />
+
+      {/* 세부 분석 (지역별, 연령별, 월별) */}
+      <h2 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '1rem', color: '#1E293B' }}>
+        🔍 {targetYear}년 {industry} 상세 분석
+      </h2>
+      <p style={{ color: '#475569', marginBottom: '1.5rem' }}>가장 최근 연도({targetYear}년) 데이터를 기준으로 세부 현황을 파악합니다.</p>
+      
+      {/* 탭 네비게이션 */}
+      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
+        {tabs.map(tab => (
+          <Link 
+            key={tab.id}
+            href={`/statistics/${encodeURIComponent(industry)}?tab=${tab.id}`}
+            style={{
+              padding: '0.75rem 1.5rem',
+              borderRadius: '0.5rem',
+              fontWeight: '600',
+              textDecoration: 'none',
+              backgroundColor: currentTab === tab.id ? '#1E3A8A' : '#F1F5F9',
+              color: currentTab === tab.id ? '#FFFFFF' : '#475569',
+              border: `1px solid ${currentTab === tab.id ? '#1E3A8A' : '#E2E8F0'}`,
+              transition: 'all 0.2s'
+            }}
+          >
+            {tab.label}
+          </Link>
+        ))}
+      </div>
+
+      <div style={{ marginBottom: '3rem', backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '0.5rem', overflow: 'hidden', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+        <div className="overflow-x-auto" style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', minWidth: '600px', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ backgroundColor: '#F8FAFC', borderBottom: '1px solid #E2E8F0', textAlign: 'left' }}>
+                <th style={{ padding: '1rem', color: '#475569', fontWeight: '600', width: '20%' }}>구분</th>
+                <th style={{ padding: '1rem', color: '#475569', fontWeight: '600', width: '15%', textAlign: 'right' }}>신규 창업 (건)</th>
+                <th style={{ padding: '1rem', color: '#475569', fontWeight: '600', width: '15%', textAlign: 'right' }}>폐업 (건)</th>
+                <th style={{ padding: '1rem', color: '#475569', fontWeight: '600', width: '50%' }}>비율 (신규 vs 폐업)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {detailsData.length === 0 ? (
+                <tr><td colSpan="4" style={{ padding: '2rem', textAlign: 'center', color: '#888' }}>해당 조건의 데이터가 없습니다.</td></tr>
+              ) : (
+                detailsData.map((row, idx) => {
+                  const newPercent = detailsMaxCount > 0 ? (row.new_count / detailsMaxCount) * 100 : 0;
+                  const closePercent = detailsMaxCount > 0 ? (row.close_count / detailsMaxCount) * 100 : 0;
+                  return (
+                    <tr key={idx} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                      <td style={{ padding: '1rem', fontWeight: '600', color: '#334155' }}>{row.category_value}</td>
                       <td style={{ padding: '1rem', textAlign: 'right', color: '#2563EB', fontWeight: '500' }}>{row.new_count.toLocaleString()}</td>
                       <td style={{ padding: '1rem', textAlign: 'right', color: '#DC2626', fontWeight: '500' }}>{row.close_count.toLocaleString()}</td>
                       <td style={{ padding: '1rem' }}>
