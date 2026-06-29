@@ -203,7 +203,6 @@ export default function MarketAnalysisPage() {
           <div ref={mapContainer} style={{ width: '100%', height: '500px', borderRadius: '0.5rem', position: 'relative' }}>
             {loading && <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(255,255,255,0.7)', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>데이터 로딩중...</div>}
           </div>
-          </div>
         </div>
 
         <div style={{ flex: '1 1 300px', border: '1px solid rgba(49, 51, 63, 0.2)', borderRadius: '0.5rem', padding: '1rem' }}>
