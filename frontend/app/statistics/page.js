@@ -17,7 +17,13 @@ export const metadata = {
 async function getFilterOptions() {
   try {
     const [yearRows] = await pool.query('SELECT DISTINCT target_year FROM kosis_life_biz_stats ORDER BY target_year DESC');
-    const [industryRows] = await pool.query("SELECT DISTINCT industry_name FROM kosis_life_biz_stats WHERE industry_name != '합계' ORDER BY industry_name");
+    const [industryRows] = await pool.query(`
+      SELECT industry_name 
+      FROM kosis_life_biz_stats
+      WHERE category_type = 'REGION' AND industry_name != '합계'
+      GROUP BY industry_name 
+      ORDER BY industry_name
+    `);
 
     return {
       years: yearRows.map(r => r.target_year),
