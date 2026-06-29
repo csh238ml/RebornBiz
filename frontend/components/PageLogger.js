@@ -8,7 +8,7 @@ const menuMapping = {
   '/simulation': '업종별 시뮬레이션',
   '/calculator': '폐업 비용 계산기',
   '/tax_cal': '폐업 세금(부가세) 자동 계산기',
-  '/guide': '정부지원 가이드라인',
+  '/statistics': '창업·폐업 트렌드',
   '/magazine': 'RebornBiz 매거진'
 };
 
