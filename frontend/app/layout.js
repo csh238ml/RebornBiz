@@ -52,7 +52,7 @@ export default function RootLayout({ children }) {
             <footer className="site-footer" style={{ textAlign: 'left', padding: '2rem 3rem', backgroundColor: '#ffffff', color: '#94a3b8', fontSize: '13px', lineHeight: '1.6', borderTop: '1px solid #f1f5f9', marginTop: 'auto' }}>
               <strong style={{ color: '#64748b', fontSize: '14px', display: 'block', marginBottom: '8px' }}>면책 고지</strong>
               <p style={{ margin: '0 0 20px 0' }}>
-                RebornBiz는 공개된 정부·공공 지자체의 공고 및 상권 데이터를 사장님들이 이해하기 쉬운 형태로 재구성한 참고용 정보 사이트입니다. 최종 판단 및 신청은 반드시 원 공고의 원문과 발행 기관의 안내에 따라 주세요. 공고의 조건·금액·기한은 사전 고지 없이 변경될 수 있습니다.
+                RebornBiz는 국세청 및 공공 기관의 공개된 통계 자료와 상권 데이터를 기반으로 제공되는 참고용 정보 서비스입니다. 분석 결과 및 데이터는 실제 시장 상황과 다를 수 있으며, 최종적인 사업적 판단과 책임은 사용자 본인에게 있습니다. 통계 데이터의 수치는 출처 기관의 사정에 따라 사전 고지 없이 업데이트되거나 변경될 수 있습니다.
               </p>
               
               <div style={{ display: 'flex', gap: '16px', fontWeight: '600', color: '#64748b', marginBottom: '12px', flexWrap: 'wrap' }}>

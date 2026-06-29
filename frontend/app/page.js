@@ -55,14 +55,14 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* 정부 지원 정책 */}
+        {/* 창업·폐업 트렌드 */}
         <div className="custom-card gov">
-          <div className="card-icon-box">🏛️</div>
+          <div className="card-icon-box">📊</div>
           <div className="card-content">
-            <span className="card-badge">가이드</span>
-            <h3>정부 지원 정책</h3>
-            <p>재취업, 재창업 등 소상공인에게 꼭 필요한 정부 지원금을 한눈에 확인하고 신청하세요.</p>
-            <Link href="/guide" className="custom-btn">지원 정책 확인</Link>
+            <span className="card-badge">통계</span>
+            <h3>창업·폐업 트렌드</h3>
+            <p>국세청 공식 확정 데이터를 활용한 100대 생활밀접업종 창업·폐업 트렌드를 한눈에 분석합니다.</p>
+            <Link href="/statistics" className="custom-btn">트렌드 분석하기</Link>
           </div>
         </div>
 
