@@ -37,12 +37,13 @@ const parseCategoryAndIndustry = (c1, c2, categoryType) => {
 };
 
 /**
- * 100대 생활밀접업종 6개 통계표(신규/폐업 x 지역/월/연령) 통합 수집 및 kosis_life_biz_stats에 적재하는 Server Action
+ * 100대 생활밀접업종 6개 통계표 통합 수집 (트랜잭션 기반 일괄 갱신)
  */
 export async function fetchKosisData() {
-  let totalAffectedRows = 0;
+  let allStats = []; // 6개 통계표 데이터를 모두 담아둘 메모리 배열
 
   try {
+    // 1. 메모리에 모든 데이터 먼저 선 수집 (API 호출)
     for (const api of API_LIST) {
       const url = `https://kosis.kr/openapi/Param/statisticsParameterData.do?method=getList&apiKey=${KOSIS_API_KEY}&orgId=${ORG_ID}&tblId=${api.tblId}&prdSe=Y&format=json`;
 
@@ -59,7 +60,7 @@ export async function fetchKosisData() {
 
       clearTimeout(timeoutId);
 
-      // HTTP 상태 코드 에러 시 텍스트 로깅
+      // HTTP 상태 코드 에러 시 즉시 중단 (방어 로직)
       if (!response.ok) {
         const errorText = await response.text();
         console.error(`[KOSIS API Error] tblId: ${api.tblId}, Status: ${response.status}, Body: ${errorText}`);
@@ -68,7 +69,7 @@ export async function fetchKosisData() {
 
       const text = await response.text();
 
-      // JSON 파싱 (에러 발생 시 비표준 텍스트 로깅)
+      // JSON 파싱 (에러 발생 시 비표준 텍스트 반환 등 방어 로직)
       let data;
       try {
         data = JSON.parse(text);
@@ -87,54 +88,65 @@ export async function fetchKosisData() {
       // 응답 데이터 매핑
       const statsData = data.map(item => {
         const { categoryValue, industryName } = parseCategoryAndIndustry(item.C1_NM, item.C2_NM, api.categoryType);
-        return {
-          targetYear: item.PRD_DE,
-          statType: api.statType,
-          categoryType: api.categoryType,
-          categoryValue: categoryValue,
-          industryName: industryName,
-          bizCount: parseInt(item.DTVAL_CO1, 10) || 0,
-        };
-      }).filter(item => item.targetYear && item.categoryValue && item.industryName);
+        return [
+          item.PRD_DE,           // targetYear
+          api.statType,          // statType
+          api.categoryType,      // categoryType
+          categoryValue,         // categoryValue
+          industryName,          // industryName
+          parseInt(item.DTVAL_CO1, 10) || 0 // bizCount
+        ];
+      }).filter(item => item[0] && item[3] && item[4]); // targetYear, categoryValue, industryName이 존재하는지 유효성 검사
 
-      if (statsData.length === 0) {
+      if (statsData.length > 0) {
+        allStats.push(...statsData); // 배열 병합
+      } else {
         console.log(`No valid statistics data found from KOSIS API for ${api.tblId}.`);
-        continue; // 데이터가 비었어도 다음 API 진행
       }
-
-      // DB 적재 (bulk insert 방식)
-      const values = statsData.map(stat => [
-        stat.targetYear, 
-        stat.statType, 
-        stat.categoryType, 
-        stat.categoryValue,
-        stat.industryName,
-        stat.bizCount
-      ]);
-      
-      const query = `
-        INSERT INTO kosis_life_biz_stats (target_year, stat_type, category_type, category_value, industry_name, biz_count) 
-        VALUES ?
-        ON DUPLICATE KEY UPDATE 
-          biz_count = VALUES(biz_count)
-      `;
-
-      const [result] = await pool.query(query, [values]);
-      totalAffectedRows += result.affectedRows;
     }
 
-    return {
-      success: true,
-      message: "6개 통계표 통합 수집 완료",
-      affectedRows: totalAffectedRows
-    };
+    if (allStats.length === 0) {
+      return { success: true, message: "No valid statistics data found across all 6 APIs.", affectedRows: 0 };
+    }
+
+    // 2. Transaction 기반 DB 적재 로직 시작
+    const connection = await pool.getConnection();
+
+    try {
+      await connection.beginTransaction(); // 트랜잭션 시작
+
+      // 2-1. 기존 데이터 전체 삭제 (좀비 데이터 방지)
+      await connection.query('DELETE FROM kosis_life_biz_stats');
+
+      // 2-2. Bulk Insert 실행 (메모리에 모아둔 데이터를 한 번에 밀어넣기)
+      const insertQuery = `
+        INSERT INTO kosis_life_biz_stats (target_year, stat_type, category_type, category_value, industry_name, biz_count) 
+        VALUES ?
+      `;
+      const [result] = await connection.query(insertQuery, [allStats]);
+
+      await connection.commit(); // 정상 완료 시 커밋
+
+      return {
+        success: true,
+        message: "6개 통계표 일괄 갱신 및 트랜잭션 커밋 완료",
+        affectedRows: result.affectedRows
+      };
+
+    } catch (dbError) {
+      await connection.rollback(); // DB 작업 중 에러 시 롤백하여 기존 데이터 보존
+      console.error("[KOSIS API] Database transaction failed and rolled back:", dbError);
+      throw new Error(`Database Error: ${dbError.message}`);
+    } finally {
+      connection.release(); // 풀에 커넥션 반환
+    }
 
   } catch (error) {
     if (error.name === 'AbortError') {
       console.error("[KOSIS API] Request timed out.");
       return { success: false, error: "KOSIS API request timed out (10s limit)." };
     }
-    console.error("[KOSIS API] Error during fetch or database insert:", error);
+    console.error("[KOSIS API] Execution failed:", error);
     return { success: false, error: error.message };
   }
 }
