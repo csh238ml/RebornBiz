@@ -46,12 +46,12 @@ async function getDashboardData(year, industry, tab) {
   try {
     const query = `
       SELECT 
-        category_value, 
+        TRIM(category_value) as category_value, 
         SUM(CASE WHEN stat_type = 'NEW' THEN biz_count ELSE 0 END) as new_count, 
         SUM(CASE WHEN stat_type = 'CLOSE' THEN biz_count ELSE 0 END) as close_count
       FROM kosis_life_biz_stats 
-      WHERE target_year = ? AND industry_name = ? AND category_type = ? AND category_value != '합계'
-      GROUP BY category_value 
+      WHERE target_year = ? AND industry_name = ? AND category_type = ? AND TRIM(category_value) != '합계'
+      GROUP BY TRIM(category_value) 
       ORDER BY new_count DESC
     `;
     const [rows] = await pool.query(query, [year, targetIndustry, categoryType]);
