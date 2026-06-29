@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import StickyHeader from '@/components/StickyHeader';
+import AdSlot from '@/components/AdSlot';
 
 export default function MarketAnalysisPage() {
   const [position, setPosition] = useState({ lat: 37.498, lon: 127.027 });
@@ -250,6 +251,10 @@ export default function MarketAnalysisPage() {
             </div>
           )}
         </div>
+      </div>
+
+      <div style={{ marginTop: '3rem' }}>
+        <AdSlot />
       </div>
     </div>
   );

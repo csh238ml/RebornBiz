@@ -114,6 +114,10 @@ export default async function MagazineListPage({ searchParams }) {
       </div>
 
       <Pagination currentPage={page} totalPages={totalPages} basePath="/magazine" search={search} />
+
+      <div style={{ marginTop: '3rem' }}>
+        <AdSlot />
+      </div>
     </div>
   );
 }
