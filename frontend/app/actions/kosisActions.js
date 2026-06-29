@@ -45,8 +45,8 @@ export async function fetchKosisData() {
   try {
     // 1. 메모리에 모든 데이터 먼저 선 수집 (API 호출)
     for (const api of API_LIST) {
-      // 필수 요청 변수 추가: itmId=ALL, objL1=ALL, objL2=ALL, newEstPrdCnt=1
-      const url = `https://kosis.kr/openapi/Param/statisticsParameterData.do?method=getList&apiKey=${KOSIS_API_KEY}&orgId=${ORG_ID}&tblId=${api.tblId}&prdSe=Y&format=json&itmId=ALL&objL1=ALL&objL2=ALL&newEstPrdCnt=1`;
+      // 필수 요청 변수 추가 및 jsonVD=Y (표준 JSON 규격 강제) 추가
+      const url = `https://kosis.kr/openapi/Param/statisticsParameterData.do?method=getList&apiKey=${KOSIS_API_KEY}&orgId=${ORG_ID}&tblId=${api.tblId}&prdSe=Y&format=json&jsonVD=Y&itmId=ALL&objL1=ALL&objL2=ALL&newEstPrdCnt=1`;
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000);
