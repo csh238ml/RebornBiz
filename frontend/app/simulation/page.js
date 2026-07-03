@@ -1,20 +1,22 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import StickyHeader from '@/components/StickyHeader';
 import AdSlot from '@/components/AdSlot';
 
 export default function SimulationPage() {
+  const [tab, setTab] = useState('NEW'); // 'NEW' or 'CHANGE'
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
 
-  // Region State
-  const [sidoList, setSidoList] = useState([]);
-  const [sigunguList, setSigunguList] = useState([]);
-  const [dongList, setDongList] = useState([]);
-  const [sido, setSido] = useState('');
-  const [sigungu, setSigungu] = useState('');
-  const [dong, setDong] = useState('');
+  // Map State
+  const [position, setPosition] = useState({ lat: 37.498, lon: 127.027 });
+  const [addressStr, setAddressStr] = useState("주소를 불러오는 중...");
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [stores, setStores] = useState([]);
+  const mapContainer = useRef(null);
+  const mapRef = useRef(null);
+  const clustererRef = useRef(null);
 
   // Industry State
   const [largeList, setLargeList] = useState([]);
@@ -35,28 +37,116 @@ export default function SimulationPage() {
 
   // Fetch initial lists
   useEffect(() => {
-    fetch('/api/regions/sido').then(res => res.json()).then(data => data.success && setSidoList(data.data));
     fetch('/api/categories/large').then(res => res.json()).then(data => data.success && setLargeList(data.data));
   }, []);
 
-  // Region cascades
+  // Load Kakao Map Script
   useEffect(() => {
-    if (sido) {
-      fetch(`/api/regions/sigungu?sido=${encodeURIComponent(sido)}`).then(res => res.json()).then(data => {
-        setSigunguList(data.success ? data.data : []);
-        setSigungu(''); setDong(''); setDongList([]);
+    const script = document.createElement('script');
+    script.src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=709c40315079132e50e64ff31f511a13&libraries=clusterer,services&autoload=false";
+    script.async = true;
+    document.head.appendChild(script);
+
+    script.onload = () => {
+      window.kakao.maps.load(() => {
+        const options = {
+          center: new window.kakao.maps.LatLng(position.lat, position.lon),
+          level: 4,
+        };
+        const map = new window.kakao.maps.Map(mapContainer.current, options);
+        mapRef.current = map;
+        setMapLoaded(true);
+
+        const clusterer = new window.kakao.maps.MarkerClusterer({
+          map: map,
+          averageCenter: true,
+          minLevel: 5
+        });
+        clustererRef.current = clusterer;
+
+        window.kakao.maps.event.addListener(map, 'dragend', function () {
+          const latlng = map.getCenter();
+          setPosition({ lat: latlng.getLat(), lon: latlng.getLng() });
+        });
+
+        // Try getting user location initially
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition((pos) => {
+            setPosition({ lat: pos.coords.latitude, lon: pos.coords.longitude });
+          }, () => { }, { enableHighAccuracy: true, timeout: 5000, maximumAge: Infinity });
+        }
       });
-    }
-  }, [sido]);
+    };
+    return () => { document.head.removeChild(script); };
+  }, []);
+
+  // Fetch Stores when position changes
+  useEffect(() => {
+    if (!mapLoaded || !mapRef.current) return;
+
+    const fetchStores = async () => {
+      try {
+        const geocoder = new window.kakao.maps.services.Geocoder();
+        geocoder.coord2RegionCode(position.lon, position.lat, (result, status) => {
+          if (status === window.kakao.maps.services.Status.OK) {
+            let addr = result[0].address_name;
+            for (let i = 0; i < result.length; i++) {
+              if (result[i].region_type === 'H') { // 행정동 기준
+                const r2 = result[i].region_2depth_name;
+                const r3 = result[i].region_3depth_name;
+                const r4 = result[i].region_4depth_name;
+                addr = `${result[i].region_1depth_name} ${r2} ${r3}${r4 ? ' ' + r4 : ''}`;
+                break;
+              }
+            }
+            setAddressStr(addr);
+          }
+        });
+
+        mapRef.current.setCenter(new window.kakao.maps.LatLng(position.lat, position.lon));
+
+        const res = await fetch(`/api/market_analysis`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lat: position.lat, lon: position.lon, radius: 500, address: addressStr })
+        });
+        const data = await res.json();
+        if (data.success) {
+          setStores(data.data || []);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchStores();
+  }, [position.lat, position.lon, mapLoaded]);
+
+  const drawMarkers = () => {
+    if (!clustererRef.current || !window.kakao) return;
+    clustererRef.current.clear();
+
+    const currentTarget = tSmall;
+    const filteredData = currentTarget ? stores.filter(s => s.indsSclsNm && s.indsSclsNm.includes(currentTarget)) : stores;
+
+    const markers = filteredData.map(store => {
+      const marker = new window.kakao.maps.Marker({
+        position: new window.kakao.maps.LatLng(store.lat, store.lon)
+      });
+      const iwContent = `<div style="padding:5px;font-size:12px;max-width:200px;white-space:normal;word-break:keep-all;">${store.bizesNm || '알수없음'}<br>(${store.indsSclsNm || store.indsMclsNm})</div>`;
+      const infowindow = new window.kakao.maps.InfoWindow({ content: iwContent });
+
+      window.kakao.maps.event.addListener(marker, 'mouseover', () => infowindow.open(mapRef.current, marker));
+      window.kakao.maps.event.addListener(marker, 'mouseout', () => infowindow.close());
+      return marker;
+    });
+
+    clustererRef.current.addMarkers(markers);
+  };
 
   useEffect(() => {
-    if (sido && sigungu) {
-      fetch(`/api/regions/dong?sido=${encodeURIComponent(sido)}&sigungu=${encodeURIComponent(sigungu)}`).then(res => res.json()).then(data => {
-        setDongList(data.success ? data.data : []);
-        setDong('');
-      });
-    }
-  }, [sido, sigungu]);
+    drawMarkers();
+  }, [stores, tSmall]);
 
   // Current Industry cascades
   useEffect(() => {
@@ -96,7 +186,6 @@ export default function SimulationPage() {
     }
   }, [tMedium]);
 
-  // Auto-sync Target Large/Medium when Current Small is selected
   const handleCSmallChange = (val) => {
     setCSmall(val);
     if (val && val !== '') {
@@ -107,20 +196,23 @@ export default function SimulationPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!sido || !cSmall || !tSmall) {
-      setError('지역 및 업종 소분류를 모두 선택해주세요.');
+    if (tab === 'CHANGE' && !cSmall) {
+      setError('현재 업종 소분류를 선택해주세요.');
+      return;
+    }
+    if (!tSmall) {
+      setError('희망 업종 소분류를 선택해주세요.');
       return;
     }
     setLoading(true);
     setError(null);
     try {
-      const region_str = `${sido} ${sigungu} ${dong}`.trim();
       const res = await fetch('/api/simulation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          region: region_str,
-          current_biz: cSmall,
+          region: addressStr,
+          current_biz: tab === 'NEW' ? "없음" : cSmall,
           target_biz: tSmall,
           investment: Number(investment)
         })
@@ -132,7 +224,7 @@ export default function SimulationPage() {
         setError(data.message || '오류가 발생했습니다.');
       }
     } catch(err) {
-      setError('서버 연동에 실패했습니다. 백엔드 서버가 실행 중인지 확인하세요.');
+      setError('서버 연동에 실패했습니다.');
     }
     setLoading(false);
   }
@@ -163,81 +255,102 @@ export default function SimulationPage() {
 
       <hr style={{borderTop: '1px solid rgba(49, 51, 63, 0.2)', margin: '1.5rem 0'}} />
 
-      <h3 style={{fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem'}}>1. 지역 및 예산 설정</h3>
-      
-      <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
-        <div style={{flex: '1 1 200px'}}>
-          <label style={labelStyle}>시/도</label>
-          <select value={sido} onChange={e => setSido(e.target.value)} style={selectStyle}>
-            <option value="">선택하세요</option>
-            {sidoList.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
-        </div>
-        <div style={{flex: '1 1 200px'}}>
-          <label style={labelStyle}>시/군/구</label>
-          <select value={sigungu} onChange={e => setSigungu(e.target.value)} style={selectStyle} disabled={!sido}>
-            <option value="">선택하세요</option>
-            {sigunguList.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
-        </div>
-        <div style={{flex: '1 1 200px'}}>
-          <label style={labelStyle}>읍/면/동</label>
-          <select value={dong} onChange={e => setDong(e.target.value)} style={selectStyle} disabled={!sigungu}>
-            <option value="">전체</option>
-            {dongList.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
-        </div>
-      </div>
-      
-      <div style={{ marginBottom: '2rem', maxWidth: '300px' }}>
-        <label style={labelStyle}>💰 가용 투자 예산 (만원)</label>
-        <input type="number" value={investment} onChange={e => setInvestment(e.target.value)} style={selectStyle} />
+      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+        <button
+          onClick={() => { setTab('NEW'); setResult(null); }}
+          style={{
+            padding: '0.75rem 1.5rem', borderRadius: '0.5rem', fontWeight: '600',
+            backgroundColor: tab === 'NEW' ? '#1E3A8A' : '#F1F5F9',
+            color: tab === 'NEW' ? '#FFFFFF' : '#475569',
+            border: `1px solid ${tab === 'NEW' ? '#1E3A8A' : '#E2E8F0'}`,
+            cursor: 'pointer', transition: 'all 0.2s', fontSize: '1.05rem'
+          }}
+        >
+          신규 창업
+        </button>
+        <button
+          onClick={() => { setTab('CHANGE'); setResult(null); }}
+          style={{
+            padding: '0.75rem 1.5rem', borderRadius: '0.5rem', fontWeight: '600',
+            backgroundColor: tab === 'CHANGE' ? '#1E3A8A' : '#F1F5F9',
+            color: tab === 'CHANGE' ? '#FFFFFF' : '#475569',
+            border: `1px solid ${tab === 'CHANGE' ? '#1E3A8A' : '#E2E8F0'}`,
+            cursor: 'pointer', transition: 'all 0.2s', fontSize: '1.05rem'
+          }}
+        >
+          업종 변경
+        </button>
       </div>
 
-      <h3 style={{fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem'}}>2. 업종 전환 정보</h3>
-      
       <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
-        <div style={{flex: '1 1 300px', border: '1px solid #e2e8f0', padding: '1.5rem', borderRadius: '0.5rem', backgroundColor: '#ffffff'}}>
-          <h4 style={{marginBottom: '1rem', color: '#1E3A8A', fontWeight: 'bold'}}>🏢 현재 업종</h4>
-          <label style={labelStyle}>대분류 (현재)</label>
-          <select value={cLarge} onChange={e => setCLarge(e.target.value)} style={selectStyle}>
-            <option value="">선택하세요</option>
-            {largeList.map(l => <option key={l} value={l}>{l}</option>)}
-          </select>
-          <label style={labelStyle}>중분류 (현재)</label>
-          <select value={cMedium} onChange={e => setCMedium(e.target.value)} style={selectStyle} disabled={!cLarge}>
-            <option value="">선택하세요</option>
-            {cMediumList.map(m => <option key={m} value={m}>{m}</option>)}
-          </select>
-          <label style={labelStyle}>소분류 (현재)</label>
-          <select value={cSmall} onChange={e => handleCSmallChange(e.target.value)} style={selectStyle} disabled={!cMedium}>
-            <option value="">선택하세요</option>
-            {cSmallList.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
+        <div style={{flex: '1 1 300px'}}>
+          <h3 style={{fontSize: '1.25rem', fontWeight: '600', marginBottom: '1rem'}}>
+            {tab === 'NEW' ? '1. 희망 업종 선택' : '1. 업종 전환 정보'}
+          </h3>
+
+          {tab === 'CHANGE' && (
+            <div style={{border: '1px solid #e2e8f0', padding: '1.5rem', borderRadius: '0.5rem', backgroundColor: '#ffffff', marginBottom: '1rem'}}>
+              <h4 style={{marginBottom: '1rem', color: '#1E3A8A', fontWeight: 'bold'}}>🏢 현재 업종</h4>
+              <label style={labelStyle}>대분류 (현재)</label>
+              <select value={cLarge} onChange={e => setCLarge(e.target.value)} style={selectStyle}>
+                <option value="">선택하세요</option>
+                {largeList.map(l => <option key={l} value={l}>{l}</option>)}
+              </select>
+              <label style={labelStyle}>중분류 (현재)</label>
+              <select value={cMedium} onChange={e => setCMedium(e.target.value)} style={selectStyle} disabled={!cLarge}>
+                <option value="">선택하세요</option>
+                {cMediumList.map(m => <option key={m} value={m}>{m}</option>)}
+              </select>
+              <label style={labelStyle}>소분류 (현재)</label>
+              <select value={cSmall} onChange={e => handleCSmallChange(e.target.value)} style={selectStyle} disabled={!cMedium}>
+                <option value="">선택하세요</option>
+                {cSmallList.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+          )}
+
+          <div style={{border: '1px solid #e2e8f0', padding: '1.5rem', borderRadius: '0.5rem', backgroundColor: '#ffffff'}}>
+            <h4 style={{marginBottom: '1rem', color: '#1E3A8A', fontWeight: 'bold'}}>🚀 {tab === 'NEW' ? '희망 업종' : '전환 희망 업종'}</h4>
+            <label style={labelStyle}>대분류 (희망)</label>
+            <select value={tLarge} onChange={e => setTLarge(e.target.value)} style={selectStyle}>
+              <option value="">선택하세요</option>
+              {largeList.map(l => <option key={l} value={l}>{l}</option>)}
+            </select>
+            <label style={labelStyle}>중분류 (희망)</label>
+            <select value={tMedium} onChange={e => setTMedium(e.target.value)} style={selectStyle} disabled={!tLarge}>
+              <option value="">선택하세요</option>
+              {tMediumList.map(m => <option key={m} value={m}>{m}</option>)}
+            </select>
+            <label style={labelStyle}>소분류 (희망)</label>
+            <select value={tSmall} onChange={e => setTSmall(e.target.value)} style={selectStyle} disabled={!tMedium}>
+              <option value="">선택하세요</option>
+              {tSmallList.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </div>
+
+          <div style={{ marginTop: '1.5rem' }}>
+            <h3 style={{fontSize: '1.25rem', fontWeight: '600', marginBottom: '1rem'}}>2. 가용 투자 예산</h3>
+            <div style={{border: '1px solid #e2e8f0', padding: '1.5rem', borderRadius: '0.5rem', backgroundColor: '#ffffff'}}>
+              <label style={labelStyle}>💰 가용 투자 예산 (만원)</label>
+              <input type="number" value={investment} onChange={e => setInvestment(e.target.value)} style={selectStyle} />
+            </div>
+          </div>
         </div>
 
-        <div style={{flex: '1 1 300px', border: '1px solid #e2e8f0', padding: '1.5rem', borderRadius: '0.5rem', backgroundColor: '#ffffff'}}>
-          <h4 style={{marginBottom: '1rem', color: '#1E3A8A', fontWeight: 'bold'}}>🚀 전환 희망 업종</h4>
-          <label style={labelStyle}>대분류 (희망)</label>
-          <select value={tLarge} onChange={e => setTLarge(e.target.value)} style={selectStyle}>
-            <option value="">선택하세요</option>
-            {largeList.map(l => <option key={l} value={l}>{l}</option>)}
-          </select>
-          <label style={labelStyle}>중분류 (희망)</label>
-          <select value={tMedium} onChange={e => setTMedium(e.target.value)} style={selectStyle} disabled={!tLarge}>
-            <option value="">선택하세요</option>
-            {tMediumList.map(m => <option key={m} value={m}>{m}</option>)}
-          </select>
-          <label style={labelStyle}>소분류 (희망)</label>
-          <select value={tSmall} onChange={e => setTSmall(e.target.value)} style={selectStyle} disabled={!tMedium}>
-            <option value="">선택하세요</option>
-            {tSmallList.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
+        <div style={{flex: '1.5 1 400px'}}>
+          <h3 style={{fontSize: '1.25rem', fontWeight: '600', marginBottom: '1rem'}}>📍 지역 선택 (마커 정보: {tSmall || '전체 업종'})</h3>
+          <div style={{border: '1px solid #e2e8f0', padding: '1rem', borderRadius: '0.5rem', backgroundColor: '#ffffff'}}>
+            <div style={{ fontSize: '0.9rem', color: '#1E3A8A', marginBottom: '0.5rem', fontWeight: 'bold' }}>현재 위치: {addressStr}</div>
+            <div ref={mapContainer} style={{ width: '100%', height: '500px', borderRadius: '0.5rem', position: 'relative' }}>
+              {!mapLoaded && <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(255,255,255,0.7)', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>지도 로딩중...</div>}
+            </div>
+            <p style={{ fontSize: '0.85rem', color: '#666', marginTop: '0.5rem', marginBottom: 0 }}>지도를 드래그하여 분석할 상권의 중심을 이동하세요. 이동된 위치의 주소가 자동으로 반영됩니다.</p>
+          </div>
         </div>
       </div>
 
       <div style={{marginBottom: '2rem'}}>
-        <button onClick={handleSubmit} disabled={loading} style={{ padding: '0.75rem 2rem', backgroundColor: '#FF4B4B', color: '#FFFFFF', border: 'none', borderRadius: '0.5rem', fontSize: '1.1rem', fontWeight: 'bold', cursor: loading ? 'not-allowed' : 'pointer', width: '100%', maxWidth: '400px' }}>
+        <button onClick={handleSubmit} disabled={loading} style={{ padding: '0.75rem 2rem', backgroundColor: '#FF4B4B', color: '#FFFFFF', border: 'none', borderRadius: '0.5rem', fontSize: '1.1rem', fontWeight: 'bold', cursor: loading ? 'not-allowed' : 'pointer', width: '100%' }}>
           {loading ? '분석 중...' : '시뮬레이션 실행 ➡️'}
         </button>
       </div>
@@ -251,7 +364,9 @@ export default function SimulationPage() {
       {result && (
         <div>
           <hr style={{borderTop: '1px solid rgba(49, 51, 63, 0.2)', margin: '1.5rem 0'}} />
-          <h3 style={{fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem'}}>3. 기대 수익률 및 핵심 지표</h3>
+          <h3 style={{fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem'}}>
+            {tab === 'NEW' ? '📊 신규 창업 분석 결과' : '📊 업종 변경 시뮬레이션 결과'}
+          </h3>
           
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
             <div style={{flex: '1 1 200px', backgroundColor: '#ffffff', padding: '1.5rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0', boxShadow: '0 2px 4px rgba(0,0,0,0.05)'}}>
@@ -268,9 +383,11 @@ export default function SimulationPage() {
               </div>
             </div>
             <div style={{flex: '1 1 200px', backgroundColor: '#ffffff', padding: '1.5rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0', boxShadow: '0 2px 4px rgba(0,0,0,0.05)'}}>
-              <div style={{ fontSize: '0.875rem', color: '#555', marginBottom: '0.5rem' }}>월별 예상 추가 수익</div>
+              <div style={{ fontSize: '0.875rem', color: '#555', marginBottom: '0.5rem' }}>
+                {tab === 'NEW' ? '월별 예상 순수익' : '월별 예상 추가 수익'}
+              </div>
               <div style={{ fontSize: '1.75rem', fontWeight: 'bold', color: result.additional_profit > 0 ? '#09AB3B' : '#FF4B4B' }}>
-                {result.additional_profit > 0 ? '+' : ''}{result.additional_profit.toLocaleString()} 만원
+                {result.additional_profit > 0 && tab === 'CHANGE' ? '+' : ''}{result.additional_profit.toLocaleString()} 만원
               </div>
             </div>
             <div style={{flex: '1 1 200px', backgroundColor: '#ffffff', padding: '1.5rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0', boxShadow: '0 2px 4px rgba(0,0,0,0.05)'}}>
@@ -279,24 +396,29 @@ export default function SimulationPage() {
             </div>
           </div>
 
-          {result.store_count !== undefined && (
-            <div style={{ padding: '1rem 1.5rem', backgroundColor: '#eff6ff', color: '#1e3a8a', borderRadius: '0.5rem', marginBottom: '2rem', border: '1px solid #bfdbfe' }}>
-              💡 <b>상권 실데이터 연동:</b> 해당 지역 내 동일 업종 점포 수는 총 <b>{result.store_count}개</b> 입니다. ({result.api_source || '공공데이터 API'})
-            </div>
-          )}
+          <div style={{ padding: '1rem 1.5rem', backgroundColor: '#eff6ff', color: '#1e3a8a', borderRadius: '0.5rem', marginBottom: '2rem', border: '1px solid #bfdbfe' }}>
+            💡 <b>상권 실데이터 연동:</b> {addressStr} 내 기존 동일 업종({tSmall}) 평균 데이터를 분석한 결과입니다. 
+            {result.store_count !== undefined && ` (현재 운영 중 점포 수: 총 ${result.store_count}개, 출처: ${result.api_source || '공공데이터 API'})`}
+          </div>
           
           <h4 style={{fontSize: '1.25rem', fontWeight: '600', marginTop: '2rem', marginBottom: '1rem'}}>📈 상세 분석 내용</h4>
           <ul style={{ lineHeight: '1.8', fontSize: '1rem', color: '#444' }}>
-            <li><b>현재 업종 ({cSmall}) 예상 월 순이익:</b> {result.current_profit.toLocaleString()} 만원</li>
-            <li><b>타겟 업종 ({tSmall}) 예상 월 순이익:</b> {result.target_profit.toLocaleString()} 만원</li>
+            {tab === 'CHANGE' && <li><b>현재 업종 ({cSmall || "없음"}) 예상 월 순이익:</b> {result.current_profit.toLocaleString()} 만원</li>}
+            <li><b>{tab === 'NEW' ? '신규 업종' : '타겟 업종'} ({tSmall}) 예상 월 순이익:</b> {result.target_profit.toLocaleString()} 만원</li>
             <li><b>분석 기준 가용 예산:</b> {result.investment.toLocaleString()} 만원</li>
           </ul>
+
+          <div style={{ marginTop: '2rem' }}>
+            <AdSlot position="bottom" />
+          </div>
         </div>
       )}
       
-      <div style={{ marginTop: '3rem' }}>
-        <AdSlot />
-      </div>
+      {!result && (
+        <div style={{ marginTop: '3rem' }}>
+          <AdSlot position="middle" />
+        </div>
+      )}
     </div>
   );
 }

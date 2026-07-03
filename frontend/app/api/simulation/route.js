@@ -145,11 +145,14 @@ async function calculateSimulation(region, budget, currIndustry, targetIndustry)
     return INDUSTRY_TEMPLATE["기타"];
   };
 
-  const currData = getIndustryData(currIndustry);
+  let currProfit = 0;
+  if (currIndustry && currIndustry !== "없음") {
+    const currData = getIndustryData(currIndustry);
+    const currSales = currData.sales;
+    currProfit = currSales * (currData.margin / 100);
+  }
+
   const targetData = getIndustryData(targetIndustry);
-  
-  const currSales = currData.sales;
-  const currProfit = currSales * (currData.margin / 100);
   
   let targetSales = targetData.sales;
   const targetSetup = targetData.setup;
