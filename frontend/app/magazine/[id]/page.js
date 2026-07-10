@@ -123,9 +123,7 @@ export default async function MagazineDetailPage({ params }) {
         <CopyLinkButton />
       </div>
 
-      <div style={{ marginTop: '2rem' }}>
-        <AdSlot />
-      </div>
+      <AdSlot style={{ marginTop: '2rem' }} />
     </div>
   );
 }

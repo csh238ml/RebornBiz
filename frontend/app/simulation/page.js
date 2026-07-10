@@ -408,16 +408,12 @@ export default function SimulationPage() {
             <li><b>분석 기준 가용 예산:</b> {result.investment.toLocaleString()} 만원</li>
           </ul>
 
-          <div style={{ marginTop: '2rem' }}>
-            <AdSlot position="bottom" />
-          </div>
+            <AdSlot position="bottom" style={{ marginTop: '2rem' }} />
         </div>
       )}
       
       {!result && (
-        <div style={{ marginTop: '3rem' }}>
-          <AdSlot position="middle" />
-        </div>
+        <AdSlot position="middle" style={{ marginTop: '2rem', marginBottom: '2rem' }} />
       )}
     </div>
   );

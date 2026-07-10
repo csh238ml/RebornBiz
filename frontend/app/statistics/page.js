@@ -215,11 +215,9 @@ export default async function StatisticsDashboard({ searchParams }) {
               )}
             </tbody>
           </table>
+          <AdSlot position="middle" style={{ marginTop: '2rem', marginBottom: '1rem' }} />
         </div>
       </div>
-
-      <AdSlot position="middle" />
-
     </div>
   );
 }

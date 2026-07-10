@@ -63,7 +63,7 @@ body {
 /* Main Content Styles */
 .main-wrapper {
   flex: 1;
-  margin-left: 300px; /* 사이드바 너비만큼 여백 확보 */
+  margin-left: 260px; /* 사이드바 너비만큼 여백 확보 */
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -103,35 +103,14 @@ body {
   border-top: 1px solid #f1f5f9;
 }
 
-/* Mobile & Hamburger */
-.mobile-menu-btn {
-  display: none;
-  position: fixed;
-  top: 1rem;
-  left: 1rem;
-  z-index: 1100;
-  background: transparent;
-  color: #333;
-  border: none;
-  padding: 0.5rem;
-  font-size: 2rem;
-  cursor: pointer;
-}
+/* Mobile & Hamburger removed to Sidebar.css */
 
-.sidebar-overlay {
-  display: none;
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.5);
-  z-index: 1040;
-}
-
-@media (max-width: 768px) {
-  .sidebar {
-    transform: translateX(-100%);
+@media (max-width: 1024px) {
+  .layout-container {
+    flex-direction: column;
   }
-  .sidebar.open {
-    transform: translateX(0);
+  .sidebar {
+    display: none; /* We use .sidebar-wrapper now, so we can hide the old one if it exists somehow */
   }
   .main-wrapper {
     margin-left: 0; /* 모바일에서는 사이드바가 덮으므로 마진 제거 */
@@ -139,12 +118,12 @@ body {
     overflow-x: clip; /* hidden 대신 clip을 사용하여 sticky 헤더 정상 작동 보장 */
   }
   .main-content {
-    padding: 0 0 3rem; /* 상단 햄버거 버튼 공간. 좌우 여백은 제거하고 자식에게 위임 */
+    padding: 0 0 3rem; /* 모바일 헤더는 따로 처리되므로 여기선 좌우여백만 위임 */
     margin: 0 auto;
     width: 100%;
   }
   
-  /* 모든 페이지 최상단 컨테이너의 하드코딩된 여백(padding: 2rem)을 모바일에 맞게 강제 축소 (상단 여백 0) */
+  /* 모든 페이지 최상단 컨테이너의 하드코딩된 여백을 모바일에 맞게 강제 축소 */
   .main-content > div {
     padding: 0 1rem 1rem 1rem !important;
   }
@@ -168,12 +147,6 @@ body {
     padding: 0.5rem !important;
     white-space: nowrap;
     flex-shrink: 0;
-  }
-  .mobile-menu-btn {
-    display: block;
-  }
-  .sidebar-overlay {
-    display: block; /* 사이드바가 열렸을 때 오버레이 활성화 */
   }
 }
 

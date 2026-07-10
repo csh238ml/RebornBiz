@@ -2,10 +2,14 @@
 
 import { useEffect, useRef } from 'react';
 
-export default function AdSlot({ position = 'default' }) {
+import { ADSENSE_ENABLED } from '@/lib/adsense';
+
+export default function AdSlot({ position = 'default', style = {} }) {
   const adRef = useRef(null);
 
   useEffect(() => {
+    if (!ADSENSE_ENABLED) return;
+    
     // 광고 스크립트 초기화 로직 (예: 구글 애드센스 push)
     try {
       if (typeof window !== 'undefined') {
@@ -16,15 +20,20 @@ export default function AdSlot({ position = 'default' }) {
     }
   }, []);
 
+  if (!ADSENSE_ENABLED) {
+    return null;
+  }
+
   return (
     <div 
       ref={adRef} 
       className={`ad-container ad-pos-${position}`} 
       style={{
         display: 'flex', justifyContent: 'center', alignItems: 'center',
-        height: '90px', maxHeight: '90px', width: '100%', margin: '20px 0', overflow: 'hidden',
+        height: '90px', maxHeight: '90px', width: '100%', overflow: 'hidden',
         border: '2px dashed #cccccc', borderRadius: '10px',
-        backgroundColor: '#f8f9fa', color: '#adb5bd'
+        backgroundColor: '#f8f9fa', color: '#adb5bd',
+        ...style
       }}
     >
       <style>{`

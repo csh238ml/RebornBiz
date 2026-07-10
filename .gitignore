@@ -2,3 +2,11 @@
 venv/
 __pycache__/
 *.sqlite3
+
+# Node / Next.js
+frontend/node_modules/
+frontend/.next/
+frontend/.swc/
+frontend/out/
+frontend/build/
+.DS_Store

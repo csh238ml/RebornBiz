@@ -271,7 +271,7 @@ export default async function IndustryTrendPage({ params, searchParams }) {
         </div>
       </div>
 
-      <AdSlot position="middle" />
+      <AdSlot position="middle" style={{ marginTop: '2rem', marginBottom: '1rem' }} />
       
       <div style={{ padding: '2rem', backgroundColor: '#F8FAFC', borderRadius: '0.5rem', border: '1px solid #E2E8F0', marginTop: '3rem' }}>
         <h3 style={{ fontSize: '1.2rem', color: '#1E293B', marginTop: 0 }}>💡 분석 팁</h3>

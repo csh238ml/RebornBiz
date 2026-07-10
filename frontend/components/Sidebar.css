@@ -1,0 +1,158 @@
+.sidebar-wrapper {
+  width: 260px;
+  background-color: #1E232E; /* Dark navy */
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 1050;
+  padding: 32px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease-in-out;
+}
+
+.sidebar-logo {
+  font-size: 28px;
+  font-weight: 700;
+  color: #3B82F6;
+  text-decoration: none;
+  line-height: 1;
+  display: block;
+  margin-bottom: 56px;
+  outline: none;
+}
+.sidebar-logo:focus-visible {
+  outline: 2px solid #3B82F6;
+  outline-offset: 4px;
+}
+
+.sidebar-group-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.45);
+  margin-top: 24px;
+  margin-bottom: 8px;
+  padding-left: 14px;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sidebar-link {
+  min-height: 48px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.84);
+  background: transparent;
+  transition: all 0.15s ease;
+  position: relative;
+  outline: none;
+}
+
+.sidebar-link:hover, .sidebar-link:focus-visible {
+  background: rgba(255, 255, 255, 0.07);
+  color: #ffffff;
+}
+
+.sidebar-link.active {
+  background: rgba(59, 130, 246, 0.18);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.sidebar-link.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 24px;
+  width: 3px;
+  background-color: #3B82F6;
+  border-radius: 0 4px 4px 0;
+}
+
+.sidebar-link.active svg {
+  color: #3B82F6;
+}
+
+/* Mobile Header */
+.mobile-header {
+  display: none;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: 64px;
+  background: #ffffff;
+  border-bottom: 1px solid #E2E8F0;
+  padding: 0 20px;
+  align-items: center;
+  justify-content: center; /* Center the logo */
+}
+
+.mobile-logo {
+  font-size: 24px;
+  font-weight: 700;
+  color: #3B82F6;
+  text-decoration: none;
+  line-height: 1;
+}
+
+.mobile-menu-btn {
+  background: transparent;
+  border: none;
+  color: #0F172A;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  position: absolute;
+  left: 16px;
+}
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1040;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+/* Media Queries */
+@media (max-width: 1024px) {
+  .sidebar-wrapper {
+    width: min(82vw, 320px);
+    transform: translateX(-100%);
+  }
+  .sidebar-wrapper.open {
+    transform: translateX(0);
+  }
+  .mobile-header {
+    display: flex;
+  }
+  .sidebar-overlay.open {
+    display: block;
+    opacity: 1;
+  }
+  .sidebar-logo {
+    display: none; /* Hide logo in drawer, since it's in the header. Or keep it? The user said "모바일 메뉴에도 데스크톱과 동일한 순서와 아이콘을 사용한다. ... 각 메뉴 항목 ..." Let's keep it to have a title. Or we can hide it. Let's keep it with less margin. */
+    margin-bottom: 32px;
+  }
+}

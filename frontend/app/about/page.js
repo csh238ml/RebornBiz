@@ -68,9 +68,7 @@ export default function AboutPage() {
         </section>
       </div>
       
-      <div style={{ marginTop: '3rem' }}>
-        <AdSlot />
-      </div>
+        <AdSlot style={{ marginTop: '3rem' }} />
     </div>
   );
 }

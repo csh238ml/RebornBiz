@@ -191,9 +191,7 @@ export default function TaxCalculatorPage() {
         </div>
       )}
       
-      <div style={{ marginTop: '3rem' }}>
-        <AdSlot />
-      </div>
+      <AdSlot style={{ marginTop: '3rem' }} />
     </div>
   );
 }

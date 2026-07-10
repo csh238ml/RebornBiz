@@ -107,7 +107,7 @@ export default async function MagazineListPage({ searchParams }) {
                 </Link>
               </div>
               {/* 5번째 아이템 뒤에 광고 삽입 (인덱스 4) */}
-              {idx === 4 && <AdSlot position="middle" />}
+              {idx === 4 && <AdSlot position="middle" style={{ margin: '1rem 0' }} />}
             </div>
           ))
         )}
@@ -115,9 +115,7 @@ export default async function MagazineListPage({ searchParams }) {
 
       <Pagination currentPage={page} totalPages={totalPages} basePath="/magazine" search={search} />
 
-      <div style={{ marginTop: '3rem' }}>
-        <AdSlot />
-      </div>
+      <AdSlot style={{ marginTop: '3rem' }} />
     </div>
   );
 }

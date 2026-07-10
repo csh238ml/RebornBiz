@@ -4,6 +4,7 @@ import Script from 'next/script';
 import AdSlot from '@/components/AdSlot';
 import Sidebar from '@/components/Sidebar';
 import PageLogger from '@/components/PageLogger';
+import { ADSENSE_ENABLED } from '@/lib/adsense';
 
 export const metadata = {
   metadataBase: new URL('https://rebornbiz.co.kr'),
@@ -25,12 +26,14 @@ export default function RootLayout({ children }) {
     <html lang="ko">
       <head>
         <link rel="stylesheet" as="style" crossOrigin="true" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
-        <Script 
-          async 
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4577150400116930" 
-          crossOrigin="anonymous" 
-          strategy="afterInteractive"
-        />
+        {ADSENSE_ENABLED && (
+          <Script 
+            async 
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4577150400116930" 
+            crossOrigin="anonymous" 
+            strategy="afterInteractive"
+          />
+        )}
         <Script 
           src="//wcs.pstatic.net/wcslog.js"
           strategy="afterInteractive"

@@ -1,86 +1,97 @@
-import Link from 'next/link';
-import StickyHeader from '@/components/StickyHeader';
-import AdSlot from '@/components/AdSlot';
+import HomeHero from '@/components/home/HomeHero';
+import ConcernSection from '@/components/home/ConcernSection';
+import CoreToolsSection from '@/components/home/CoreToolsSection';
+import LatestMagazine from '@/components/home/LatestMagazine';
+import DataSources from '@/components/home/DataSources';
+import HomeFaq from '@/components/home/HomeFaq';
+import HomeFinalCta from '@/components/home/HomeFinalCta';
+import '@/components/home/home.css';
+
+export const metadata = {
+  title: "RebornBiz | 폐업 비용·부가세 계산과 상권 분석",
+  description: "폐업 비용과 잔존재화 부가세를 계산하고, 창업·폐업 통계와 주변 상권 데이터를 분석해 소상공인의 다음 결정을 돕습니다.",
+  alternates: {
+    canonical: "https://rebornbiz.co.kr",
+  },
+  openGraph: {
+    title: "RebornBiz | 폐업 비용·부가세 계산과 상권 분석",
+    description: "폐업 비용과 잔존재화 부가세를 계산하고, 창업·폐업 통계와 주변 상권 데이터를 분석해 소상공인의 다음 결정을 돕습니다.",
+    url: "https://rebornbiz.co.kr",
+    siteName: "RebornBiz",
+    locale: "ko_KR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "RebornBiz | 폐업 비용·부가세 계산과 상권 분석",
+    description: "폐업 비용과 잔존재화 부가세를 계산하고, 창업·폐업 통계와 주변 상권 데이터를 분석해 소상공인의 다음 결정을 돕습니다.",
+  }
+};
+
+const jsonLdData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "name": "RebornBiz",
+      "url": "https://rebornbiz.co.kr"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "폐업 비용 계산 결과는 실제 비용과 동일한가요?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "아닙니다. 입력한 매장 조건을 기준으로 계산한 예상 금액입니다. 실제 철거비, 위약금, 원상복구 비용은 계약 조건과 업체 견적에 따라 달라질 수 있습니다."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "폐업 시 모든 사업자가 부가세를 추가로 납부하나요?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "모든 사업자에게 추가 부가세가 발생하는 것은 아닙니다. 매입세액 공제를 받은 자산의 보유 여부와 취득 시점 등 조건에 따라 달라질 수 있습니다."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "주변 상권 데이터는 어디에서 가져오나요?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "RebornBiz는 프로젝트에서 연동된 공공데이터와 위치 기반 API를 활용해 주변 점포와 업종 정보를 분석합니다. 데이터 제공 시점에 따라 실제 현황과 차이가 있을 수 있습니다."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "회원가입 없이 이용할 수 있나요?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "네. 현재 RebornBiz의 주요 계산 및 분석 도구는 회원가입 없이 이용할 수 있습니다."
+          }
+        }
+      ]
+    }
+  ]
+};
 
 export default function HomePage() {
   return (
-    <div className="custom-main">
-      <StickyHeader showBanner={true}>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem' }}>소상공인 지원 플랫폼</h1>
-        <p style={{ fontSize: '1rem', marginBottom: '0' }}>여러분의 새로운 시작과 도약을 체계적이고 안전하게 돕기 위해 마련된 종합 플랫폼입니다.</p>
-      </StickyHeader>
-
-      <div className="custom-grid">
-        {/* 폐업 비용 계산기 */}
-        <div className="custom-card diag">
-          <div className="card-icon-box">🧮</div>
-          <div className="card-content">
-            <span className="card-badge">진단</span>
-            <h3>폐업 비용 계산기</h3>
-            <p>철거비, 위약금 등 사업 정리 시 발생하는 각종 예상 비용을 데이터로 정확히 산출합니다.</p>
-            <Link href="/calculator" className="custom-btn">비용 계산하기</Link>
-          </div>
-        </div>
-        
-        {/* 세금 자동 계산기 */}
-        <div className="custom-card tax">
-          <div className="card-icon-box">🧾</div>
-          <div className="card-content">
-            <span className="card-badge">세무</span>
-            <h3>세금 자동 계산기</h3>
-            <p>폐업 시 매입세액 공제 자산에 대한 부가가치세(잔존재화 간주공급)를 세법 기준으로 산출합니다.</p>
-            <Link href="/tax_cal" className="custom-btn">세금 계산하기</Link>
-          </div>
-        </div>
-
-        {/* 업종 변경 시뮬레이션 */}
-        <div className="custom-card simul">
-          <div className="card-icon-box">📈</div>
-          <div className="card-content">
-            <span className="card-badge">분석</span>
-            <h3>업종 변경 시뮬레이션</h3>
-            <p>새로운 업종 전환 시의 예상 리스크와 수익성을 분석하여 안전한 도전을 지원합니다.</p>
-            <Link href="/simulation" className="custom-btn">시뮬레이션 시작</Link>
-          </div>
-        </div>
-
-        {/* 내 주변 상권 분석 */}
-        <div className="custom-card area">
-          <div className="card-icon-box">📍</div>
-          <div className="card-content">
-            <span className="card-badge">상권</span>
-            <h3>내 주변 상권 분석</h3>
-            <p>현재 위치 기반 상권 밀집도와 업종 분포 파악하여 최적의 입지 전략을 제시합니다.</p>
-            <Link href="/market_analysis" className="custom-btn">상권 분석하기</Link>
-          </div>
-        </div>
-
-        {/* 창업·폐업 트렌드 */}
-        <div className="custom-card gov">
-          <div className="card-icon-box">📊</div>
-          <div className="card-content">
-            <span className="card-badge">통계</span>
-            <h3>창업·폐업 트렌드</h3>
-            <p>국세청 공식 확정 데이터를 활용한 100대 생활밀접업종 창업·폐업 트렌드를 한눈에 분석합니다.</p>
-            <Link href="/statistics" className="custom-btn">트렌드 분석하기</Link>
-          </div>
-        </div>
-
-        {/* Reborn 매거진 */}
-        <div className="custom-card mag">
-          <div className="card-icon-box">📰</div>
-          <div className="card-content">
-            <span className="card-badge">인사이트</span>
-            <h3>Reborn 매거진</h3>
-            <p>빠르게 변화하는 소상공인 트렌드, 성공적인 비즈니스를 위한 인사이트와 가이드를 만나보세요.</p>
-            <Link href="/magazine" className="custom-btn">매거진 읽기</Link>
-          </div>
-        </div>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdData) }}
+      />
+      <div className="home-container">
+        <HomeHero />
+        <ConcernSection />
+        <CoreToolsSection />
+        <LatestMagazine />
+        <DataSources />
+        <HomeFaq />
+        <HomeFinalCta />
       </div>
-      
-      <div style={{ marginTop: '3rem' }}>
-        <AdSlot />
-      </div>
-    </div>
+    </>
   );
 }
