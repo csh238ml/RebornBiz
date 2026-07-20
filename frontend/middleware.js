@@ -2,10 +2,10 @@ import { NextResponse } from 'next/server';
 
 export function middleware(request) {
   const url = request.nextUrl.clone();
-  const hostname = url.hostname;
+  const host = request.headers.get('host') || url.hostname;
 
   // 1. Force www
-  if (hostname === 'rebornbiz.co.kr') {
+  if (host === 'rebornbiz.co.kr') {
     url.hostname = 'www.rebornbiz.co.kr';
     url.port = '443';
     url.protocol = 'https:';

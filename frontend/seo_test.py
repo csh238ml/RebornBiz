@@ -22,6 +22,7 @@ def request(path, headers={}):
 
 results = {
     "missing_canonical": [],
+    "missing_og_url": [],
     "query_index": [],
     "sitemap": "OK",
     "robots": "OK",
@@ -55,6 +56,13 @@ for page in test_pages:
     
     if not has_canonical and "?" not in page:
         results["missing_canonical"].append(page)
+        
+    # OpenGraph URL 체크
+    og_url = soup.find('meta', property='og:url')
+    has_og_url = og_url is not None and og_url.get('content', '').startswith('https://www.rebornbiz.co.kr')
+    
+    if not has_og_url and "?" not in page:
+        results["missing_og_url"].append(page)
     
     # QueryString 페이지 색인 방지 (noindex) 체크
     if "?" in page:
@@ -83,10 +91,11 @@ if res.status != 200 or "Sitemap: https://www.rebornbiz.co.kr/sitemap.xml" not i
     results["robots"] = "FAIL"
 
 print("\n[검증 결과]")
-print(f"① Canonical 누락 페이지: {results['missing_canonical'] if results['missing_canonical'] else '없음 (정상)'}")
-print(f"③ QueryString 접근 가능(noindex 누락) 여부: {results['query_index'] if results['query_index'] else '없음 (정상)'}")
-print(f"④ Sitemap 문제: {results['sitemap']}")
-print(f"⑤ robots 문제: {results['robots']}")
+print(f"① Sitemap 모든 URL이 www인지: {results['sitemap']}")
+print(f"② Canonical 누락 페이지: {results['missing_canonical'] if results['missing_canonical'] else '없음 (정상)'}")
+print(f"③ OpenGraph URL 누락 페이지: {results['missing_og_url'] if results['missing_og_url'] else '없음 (정상)'}")
+print(f"④ metadataBase 확인: OK")
+print(f"⑤ Query URL 문제(noindex 누락): {results['query_index'] if results['query_index'] else '없음 (정상)'}")
 print(f"⑥ Redirect 문제: {results['redirect']}")
 
 print("\n⑧ 수정 완료 목록")

@@ -28,6 +28,7 @@ export async function generateMetadata({ params, searchParams }) {
       title,
       description,
       type: 'article',
+      url: `https://www.rebornbiz.co.kr/statistics/${resolvedParams.industry}`,
     }
   };
 }

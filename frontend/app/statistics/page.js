@@ -25,6 +25,7 @@ export async function generateMetadata({ searchParams }) {
       title: '창업·폐업 트렌드 분석 | RebornBiz',
       description: '100대 생활밀접업종의 지역별, 연령별, 월별 최신 창업 및 폐업 동향을 한눈에 비교하고 분석해보세요.',
       type: 'website',
+      url: 'https://www.rebornbiz.co.kr/statistics',
     }
   };
 }

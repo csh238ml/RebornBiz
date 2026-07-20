@@ -44,6 +44,7 @@ export async function generateMetadata({ searchParams }) {
       title,
       description: '빠르게 변화하는 트렌드를 확인하고 성공적인 비즈니스를 준비하세요!',
       type: 'website',
+      url: 'https://www.rebornbiz.co.kr/magazine',
     }
   };
 }
