@@ -2,7 +2,10 @@ import StickyHeader from '@/components/StickyHeader';
 import AdSlot from '@/components/AdSlot';
 
 export const metadata = {
-  title: 'RebornBiz 소개 | RebornBiz'
+  title: 'RebornBiz 소개 | RebornBiz',
+  alternates: {
+    canonical: '/about',
+  },
 };
 
 export default function AboutPage() {

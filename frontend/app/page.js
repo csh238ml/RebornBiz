@@ -11,12 +11,12 @@ export const metadata = {
   title: "RebornBiz | 폐업 비용·부가세 계산과 상권 분석",
   description: "폐업 비용과 잔존재화 부가세를 계산하고, 창업·폐업 통계와 주변 상권 데이터를 분석해 소상공인의 다음 결정을 돕습니다.",
   alternates: {
-    canonical: "https://rebornbiz.co.kr",
+    canonical: "/",
   },
   openGraph: {
     title: "RebornBiz | 폐업 비용·부가세 계산과 상권 분석",
     description: "폐업 비용과 잔존재화 부가세를 계산하고, 창업·폐업 통계와 주변 상권 데이터를 분석해 소상공인의 다음 결정을 돕습니다.",
-    url: "https://rebornbiz.co.kr",
+    url: "https://www.rebornbiz.co.kr",
     siteName: "RebornBiz",
     locale: "ko_KR",
     type: "website",
@@ -34,7 +34,7 @@ const jsonLdData = {
     {
       "@type": "WebSite",
       "name": "RebornBiz",
-      "url": "https://rebornbiz.co.kr"
+      "url": "https://www.rebornbiz.co.kr"
     },
     {
       "@type": "FAQPage",

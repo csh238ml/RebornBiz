@@ -4,15 +4,30 @@ import StickyHeader from '@/components/StickyHeader';
 import AdSlot from '@/components/AdSlot';
 import DashboardFilter from '@/components/DashboardFilter';
 
-export const metadata = {
-  title: '창업·폐업 트렌드 분석 | RebornBiz',
-  description: '100대 생활밀접업종의 지역별, 연령별, 월별 최신 창업 및 폐업 동향을 한눈에 비교하고 분석해보세요.',
-  openGraph: {
+export async function generateMetadata({ searchParams }) {
+  const resolvedParams = await searchParams;
+  const year = resolvedParams?.year || '';
+  const industry = resolvedParams?.industry || '';
+  const tab = resolvedParams?.tab || '';
+
+  const hasQueryParams = Boolean(year || industry || tab);
+
+  return {
     title: '창업·폐업 트렌드 분석 | RebornBiz',
     description: '100대 생활밀접업종의 지역별, 연령별, 월별 최신 창업 및 폐업 동향을 한눈에 비교하고 분석해보세요.',
-    type: 'website',
-  }
-};
+    alternates: {
+      canonical: '/statistics',
+    },
+    robots: {
+      index: !hasQueryParams,
+    },
+    openGraph: {
+      title: '창업·폐업 트렌드 분석 | RebornBiz',
+      description: '100대 생활밀접업종의 지역별, 연령별, 월별 최신 창업 및 폐업 동향을 한눈에 비교하고 분석해보세요.',
+      type: 'website',
+    }
+  };
+}
 
 async function getFilterOptions() {
   try {

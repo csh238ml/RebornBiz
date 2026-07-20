@@ -7,13 +7,13 @@ import PageLogger from '@/components/PageLogger';
 import { ADSENSE_ENABLED } from '@/lib/adsense';
 
 export const metadata = {
-  metadataBase: new URL('https://rebornbiz.co.kr'),
+  metadataBase: new URL('https://www.rebornbiz.co.kr'),
   title: 'RebornBiz | 소상공인 폐업 및 재창업 지원 플랫폼',
   description: '폐업 비용 진단, 상권 분석 시뮬레이션, 정부 지원 정책 안내 플랫폼',
   openGraph: {
     title: 'RebornBiz',
     description: '소상공인 창업 및 상권 분석 가이드',
-    url: 'https://rebornbiz.co.kr',
+    url: 'https://www.rebornbiz.co.kr',
     siteName: 'RebornBiz',
     images: [{ url: '/images/og-image.png' }],
     locale: 'ko_KR',

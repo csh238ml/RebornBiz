@@ -39,6 +39,9 @@ export async function generateMetadata({ params }) {
   return {
     title: `${post.title} | RebornBiz 매거진`,
     description: plainTextDescription,
+    alternates: {
+      canonical: `/magazine/${resolvedParams.id}`,
+    },
     openGraph: {
       title: post.title,
       description: plainTextDescription,

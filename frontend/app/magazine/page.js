@@ -23,14 +23,23 @@ async function fetchPosts(search = '') {
 export async function generateMetadata({ searchParams }) {
   const resolvedParams = await searchParams;
   const search = resolvedParams?.search || '';
+  const page = resolvedParams?.page || '';
 
   const title = search
     ? `'${search}' 검색 결과 | Reborn 매거진`
     : 'Reborn 매거진 | 성공적인 재창업과 상권 분석 인사이트';
 
+  const hasQueryParams = Boolean(search || page);
+
   return {
     title,
     description: '소상공인을 위한 최신 정책, 창업 가이드, 그리고 상권 분석 인사이트를 만나보세요.',
+    alternates: {
+      canonical: '/magazine',
+    },
+    robots: {
+      index: !hasQueryParams,
+    },
     openGraph: {
       title,
       description: '빠르게 변화하는 트렌드를 확인하고 성공적인 비즈니스를 준비하세요!',

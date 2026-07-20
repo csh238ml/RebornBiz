@@ -3,9 +3,14 @@ import { pool } from '@/lib/db';
 import StickyHeader from '@/components/StickyHeader';
 import AdSlot from '@/components/AdSlot';
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata({ params, searchParams }) {
   const resolvedParams = await params;
   const industry = decodeURIComponent(resolvedParams.industry || '');
+
+  const resolvedSearchParams = await searchParams;
+  const tab = resolvedSearchParams?.tab || '';
+
+  const hasQueryParams = Boolean(tab);
 
   const title = `[${industry}] 창업 및 폐업 현황 트렌드 분석 - RebornBiz`;
   const description = `국세청 공식 확정 데이터를 기반으로 분석한 ${industry} 업종의 지역별, 연령별, 월별 최신 창업 및 폐업자 수 통계 리포트를 확인하세요.`;
@@ -13,6 +18,12 @@ export async function generateMetadata({ params }) {
   return {
     title,
     description,
+    alternates: {
+      canonical: `/statistics/${resolvedParams.industry}`,
+    },
+    robots: {
+      index: !hasQueryParams,
+    },
     openGraph: {
       title,
       description,

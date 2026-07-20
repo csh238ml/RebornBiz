@@ -2,7 +2,10 @@ import StickyHeader from '@/components/StickyHeader';
 import AdSlot from '@/components/AdSlot';
 
 export const metadata = {
-  title: '이용약관 및 개인정보처리방침 | RebornBiz'
+  title: '이용약관 및 개인정보처리방침 | RebornBiz',
+  alternates: {
+    canonical: '/policy',
+  },
 };
 
 export default function PolicyPage() {
