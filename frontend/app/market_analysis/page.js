@@ -160,7 +160,10 @@ export default function MarketAnalysisPage() {
           </div>
           <div>
             <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem', color: '#31333F' }}>내 주변 상권 분석</h1>
-            <p style={{ fontSize: '1rem', marginBottom: '0', lineHeight: '1.6', color: '#555' }}>현재 내 위치를 기반으로 주변 반경 내에 어떤 상권이 형성되어 있는지 시각적으로 확인합니다. 지도를 클릭하면 중심점이 이동합니다.</p>
+            <p style={{ fontSize: '1rem', marginBottom: '0', lineHeight: '1.6', color: '#555' }}>
+              관심 있는 지역의 업종 밀집도, 유동 인구 특성, 그리고 평균 매출 추이를 분석하여<br/>
+              어느 곳에 어떤 매장을 열어야 할지 입지 선정의 나침반이 되어 드리는 상권 지도 도구입니다.
+            </p>
           </div>
         </div>
         <div className="mobile-only">
@@ -168,13 +171,16 @@ export default function MarketAnalysisPage() {
             <img src="/images/rebornbiz_main_mobile.jpg" alt="RebornBiz Banner" style={{ width: '100%', height: 'auto', objectFit: 'contain', objectPosition: 'left center' }} />
           </div>
           <h1 style={{ fontSize: '1.75rem', fontWeight: '700', marginBottom: '0.5rem', color: '#31333F' }}>내 주변 상권 분석</h1>
-          <p style={{ fontSize: '0.95rem', marginBottom: '0', lineHeight: '1.5', color: '#555' }}>현재 내 위치를 기반으로 주변 반경 내에 어떤 상권이 형성되어 있는지 시각적으로 확인합니다. 지도를 클릭하면 중심점이 이동합니다.</p>
+          <p style={{ fontSize: '0.95rem', marginBottom: '0', lineHeight: '1.5', color: '#555' }}>
+            관심 있는 지역의 업종 밀집도와 경쟁 점포 수를 분석하여 최적의 입지 선정을 돕습니다. 지도를 클릭하면 중심점이 이동합니다.
+          </p>
         </div>
       </StickyHeader>
 
       <hr style={{ borderTop: '1px solid rgba(49, 51, 63, 0.2)', margin: '1.5rem 0' }} />
 
       <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem' }}>1. 상권 분석 반경 설정</h3>
+      <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '1rem' }}>원하시는 지역의 지도를 클릭하고 반경을 설정하면, 해당 구역 내의 모든 활성 점포 데이터를 불러옵니다.</div>
       <div style={{ marginBottom: '2rem' }}>
         <input type="range" min="100" max="2000" step="100" value={radius} onChange={(e) => setRadius(Number(e.target.value))} style={{ width: '100%', maxWidth: '400px' }} />
         <div style={{ marginTop: '0.5rem', fontWeight: 'bold' }}>{radius} 미터</div>
@@ -252,6 +258,47 @@ export default function MarketAnalysisPage() {
           )}
         </div>
       </div>
+
+      {/* SEO를 위한 정적 예시 및 체크리스트 */}
+      <section style={{ backgroundColor: '#f8fafc', padding: '2rem', borderRadius: '0.5rem', marginTop: '3rem', border: '1px solid #e2e8f0' }}>
+        <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '1.5rem', color: '#1e293b' }}>💡 상권 분석 가이드 및 체크리스트</h3>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', marginBottom: '2rem' }}>
+          <div>
+            <h4 style={{ fontSize: '1rem', fontWeight: '600', color: '#334155', marginBottom: '0.75rem' }}>가상 상권 분석 결과 예시</h4>
+            <div style={{ backgroundColor: '#ffffff', padding: '1rem', borderRadius: '0.25rem', border: '1px solid #cbd5e1', fontSize: '0.9rem', color: '#475569', lineHeight: '1.6' }}>
+              <div style={{ fontSize: '0.8rem', color: '#dc2626', marginBottom: '1rem', fontWeight: 'bold' }}>※ 아래 내용은 결과 화면 이해를 위한 가상 예시이며 실제 상권 분석값이 아닙니다.</div>
+              <p style={{ margin: '0 0 0.5rem 0' }}><b>[가상 분석 설정]</b></p>
+              <ul style={{ margin: '0 0 1rem 0', paddingLeft: '1.2rem' }}>
+                <li>지역: 역세권 중심 반경 500m</li>
+                <li>업종 필터: 카페/커피숍</li>
+              </ul>
+              <p style={{ margin: '0 0 0.5rem 0' }}><b>[결과 항목 해석 방법]</b></p>
+              <ul style={{ margin: '0', paddingLeft: '1.2rem' }}>
+                <li>경쟁점포 수: 주변에 동일 업종이 얼마나 밀집해 있는지 판단하는 지표</li>
+                <li>유동인구 특성: 우리 매장의 주력 고객층(예: 2030 여성)이 많이 지나다니는지 확인</li>
+                <li>피크 타임: 언제 방문객이 가장 많은지 파악하여 인력 배치 계획 수립</li>
+                <li><b>전략 수립: 데이터 해석 결과를 바탕으로 영업시간, 타겟 마케팅 등 수립</b></li>
+              </ul>
+            </div>
+          </div>
+
+          <div>
+            <h4 style={{ fontSize: '1rem', fontWeight: '600', color: '#334155', marginBottom: '0.75rem' }}>✅ 입지 선정 시 필수 체크리스트</h4>
+            <ul style={{ margin: '0', paddingLeft: '1.2rem', fontSize: '0.9rem', color: '#475569', lineHeight: '1.8' }}>
+              <li>상권의 메인 동선과 매장의 접근성이 뛰어난가? (가시성 포함)</li>
+              <li>예상되는 평균 매출액 대비 월 임대료가 타당한 수준(보통 10~15% 이하)인가?</li>
+              <li>출점하려는 업종과 주변 상가의 주요 소비 연령층이 일치하는가?</li>
+              <li>경쟁 점포 대비 우리 매장만의 확실한 차별화 포인트가 있는가?</li>
+              <li>유동인구가 평일(오피스 상권)과 주말(주거/번화가 상권) 중 언제 집중되는가?</li>
+            </ul>
+          </div>
+        </div>
+
+        <div style={{ fontSize: '0.8rem', color: '#64748b', lineHeight: '1.5', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
+          <b>※ 참고 및 면책 조항:</b> 본 상권 분석 데이터는 소상공인시장진흥공단 API 등 공공데이터 상권 정보를 바탕으로 제공됩니다. 분석된 점포 수 및 상권 정보는 최근 개/폐업 변동이나 API 갱신 주기에 따라 실제 상권과 다소 오차가 발생할 수 있으므로, 입지 선정 전 반드시 현장 실사(임장)를 병행하시기 바랍니다.
+        </div>
+      </section>
 
       <AdSlot style={{ marginTop: '3rem' }} />
     </div>

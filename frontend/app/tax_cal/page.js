@@ -76,7 +76,10 @@ export default function TaxCalculatorPage() {
           </div>
           <div>
             <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem', color: '#31333F' }}>폐업 세금(부가세) 자동 계산기</h1>
-            <p style={{ fontSize: '1rem', marginBottom: '0', lineHeight: '1.6', color: '#555' }}>폐업 시 매입세액 공제를 받은 남아있는 자산(건물, 인테리어, 비품 등)에 대해 납부해야 할 <b>'폐업 시 잔존재화 간주공급'</b> 부가가치세를 손쉽게 계산해 보세요.</p>
+            <p style={{ fontSize: '1rem', marginBottom: '0', lineHeight: '1.6', color: '#555' }}>
+              폐업 시 가장 놓치기 쉬운 <b>'폐업 시 잔존재화 간주공급'</b> 부가가치세를 계산합니다.<br/>
+              매입세액 공제를 받고 산 시설이나 인테리어 중 아직 상각되지 않은 부분에 대해 내야 할 세금을 미리 파악하세요.
+            </p>
           </div>
         </div>
         <div className="mobile-only">
@@ -84,7 +87,10 @@ export default function TaxCalculatorPage() {
             <img src="/images/rebornbiz_main_mobile.jpg" alt="RebornBiz Banner" style={{ width: '100%', height: 'auto', objectFit: 'contain', objectPosition: 'left center' }} />
           </div>
           <h1 style={{ fontSize: '1.75rem', fontWeight: '700', marginBottom: '0.5rem', color: '#31333F' }}>폐업 세금(부가세) 자동 계산기</h1>
-          <p style={{ fontSize: '0.95rem', marginBottom: '0', lineHeight: '1.5', color: '#555' }}>폐업 시 매입세액 공제를 받은 남아있는 자산(건물, 인테리어, 비품 등)에 대해 납부해야 할 <b>'폐업 시 잔존재화 간주공급'</b> 부가가치세를 손쉽게 계산해 보세요.</p>
+          <p style={{ fontSize: '0.95rem', marginBottom: '0', lineHeight: '1.5', color: '#555' }}>
+            폐업 시 가장 놓치기 쉬운 <b>'폐업 시 잔존재화 간주공급'</b> 부가가치세를 계산합니다.<br/>
+            매입세액 공제를 받고 산 시설이나 인테리어 중 아직 상각되지 않은 부분에 대해 내야 할 세금을 미리 파악하세요.
+          </p>
         </div>
       </StickyHeader>
 
@@ -95,6 +101,7 @@ export default function TaxCalculatorPage() {
       <hr style={{ borderTop: '1px solid rgba(49, 51, 63, 0.2)', margin: '1.5rem 0' }} />
 
       <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem' }}>1. 자산 취득 및 폐업 연월 입력</h3>
+      <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '1.5rem' }}>자산을 취득한 시점과 폐업일이 속한 시점에 따라 경과된 과세기간 수(6개월 단위)를 산정합니다.</div>
 
       <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
         <div style={{ flex: '1 1 200px' }}>
@@ -124,6 +131,8 @@ export default function TaxCalculatorPage() {
       </div>
 
       <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem' }}>2. 자산 정보 입력</h3>
+      <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '1.5rem' }}>부가가치세를 환급받은 자산의 취득가액(공급가액)을 입력하세요. 건물은 1기당 5%, 인테리어나 기계장치는 1기당 25%씩 가치가 감소(상각)합니다.</div>
+      
       <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
         <div style={{ flex: '1 1 400px' }}>
           <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.5rem' }}>자산 종류</label>
@@ -157,16 +166,19 @@ export default function TaxCalculatorPage() {
 
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.5rem', padding: '1.5rem', border: '1px solid rgba(49, 51, 63, 0.2)', borderRadius: '0.5rem' }}>
             <div style={{ flex: '1 1 200px' }}>
-              <div style={{ fontSize: '0.875rem', color: '#31333F', marginBottom: '0.25rem' }}>⏳ 경과된 과세기간 수</div>
+              <div style={{ fontSize: '0.875rem', color: '#31333F', marginBottom: '0.25rem', fontWeight: 'bold' }}>⏳ 경과된 과세기간 수</div>
               <div style={{ fontSize: '2.25rem', color: '#31333F' }}>{result.passed_periods}기</div>
+              <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.25rem' }}>취득부터 폐업 전 과세기간까지 (1기=6개월)</div>
             </div>
             <div style={{ flex: '1 1 200px' }}>
-              <div style={{ fontSize: '0.875rem', color: '#31333F', marginBottom: '0.25rem' }}>📉 총 상각률</div>
+              <div style={{ fontSize: '0.875rem', color: '#31333F', marginBottom: '0.25rem', fontWeight: 'bold' }}>📉 총 상각률</div>
               <div style={{ fontSize: '2.25rem', color: '#31333F' }}>{(result.total_depreciation_rate * 100).toFixed(0)}%</div>
+              <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.25rem' }}>자산 가치가 법적으로 하락한 비율</div>
             </div>
             <div style={{ flex: '1 1 300px' }}>
-              <div style={{ fontSize: '0.875rem', color: '#31333F', marginBottom: '0.25rem' }}>💰 잔존가액</div>
+              <div style={{ fontSize: '0.875rem', color: '#31333F', marginBottom: '0.25rem', fontWeight: 'bold' }}>💰 잔존가액</div>
               <div style={{ fontSize: '2.25rem', color: '#31333F' }}>{result.residual_value.toLocaleString()}원</div>
+              <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.25rem' }}>상각 후 세법상 남아있는 자산의 가치</div>
             </div>
           </div>
 
@@ -191,6 +203,48 @@ export default function TaxCalculatorPage() {
         </div>
       )}
       
+      {/* SEO를 위한 정적 예시 및 체크리스트 (결과 유무 상관없이 노출) */}
+      <section style={{ backgroundColor: '#f8fafc', padding: '2rem', borderRadius: '0.5rem', marginTop: '3rem', border: '1px solid #e2e8f0' }}>
+        <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '1.5rem', color: '#1e293b' }}>💡 부가세 간주공급 계산 예시 및 활용 가이드</h3>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', marginBottom: '2rem' }}>
+          <div>
+            <h4 style={{ fontSize: '1rem', fontWeight: '600', color: '#334155', marginBottom: '0.75rem' }}>입력 및 결과 예시</h4>
+            <div style={{ backgroundColor: '#ffffff', padding: '1rem', borderRadius: '0.25rem', border: '1px solid #cbd5e1', fontSize: '0.9rem', color: '#475569', lineHeight: '1.6' }}>
+              <p style={{ margin: '0 0 0.5rem 0' }}><b>[입력 예시]</b></p>
+              <ul style={{ margin: '0 0 1rem 0', paddingLeft: '1.2rem' }}>
+                <li>취득 연월: 2024년 1월</li>
+                <li>폐업 연월: 2025년 8월</li>
+                <li>자산 종류: 인테리어/기타자산 (상각률 25%)</li>
+                <li>취득가액: 3,000만 원 (환급받은 내역)</li>
+              </ul>
+              <p style={{ margin: '0 0 0.5rem 0' }}><b>[예상 결과 예시]</b></p>
+              <ul style={{ margin: '0', paddingLeft: '1.2rem' }}>
+                <li>경과 과세기간: 3기 (24년 1기, 24년 2기, 25년 1기)</li>
+                <li>적용 상각률: 75% (25% × 3기)</li>
+                <li>잔존가치: 750만 원 (3,000만원의 25%)</li>
+                <li><b>최종 납부 부가세: 75만 원 (잔존가치의 10%)</b></li>
+              </ul>
+            </div>
+          </div>
+
+          <div>
+            <h4 style={{ fontSize: '1rem', fontWeight: '600', color: '#334155', marginBottom: '0.75rem' }}>✅ 부가세 신고 전 점검 체크리스트</h4>
+            <ul style={{ margin: '0', paddingLeft: '1.2rem', fontSize: '0.9rem', color: '#475569', lineHeight: '1.8' }}>
+              <li>매입 당시 세금계산서를 발급받고 부가세 매입세액 공제를 받은 자산만 계산했는가?</li>
+              <li>차량, 컴퓨터, 포스기 등 환급받은 기계장치 및 비품이 누락되지 않았는가?</li>
+              <li>건물이나 구축물의 경우 상각률을 5%로 올바르게 적용했는가? (기타 자산은 25%)</li>
+              <li>간이과세자에서 일반과세자로 전환된 이력이 있는 경우, 세무사와 상담을 거쳤는가?</li>
+              <li>폐업일이 속하는 달의 다음 달 25일까지 폐업 확정신고를 준비하고 있는가?</li>
+            </ul>
+          </div>
+        </div>
+
+        <div style={{ fontSize: '0.8rem', color: '#64748b', lineHeight: '1.5', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
+          <b>※ 참고 및 면책 조항:</b> 본 폐업 세금 계산기는 부가가치세법상 '폐업 시 잔존재화에 대한 간주공급' 규정에 따른 예상 부가세액을 산출합니다. 종합소득세 등 타 세금은 반영되지 않았으며, 실제 납부해야 할 세금액은 과세표준 명세서 작성 및 감가상각 누계액 처리 방식 등에 따라 차이가 발생할 수 있으므로 반드시 세무 대리인 또는 국세청(126)의 상담을 거친 후 최종 결정하시기 바랍니다.
+        </div>
+      </section>
+
       <AdSlot style={{ marginTop: '3rem' }} />
     </div>
   );

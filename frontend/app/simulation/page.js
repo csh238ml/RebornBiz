@@ -745,16 +745,21 @@ export default function SimulationPage() {
             <img src="/rebornBiz_logo.png" alt="RebornBiz Logo" style={{ width: '200px', height: 'auto' }} />
           </div>
           <div>
-            <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem', color: '#31333F' }}>업종 변경 시뮬레이션</h1>
-            <p style={{ fontSize: '1rem', marginBottom: '0', lineHeight: '1.6', color: '#555' }}>새로운 업종 전환 시의 예상 리스크와 수익성을 분석합니다.</p>
+            <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem', color: '#31333F' }}>신규 창업 & 업종 변경 시뮬레이션</h1>
+            <p style={{ fontSize: '1rem', marginBottom: '0', lineHeight: '1.6', color: '#555' }}>
+              신규 창업의 생존 가능성과, 현재 업종을 타 업종으로 변경했을 때의 예상 전환 비용 및 기대 수익(ROI)을<br/>
+              실제 공공데이터(상권, 업종 평균) 기반으로 정교하게 시뮬레이션하여 데이터 기반 의사결정을 돕습니다.
+            </p>
           </div>
         </div>
         <div className="mobile-only">
           <div style={{ paddingLeft: '3.5rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', minHeight: '48px' }}>
             <img src="/images/rebornbiz_main_mobile.jpg" alt="RebornBiz Banner" style={{ width: '100%', height: 'auto', objectFit: 'contain', objectPosition: 'left center' }} />
           </div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: '700', marginBottom: '0.5rem', color: '#31333F' }}>업종 변경 시뮬레이션</h1>
-          <p style={{ fontSize: '0.95rem', marginBottom: '0', lineHeight: '1.5', color: '#555' }}>새로운 업종 전환 시의 예상 리스크와 수익성을 분석합니다.</p>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: '700', marginBottom: '0.5rem', color: '#31333F' }}>신규 창업 & 업종 변경 시뮬레이션</h1>
+          <p style={{ fontSize: '0.95rem', marginBottom: '0', lineHeight: '1.5', color: '#555' }}>
+            신규 창업의 생존 가능성과, 타 업종 변경 시 예상 전환 비용 및 기대 수익을 데이터 기반으로 분석합니다.
+          </p>
         </div>
       </StickyHeader>
 
@@ -1077,6 +1082,48 @@ export default function SimulationPage() {
       {!result && (
         <AdSlot position="middle" style={{ marginTop: '2rem', marginBottom: '2rem' }} />
       )}
+
+      {/* SEO를 위한 정적 예시 및 체크리스트 */}
+      <section style={{ backgroundColor: '#f8fafc', padding: '2rem', borderRadius: '0.5rem', marginTop: '3rem', border: '1px solid #e2e8f0' }}>
+        <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '1.5rem', color: '#1e293b' }}>💡 시뮬레이션 활용 예시 및 체크리스트</h3>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', marginBottom: '2rem' }}>
+          <div>
+            <h4 style={{ fontSize: '1rem', fontWeight: '600', color: '#334155', marginBottom: '0.75rem' }}>입력 및 결과 해석 (업종 변경 예시)</h4>
+            <div style={{ backgroundColor: '#ffffff', padding: '1rem', borderRadius: '0.25rem', border: '1px solid #cbd5e1', fontSize: '0.9rem', color: '#475569', lineHeight: '1.6' }}>
+              <div style={{ fontSize: '0.8rem', color: '#dc2626', marginBottom: '1rem', fontWeight: 'bold' }}>※ 아래 내용은 결과 화면 이해를 위한 가상 예시이며 실제 분석값이 아닙니다.</div>
+              <p style={{ margin: '0 0 0.5rem 0' }}><b>[상황 가정]</b></p>
+              <ul style={{ margin: '0 0 1rem 0', paddingLeft: '1.2rem' }}>
+                <li>현재 업종: 한식 식당 (매출 부진)</li>
+                <li>변경 희망: 배달 전문 카페</li>
+                <li>가용 예산: 기존 집기 최대한 재활용</li>
+              </ul>
+              <p style={{ margin: '0 0 0.5rem 0' }}><b>[결과 항목 해석 방법]</b></p>
+              <ul style={{ margin: '0', paddingLeft: '1.2rem' }}>
+                <li>필요 추가 투자금: 예산 내에 리모델링 및 전환이 가능한지 판단</li>
+                <li>예상 월 영업이익 증감: 업종 변경 후 기대되는 수익 개선 폭 확인</li>
+                <li>예상 투자금 회수기간: 투자된 비용을 회수하는 데 걸리는 시간 추정</li>
+                <li>종합 리스크: 경쟁 강도 및 초기 자본 부담 등을 고려한 위험도 평가</li>
+              </ul>
+            </div>
+          </div>
+
+          <div>
+            <h4 style={{ fontSize: '1rem', fontWeight: '600', color: '#334155', marginBottom: '0.75rem' }}>✅ 창업 및 업종 변경 전 필수 점검</h4>
+            <ul style={{ margin: '0', paddingLeft: '1.2rem', fontSize: '0.9rem', color: '#475569', lineHeight: '1.8' }}>
+              <li>목표 상권 내에 경쟁 점포 수가 너무 많아 포화 상태가 아닌가?</li>
+              <li>최소 3~6개월 동안 적자가 나더라도 버틸 수 있는 '운영 자금'을 확보했는가?</li>
+              <li>업종 변경 시 기존의 인테리어나 주방 기기를 최대한 재활용하여 초기 비용을 낮출 수 있는가?</li>
+              <li>사장님 본인의 인건비를 차감하고도 유의미한 영업이익이 발생하는가?</li>
+              <li>배달 매출 위주라면, 높은 배달 수수료를 감당할 수 있는 마진율이 확보되는가?</li>
+            </ul>
+          </div>
+        </div>
+
+        <div style={{ fontSize: '0.8rem', color: '#64748b', lineHeight: '1.5', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
+          <b>※ 참고 및 면책 조항:</b> 본 시뮬레이션 결과는 소상공인시장진흥공단 상권 정보 API 등 공공데이터 상권 정보를 바탕으로 산출된 추정치입니다. 실제 사업장의 입지 조건, 사장님의 마케팅 역량, 예기치 못한 비용 발생 등에 따라 실제 수익성은 크게 달라질 수 있으므로 투자 결정의 참고 자료로만 활용하시기 바랍니다.
+        </div>
+      </section>
     </div>
   );
 }
