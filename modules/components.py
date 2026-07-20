@@ -263,15 +263,15 @@ def inject_seo_tags(title=None, description=None):
     addMetaTag('naver-site-verification', '60e370a04a68c7125d47cc27112186c48372d8b8');
     addMetaTag('google-site-verification', 'KJ_THHy7VKDvnXerQT1S5I0B2U2glszxIeS5Ge34Gvs');
     addMetaTag('og:type', 'website', true);
-    addMetaTag('og:url', 'https://rebornbiz.co.kr', true);
+    addMetaTag('og:url', 'https://www.rebornbiz.co.kr', true);
     addMetaTag('og:title', `{seo_title}`, true);
     addMetaTag('og:description', `{og_desc}`, true);
-    addMetaTag('og:image', 'https://rebornbiz.co.kr/assets/og-image.png', true);
+    addMetaTag('og:image', 'https://www.rebornbiz.co.kr/assets/og-image.png', true);
 
     addMetaTag('twitter:card', 'summary_large_image');
     addMetaTag('twitter:title', `{seo_title}`);
     addMetaTag('twitter:description', `{og_desc}`);
-    addMetaTag('twitter:image', 'https://rebornbiz.co.kr/assets/og-image.png');
+    addMetaTag('twitter:image', 'https://www.rebornbiz.co.kr/assets/og-image.png');
 
     // 구글 애드센스 스크립트 주입
     if (!window.parent.document.querySelector('script[src*="adsbygoogle.js"]')) {{

@@ -14,7 +14,7 @@ if os.name == 'nt':
 else:
     SITEMAP_PATH = '/home/ubuntu/rebornbiz/frontend/public/sitemap.xml'
 
-BASE_URL = "https://rebornbiz.co.kr"
+BASE_URL = "https://www.rebornbiz.co.kr"
 
 # 정적 페이지 라우팅 경로 (현재 Streamlit 실제 파일 구조 기준)
 STATIC_PAGES = [

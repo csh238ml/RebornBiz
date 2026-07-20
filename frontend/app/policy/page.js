@@ -38,7 +38,7 @@ export default function PolicyPage() {
 
         <section style={{ marginBottom: '2rem' }}>
           <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '0.5rem' }}>제1조 (목적)</h3>
-          <p>본 약관은 RebornBiz(rebornbiz.co.kr, 이하 “본 사이트”)가 제공하는 상권 분석, 폐업 및 업종 변경 시뮬레이션, 창업·폐업 트렌드 분석 서비스(이하 “서비스”)의 이용과 관련하여 본 사이트와 이용자 간의 권리·의무 및 책임사항 등을 규정함을 목적으로 합니다.</p>
+          <p>본 약관은 RebornBiz(www.rebornbiz.co.kr, 이하 “본 사이트”)가 제공하는 상권 분석, 폐업 및 업종 변경 시뮬레이션, 창업·폐업 트렌드 분석 서비스(이하 “서비스”)의 이용과 관련하여 본 사이트와 이용자 간의 권리·의무 및 책임사항 등을 규정함을 목적으로 합니다.</p>
         </section>
 
         <section style={{ marginBottom: '2rem' }}>
@@ -128,7 +128,7 @@ export default function PolicyPage() {
         <h2 style={{ fontSize: '2rem', fontWeight: '700', margin: '2rem 0 1rem 0', color: '#1E3A8A' }}>개인정보처리방침</h2>
         <p style={{ fontWeight: 'bold', marginBottom: '1.5rem' }}>시행일 2026-06-29 · 최종 개정 2026-06-29</p>
         
-        <p style={{ marginBottom: '2rem' }}>RebornBiz(rebornbiz.co.kr, 이하 “본 사이트”)는 이용자의 개인정보를 중요시하며, 「개인정보 보호법」 및 「위치정보의 보호 및 이용 등에 관한 법률」 등 관련 법령을 준수합니다. 본 개인정보처리방침은 본 사이트가 수집·이용하는 개인정보의 항목, 목적, 보유 기간, 제3자 제공 여부, 쿠키 및 분석 도구 운영, 이용자의 권리 등을 안내합니다.</p>
+        <p style={{ marginBottom: '2rem' }}>RebornBiz(www.rebornbiz.co.kr, 이하 “본 사이트”)는 이용자의 개인정보를 중요시하며, 「개인정보 보호법」 및 「위치정보의 보호 및 이용 등에 관한 법률」 등 관련 법령을 준수합니다. 본 개인정보처리방침은 본 사이트가 수집·이용하는 개인정보의 항목, 목적, 보유 기간, 제3자 제공 여부, 쿠키 및 분석 도구 운영, 이용자의 권리 등을 안내합니다.</p>
 
         <section style={{ marginBottom: '2rem' }}>
           <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '0.5rem' }}>1. 수집하는 개인정보 항목</h3>

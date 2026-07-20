@@ -4,7 +4,7 @@ import { getLatestPosts } from '@/lib/db';
 export async function GET() {
   try {
     const posts = await getLatestPosts(20);
-    const siteUrl = 'https://rebornbiz.co.kr';
+    const siteUrl = 'https://www.rebornbiz.co.kr';
     
     // RSS 2.0 XML 생성
     const rssItemsXml = posts.map(post => {

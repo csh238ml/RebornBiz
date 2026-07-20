@@ -32,7 +32,7 @@ export default function AboutPage() {
         <section style={{ marginBottom: '2rem' }}>
           <h2 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '1rem' }}>RebornBiz가 뭐예요?</h2>
           <p>
-            RebornBiz(rebornbiz.co.kr)는 전국의 자영업·소상공인 및 예비 창업자 사장님들을 위해 상권 분석부터 폐업, 재창업까지의 의사결정을 데이터 기반으로 돕는 종합 프롭테크(Proptech) 플랫폼입니다. <br/>
+            RebornBiz(www.rebornbiz.co.kr)는 전국의 자영업·소상공인 및 예비 창업자 사장님들을 위해 상권 분석부터 폐업, 재창업까지의 의사결정을 데이터 기반으로 돕는 종합 프롭테크(Proptech) 플랫폼입니다. <br/>
             복잡한 내 주변 상권 분석과 상가 실거래가 조회부터, 막막한 폐업 비용 계산, 업종 변경 시뮬레이션, 그리고 국세청 공식 확정 데이터를 활용한 100대 생활밀접업종 창업·폐업 트렌드 분석까지 사장님이 필요로 하는 핵심 도구와 정보를 한곳에 모아 쉬운 말로 제공하는 든든한 파트너입니다.
           </p>
         </section>
