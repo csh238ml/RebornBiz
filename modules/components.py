@@ -230,7 +230,6 @@ def set_custom_sidebar():
         st.page_link("pages/tax_cal.py", label="폐업 세금 계산기", icon="🧾")
         st.page_link("pages/2_simulation.py", label="업종 변경 시뮬레이션", icon="📈")
         st.page_link("pages/4_market_analysis.py", label="내 주변 상권 분석", icon="📍")
-        st.page_link("pages/3_guide.py", label="정부 지원 정책", icon="🏛️")
         st.page_link("pages/7_magazine.py", label="Reborn 매거진", icon="📰")
     
 

@@ -164,15 +164,6 @@ st.html("""
             </div>
         </div>
 
-        <div class="custom-card gov">
-            <div class="card-icon-box">🏛️</div>
-            <div class="card-content">
-                <span class="card-badge">가이드</span>
-                <h3>정부 지원 정책</h3>
-                <p>재취업, 재창업 등 소상공인에게 꼭 필요한 정부 지원금을 한눈에 확인하고 신청하세요.</p>
-                <button class="custom-btn" data-target="guide">지원 정책 확인</button>
-            </div>
-        </div>
 
         <div class="custom-card mag">
             <div class="card-icon-box">📰</div>
